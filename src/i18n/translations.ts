@@ -18,7 +18,7 @@ export const translations: Record<Lang, Dict> = {
       wishlist: "علاقه‌مندی",
       cart: "سبد خرید",
       account: "حساب کاربری",
-      searchPlaceholder: "دنبال چه کالایی می‌گردید؟",
+      searchPlaceholder: "نام کالا را جستجو کنید...",
       logoName: "کالا سرچ",
     },
     menu: {
