@@ -33,6 +33,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addItem = useCallback(
     (product: Product, name: string, quantity: number, variation?: CartVariation) => {
+      // Implementation 16: Prevent out-of-stock products from entering cart
+      if (!product.inStock) {
+        return;
+      }
       setItems((prev) => {
         const existingIdx = prev.findIndex(
           (it) => it.productId === product.id && it.variation?.id === variation?.id

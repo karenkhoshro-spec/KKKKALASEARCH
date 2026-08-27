@@ -8,6 +8,7 @@ import { useToast } from "../context/ToastContext";
 import { generateOrderPdf, downloadBlob } from "../utils/pdf";
 import { deliverOrderToSeller } from "../utils/sellerDelivery";
 import { normalizeIranLocal, isValidIranLocal, toFullIranPhone } from "../utils/phone";
+import { getProductById } from "../data/products";
 import BackButton from "../components/BackButton";
 
 function generateOrderNumber() {
@@ -56,33 +57,50 @@ export default function CheckoutPage() {
     const fullPhone = toFullIranPhone(phoneLocal);
 
     try {
+      // Implementation 14 & 15: Enhanced PDF with real checkout data, packQuantity, address
       const pdfBlob = await generateOrderPdf({
         orderNumber,
         date,
         customerName: fullName.trim(),
         phone: fullPhone,
+        address: notes.trim() || undefined,
         notes: notes.trim() || undefined,
-        items: items.map((it) => ({
-          name: it.name,
-          variation: it.variation?.name,
-          quantity: it.quantity,
-          price: it.price,
-        })),
+        status: "pending",
+        items: items.map((it) => {
+          const product = getProductById(it.productId);
+          return {
+            name: it.name,
+            variation: it.variation?.name,
+            quantity: it.quantity,
+            packQuantity: product?.packQuantity,
+            price: it.price,
+          };
+        }),
+        subtotal: total,
+        discount: 0,
+        shipping: 0,
         total,
         currencyLabel: t("cart.toman"),
         dir,
         labels: {
           title: t("checkout.title"),
+          brand: "KalaSearch",
           orderNumber: t("checkout.orderNumber"),
           date: t("checkout.date"),
+          status: "وضعیت",
           customer: t("checkout.fullName"),
           phone: t("checkout.phone"),
+          address: "آدرس",
           notes: t("checkout.notes"),
           product: t("cart.product"),
           variation: t("product.variation"),
           quantity: t("cart.quantity"),
+          packQuantity: t("product.packQuantity") || "تعداد در بسته",
           price: t("cart.price"),
           lineTotal: t("cart.total"),
+          subtotal: t("cart.subtotal") || "جمع",
+          discount: "تخفیف",
+          shipping: "هزینه ارسال",
           total: t("cart.total"),
         },
       });

@@ -89,6 +89,9 @@ export const translations: Record<Lang, Dict> = {
       specTitle: "مشخصات کامل",
       shareText: "این محصول را با دیگران به اشتراک بگذارید",
       linkNotSet: "لینک این محصول در سایت اشکان پلاستیک هنوز تنظیم نشده است.",
+      requestProduction: "درخواست تولید",
+      requestProductionToast: "درخواست تولید شما ثبت شد. به زودی با شما تماس می‌گیریم.",
+      packQuantity: "تعداد در بسته",
     },
     notifications: {
       addedToCart: "محصول با موفقیت به سبد خرید اضافه شد.",
@@ -261,6 +264,9 @@ export const translations: Record<Lang, Dict> = {
       specTitle: "Full Specifications",
       shareText: "Share this product with others",
       linkNotSet: "The Ashkan Plastic website link for this product is not configured yet.",
+      requestProduction: "Request Production",
+      requestProductionToast: "Your production request has been registered. We will contact you soon.",
+      packQuantity: "Pack Quantity",
     },
     notifications: {
       addedToCart: "Product was successfully added to your cart.",
@@ -433,6 +439,9 @@ export const translations: Record<Lang, Dict> = {
       specTitle: "المواصفات الكاملة",
       shareText: "شارك هذا المنتج مع الآخرين",
       linkNotSet: "رابط هذا المنتج على موقع أشكان بلاستيك غير مُعد بعد.",
+      requestProduction: "طلب إنتاج",
+      requestProductionToast: "تم تسجيل طلب الإنتاج الخاص بك. سوف نتصل بك قريباً.",
+      packQuantity: "الكمية في العبوة",
     },
     notifications: {
       addedToCart: "تمت إضافة المنتج إلى سلة التسوق بنجاح.",

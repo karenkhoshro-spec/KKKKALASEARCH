@@ -32,6 +32,14 @@ export interface Product {
    * in that case no link will be rendered (no fake/broken links).
    */
   ashkanProductUrl?: string;
+  /**
+   * Implementation 9: Fields for future Excel import
+   * quantity = تعداد
+   * packQuantity = تعداد در بسته / سر بسته
+   * Optional, no fake data - only structure for future Excel sync
+   */
+  quantity?: number;
+  packQuantity?: number;
 }
 
 export interface Category {

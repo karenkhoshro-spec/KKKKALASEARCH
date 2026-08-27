@@ -1,13 +1,26 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
+import { products } from "../data/products";
 
 export default function SearchBar({ large = false }: { large?: boolean }) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const navigate = useNavigate();
   const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
+
+  // Implementation 3: Use real product name as placeholder (not a real query)
+  const placeholder = useMemo(() => {
+    // Use first product's name in current language as realistic placeholder
+    // Falls back to translation if no products
+    if (products.length > 0) {
+      const first = products[0];
+      // Prefer current lang, fallback to fa
+      return first.name[lang] || first.name.fa || t("header.searchPlaceholder");
+    }
+    return t("header.searchPlaceholder");
+  }, [lang, t]);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +46,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
             onChange={(e) => setValue(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            placeholder={t("header.searchPlaceholder")}
+            placeholder={placeholder}
             className={`w-full flex-1 bg-transparent outline-none placeholder:opacity-60 ${large ? "text-base sm:text-lg" : "text-sm"}`}
             style={{ color: "var(--text-primary)" }}
           />

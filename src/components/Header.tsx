@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Menu, Heart, ShoppingCart, User } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Menu, Heart, ShoppingCart } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useCart } from "../context/CartContext";
-import { useAccount } from "../context/AccountContext";
 import { useWishlist } from "../context/WishlistContext";
 import Logo from "./Logo";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -14,9 +13,7 @@ export default function Header() {
   const { t } = useLanguage();
   const { count } = useCart();
   const { ids } = useWishlist();
-  const { account } = useAccount();
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
 
   return (
     <>
@@ -44,7 +41,7 @@ export default function Header() {
               </Link>
             </div>
 
-            {/* Actions group */}
+            {/* Actions group - Account moved to SideMenu per Implementation 5 */}
             <div className="flex items-center justify-end gap-0.5 sm:gap-1.5">
               <Link
                 to="/wishlist"
@@ -76,21 +73,6 @@ export default function Header() {
                   </span>
                 )}
               </Link>
-              <button
-                onClick={() => navigate("/account")}
-                aria-label={t("header.account")}
-                title={account?.name ? t("account.greeting", { name: account.name }) : t("header.account")}
-                className={`flex h-9 items-center gap-1.5 rounded-full px-1.5 transition-colors hover:bg-white/10 sm:px-2 ${
-                  account?.name ? "glass sm:px-3" : ""
-                }`}
-              >
-                <User size={18} style={{ color: account?.name ? "var(--accent-1)" : "var(--text-primary)" }} />
-                {account?.name && (
-                  <span className="hidden max-w-[140px] truncate text-xs font-semibold sm:inline" style={{ color: "var(--text-primary)" }}>
-                    {t("account.greeting", { name: account.name })}
-                  </span>
-                )}
-              </button>
             </div>
           </div>
         </div>

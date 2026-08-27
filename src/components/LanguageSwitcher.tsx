@@ -56,7 +56,14 @@ export default function LanguageSwitcher({ variant = "header" }: { variant?: "he
       </button>
       {open && (
         <div
-          className="glass-strong animate-pop absolute top-11 z-50 min-w-[130px] overflow-hidden rounded-2xl p-1.5 end-0"
+          className="glass-strong animate-pop absolute top-12 z-50 min-w-[160px] max-w-[min(200px,calc(100vw-24px))] overflow-hidden rounded-2xl p-1.5 shadow-[var(--shadow-glow)] start-0 sm:min-w-[180px] sm:max-w-[220px]"
+          style={{
+            // Implementation 4: Responsive fix to stay inside viewport 360-1920
+            // Using logical start-0 ensures dropdown extends toward center, not outside viewport
+            // Works for both RTL (start=right) and LTR (start=left) when button is near start edge
+            // max-width prevents overflow on 360px devices
+            maxWidth: "min(200px, calc(100vw - 24px))",
+          }}
         >
           {OPTIONS.map((opt) => (
             <button
@@ -65,7 +72,7 @@ export default function LanguageSwitcher({ variant = "header" }: { variant?: "he
                 setLang(opt.code);
                 setOpen(false);
               }}
-              className="block w-full rounded-xl px-3 py-2 text-start text-sm transition-colors hover:bg-white/10"
+              className="block w-full rounded-xl px-3 py-2.5 text-start text-sm transition-colors hover:bg-white/10"
               style={{
                 color: lang === opt.code ? "var(--accent-1)" : "var(--text-primary)",
                 fontWeight: lang === opt.code ? 700 : 500,

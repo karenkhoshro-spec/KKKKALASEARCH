@@ -42,6 +42,11 @@ export default function ProductDetails() {
   const selectedVariation = product.variations?.find((v) => v.id === variationId);
 
   const handleAddToCart = () => {
+    // Implementation 16: Prevent out-of-stock products from entering cart
+    if (!product || !product.inStock) {
+      showToast(t("product.requestProductionToast") || "درخواست تولید ثبت شد", "info");
+      return;
+    }
     addItem(
       product,
       product.name[lang],
@@ -49,7 +54,13 @@ export default function ProductDetails() {
       selectedVariation ? { id: selectedVariation.id, name: selectedVariation.name[lang] } : undefined
     );
     showToast(t("notifications.addedToCart"), "success");
-    // Stay on the current product page — do NOT navigate away automatically.
+  };
+
+  const handleRequestProduction = () => {
+    // Implementation 8: Request production handler - does NOT add to cart, shows toast
+    // This is an internal extensible handler for future integration
+    showToast(t("product.requestProductionToast"), "info");
+    // Future: could integrate with sellerDelivery or API
   };
 
   const backPath = listContext.type === "home" ? "/" : listContextToPath(listContext);
@@ -61,7 +72,8 @@ export default function ProductDetails() {
       </div>
 
       <div className="grid gap-8 md:grid-cols-2">
-        <div className="glass product-media aspect-square rounded-3xl p-8">
+        {/* Implementation 7: Smaller, more compact image container */}
+        <div className="glass mx-auto flex aspect-square max-h-[340px] w-full max-w-[420px] items-center justify-center rounded-2xl p-4 sm:max-h-[380px] md:max-h-[420px] md:p-6">
           <img src={product.image} alt={product.name[lang]} className="h-full w-full object-contain" />
         </div>
 
@@ -158,15 +170,24 @@ export default function ProductDetails() {
           </div>
 
           <div className="mt-6 flex items-center gap-3">
-            <button
-              onClick={handleAddToCart}
-              disabled={!product.inStock}
-              className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold text-white shadow-[var(--shadow-glow)] transition-transform duration-300 hover:scale-[1.01] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
-              style={{ background: "linear-gradient(90deg, var(--accent-2), var(--accent-1))" }}
-            >
-              <ShoppingCart size={17} />
-              {t("product.addToCart")}
-            </button>
+            {product.inStock ? (
+              <button
+                onClick={handleAddToCart}
+                className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold text-white shadow-[var(--shadow-glow)] transition-transform duration-300 hover:scale-[1.01] active:scale-95"
+                style={{ background: "linear-gradient(90deg, var(--accent-2), var(--accent-1))" }}
+              >
+                <ShoppingCart size={17} />
+                {t("product.addToCart")}
+              </button>
+            ) : (
+              <button
+                onClick={handleRequestProduction}
+                className="flex flex-1 items-center justify-center gap-2 rounded-2xl border-2 py-3.5 text-sm font-bold transition-transform duration-300 hover:scale-[1.01] active:scale-95"
+                style={{ borderColor: "var(--accent-1)", color: "var(--accent-1)", background: "var(--chip-bg)" }}
+              >
+                {t("product.requestProduction")}
+              </button>
+            )}
             <button
               onClick={() => {
                 const added = toggle(product.id);
