@@ -40,6 +40,14 @@ export interface Product {
    */
   quantity?: number;
   packQuantity?: number;
+  /**
+   * PART H/I/J - Ashkan Plastic & Excel sync readiness
+   * Stable identifiers for duplicate prevention and future sync
+   * All optional, no fake data, preserves existing architecture
+   */
+  sku?: string;
+  externalId?: string;
+  ashkanId?: string;
 }
 
 export interface Category {
