@@ -94,16 +94,13 @@ export default function ProductDetails() {
             <span>{t("product.packQuantity")}: {selectedVariation?.packQuantity ?? product.packQuantity ?? "-"}</span>
           </div>
 
-          <div className="mt-4 flex items-baseline gap-3">
-            <span className="text-2xl font-extrabold" style={{ color: "var(--accent-1)" }}>
-              {available ? (activePrice !== undefined ? `${activePrice.toLocaleString()} ${t("product.toman")}` : t("product.priceUnknown")) : t("product.outOfStock")}
-            </span>
-            {product.oldPrice && (
-              <span className="text-sm line-through" style={{ color: "var(--text-muted)" }}>
-                {product.oldPrice.toLocaleString()}
+          {available && activePrice !== undefined && (
+            <div className="mt-4 flex items-baseline gap-3">
+              <span className="text-2xl font-extrabold" style={{ color: "var(--accent-1)" }}>
+                {activePrice.toLocaleString()} {t("product.toman")}
               </span>
-            )}
-          </div>
+            </div>
+          )}
 
           <p className="mt-5 text-sm leading-7" style={{ color: "var(--text-secondary)" }}>
             {activeSpec}

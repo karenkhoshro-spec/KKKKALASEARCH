@@ -50,9 +50,11 @@ export default function CartPage() {
                       {item.variation.name}
                     </p>
                   )}
-                  <p className="mt-1 text-sm font-semibold" style={{ color: "var(--accent-1)" }}>
-                    {item.price !== undefined ? `${item.price.toLocaleString()} ${t("cart.toman")}` : t("product.priceUnknown")}
-                  </p>
+                  {item.price !== undefined && (
+                    <p className="mt-1 text-sm font-semibold" style={{ color: "var(--accent-1)" }}>
+                      {item.price.toLocaleString()} {t("cart.toman")}
+                    </p>
+                  )}
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   <div className="glass flex items-center gap-2 rounded-xl px-1.5 py-1">
