@@ -15,7 +15,7 @@ const STORAGE_KEY = "kala-search-theme";
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return (saved as Theme) || "dark";
+    return (saved as Theme) || "light";
   });
 
   useEffect(() => {
