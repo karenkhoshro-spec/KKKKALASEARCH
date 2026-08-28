@@ -3,9 +3,7 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useListContext } from "../context/ListContext";
 import { categories } from "../data/categories";
-import { products } from "../data/products";
 import SearchBar from "../components/SearchBar";
-import ProductCard from "../components/ProductCard";
 
 export default function Home() {
   const { t, lang } = useLanguage();
@@ -14,8 +12,6 @@ export default function Home() {
   useEffect(() => {
     setListContext({ type: "home" });
   }, [setListContext]);
-
-  const featured = products.slice(0, 8);
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6">
@@ -54,21 +50,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section>
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-bold sm:text-xl" style={{ color: "var(--text-primary)" }}>
-            {t("home.featuredTitle")}
-          </h2>
-          <Link to="/products" className="text-sm font-semibold transition-opacity hover:opacity-80" style={{ color: "var(--accent-1)" }}>
-            {t("home.viewAll")}
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
-          {featured.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
-      </section>
     </div>
   );
 }
