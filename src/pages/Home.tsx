@@ -4,7 +4,6 @@ import { useLanguage } from "../i18n/LanguageContext";
 import { useListContext } from "../context/ListContext";
 import { categories } from "../data/categories";
 import { products } from "../data/products";
-import HeroSlider from "../components/HeroSlider";
 import SearchBar from "../components/SearchBar";
 import ProductCard from "../components/ProductCard";
 
@@ -20,11 +19,6 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6">
-      {/* 8. Homepage slider — before the search headline section */}
-      <section className="mb-8">
-        <HeroSlider />
-      </section>
-
       {/* 12. Prominent search hero */}
       <section className="mb-12 text-center">
         <h1 className="animate-fade-up text-2xl font-extrabold leading-tight sm:text-3xl md:text-4xl" style={{ color: "var(--text-primary)" }}>
