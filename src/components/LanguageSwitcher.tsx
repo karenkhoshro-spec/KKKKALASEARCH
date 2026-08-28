@@ -3,10 +3,10 @@ import { Check, Globe2, Sparkles } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import type { Lang } from "../types";
 
-const OPTIONS: { code: Lang; native: string; short: string; glow: string }[] = [
-  { code: "fa", native: "فارسی", short: "فا", glow: "#a855f7" },
-  { code: "en", native: "English", short: "EN", glow: "#22d3ee" },
-  { code: "ar", native: "العربية", short: "ع", glow: "#ec4899" },
+const OPTIONS: { code: Lang; native: string; flag: string; short: string; glow: string }[] = [
+  { code: "fa", native: "فارسی", flag: "🇮🇷", short: "فا", glow: "#a855f7" },
+  { code: "en", native: "English", flag: "🇬🇧", short: "EN", glow: "#22d3ee" },
+  { code: "ar", native: "العربية", flag: "🇸🇦", short: "ع", glow: "#ec4899" },
 ];
 
 export default function LanguageSwitcher({ variant = "header" }: { variant?: "header" | "menu" }) {
@@ -27,7 +27,8 @@ export default function LanguageSwitcher({ variant = "header" }: { variant?: "he
       <div className="flex flex-wrap gap-2" dir={dir}>
         {OPTIONS.map((opt) => (
           <button key={opt.code} onClick={() => setLang(opt.code)} className="rounded-xl border px-3 py-2 text-xs font-semibold transition-colors" style={{ borderColor: lang === opt.code ? opt.glow : "var(--border-soft)", background: lang === opt.code ? "var(--chip-bg)" : "transparent", color: "var(--text-primary)" }}>
-            {opt.native}
+            <span className="text-lg leading-none" aria-hidden="true">{opt.flag}</span>
+            <span>{opt.native}</span>
           </button>
         ))}
       </div>
@@ -52,7 +53,7 @@ export default function LanguageSwitcher({ variant = "header" }: { variant?: "he
                 const active = lang === opt.code;
                 return (
                   <button key={opt.code} onClick={() => { setLang(opt.code); setOpen(false); }} className="group flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-start transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10" style={{ color: active ? opt.glow : "var(--text-primary)", background: active ? "var(--chip-bg)" : "transparent", boxShadow: active ? `0 0 22px ${opt.glow}33` : "none" }}>
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs font-extrabold text-white shadow-lg transition-transform duration-300 group-hover:rotate-6" style={{ background: `linear-gradient(135deg, ${opt.glow}, var(--accent-2))` }}>{opt.short}</span>
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xl leading-none shadow-lg transition-transform duration-300 group-hover:rotate-6" style={{ background: `linear-gradient(135deg, ${opt.glow}, var(--accent-2))` }} aria-hidden="true">{opt.flag}</span>
                     <span className="flex-1 text-sm font-semibold">{opt.native}</span>
                     {active && <Check size={17} />}
                   </button>
