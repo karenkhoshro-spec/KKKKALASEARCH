@@ -40,6 +40,8 @@ export default function ProductDetails() {
   const activeImage = selectedVariation?.image || product.image;
   const activeUrl = selectedVariation?.url || product.ashkanProductUrl;
   const activeSpec = selectedVariation?.technicalSpec || product.description[lang];
+  const colorVariations = (product.variations ?? []).filter((v) => v.colorName);
+  const uniqueColors = Array.from(new Map(colorVariations.map((v) => [v.colorName, v])).values());
 
   const handleAddToCart = () => {
     addItem(
@@ -121,6 +123,19 @@ export default function ProductDetails() {
                     {product.features.slice(1).map((f, i) => <li key={i} className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}><span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: "var(--accent-1)" }} />{f[lang]}</li>)}
                   </ul>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {uniqueColors.length > 0 && (
+            <div className="mt-5">
+              <h3 className="mb-2 text-sm font-bold" style={{ color: "var(--text-primary)" }}>رنگ</h3>
+              <div className="flex flex-wrap gap-2">
+                {uniqueColors.map((v) => (
+                  <button type="button" key={v.colorName} onClick={() => setVariationId(v.id)} className="flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-all" style={{ borderColor: variationId === v.id ? "var(--accent-1)" : "var(--border-soft)", background: variationId === v.id ? "var(--chip-bg)" : "transparent", color: "var(--text-primary)" }}>
+                    <span className="h-3.5 w-3.5 rounded-full border" style={{ background: v.color, borderColor: v.color === "#f8fafc" ? "var(--border-soft)" : v.color }} />{v.colorName}
+                  </button>
+                ))}
               </div>
             </div>
           )}

@@ -1,7 +1,7 @@
 export type Lang = "fa" | "en" | "ar";
 export interface LocalizedText { fa: string; en: string; ar: string; }
 export interface ProductVariation {
-  id: string; name: LocalizedText; color?: string; sku?: string; price?: number; image?: string; stockCount?: number;
+  id: string; name: LocalizedText; color?: string; colorName?: string; sku?: string; price?: number; image?: string; stockCount?: number;
   packQuantity?: number; inStock: boolean; url?: string; technicalSpec?: string;
 }
 export interface Product {
