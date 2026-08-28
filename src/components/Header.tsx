@@ -4,7 +4,6 @@ import { Menu, ShoppingCart } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useCart } from "../context/CartContext";
 import Logo from "./Logo";
-import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
 import SideMenu from "./SideMenu";
 
@@ -28,7 +27,6 @@ export default function Header() {
               >
                 <Menu size={19} />
               </button>
-              <LanguageSwitcher />
               <ThemeToggle />
             </div>
 
