@@ -21,12 +21,7 @@ export default function Home() {
       {/* 12. Prominent search hero */}
       <section className="mb-12 text-center">
         <p className="animate-fade-up mx-auto mt-2 max-w-xl text-sm font-extrabold sm:text-base" style={{ color: "var(--text-secondary)", animationDelay: "0.05s" }}>
-          {(() => {
-            const subtitle = t("home.heroSubtitle");
-            const marker = "خانگی";
-            const [before, after] = subtitle.split(marker);
-            return after === undefined ? subtitle : <>{before}<span className="mx-1 inline-block bg-gradient-to-r from-[var(--accent-2)] to-[var(--accent-1)] bg-clip-text font-black text-transparent">{marker}</span>{after}</>;
-          })()}
+          {t("home.heroSubtitle")}
         </p>
         <div className="mt-6">
           <SearchBar large />
