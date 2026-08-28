@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Languages } from "lucide-react";
+import { Globe2 } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import type { Lang } from "../types";
 
@@ -52,11 +52,11 @@ export default function LanguageSwitcher({ variant = "header" }: { variant?: "he
         className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-white/10"
         style={{ color: "var(--text-primary)" }}
       >
-        <Languages size={18} />
+        <Globe2 size={19} />
       </button>
       {open && (
         <div
-          className="glass-strong animate-pop absolute top-11 z-50 min-w-[130px] overflow-hidden rounded-2xl p-1.5 end-0"
+          className="glass-strong animate-pop fixed end-3 top-14 z-[240] min-w-[130px] overflow-hidden rounded-2xl p-1.5 sm:absolute sm:end-0 sm:top-11"
         >
           {OPTIONS.map((opt) => (
             <button

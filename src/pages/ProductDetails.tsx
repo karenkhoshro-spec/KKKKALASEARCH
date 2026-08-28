@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ExternalLink, Minus, Plus, ShoppingCart, CheckCircle2, XCircle, Heart } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -6,8 +6,7 @@ import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
 import { useWishlist } from "../context/WishlistContext";
 import { useListContext, listContextToPath } from "../context/ListContext";
-import { getProductById, getProductsByCategory } from "../data/products";
-import ProductCard from "../components/ProductCard";
+import { getProductById } from "../data/products";
 import BackButton from "../components/BackButton";
 
 export default function ProductDetails() {
@@ -21,11 +20,6 @@ export default function ProductDetails() {
   const product = getProductById(id);
   const [quantity, setQuantity] = useState(1);
   const [variationId, setVariationId] = useState(product?.variations?.[0]?.id);
-
-  const related = useMemo(
-    () => (product ? getProductsByCategory(product.categoryId).filter((p) => p.id !== product.id).slice(0, 4) : []),
-    [product]
-  );
 
   if (!product) {
     return (
@@ -209,19 +203,6 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
-
-      {related.length > 0 && (
-        <section className="mt-14">
-          <h2 className="mb-5 text-lg font-bold" style={{ color: "var(--text-primary)" }}>
-            {t("product.relatedTitle")}
-          </h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
-            {related.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 }

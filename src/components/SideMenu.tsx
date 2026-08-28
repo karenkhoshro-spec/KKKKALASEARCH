@@ -1,19 +1,21 @@
 import { Link } from "react-router-dom";
 import { X, Home, Grid3x3, Package, Heart, ShoppingCart, User, Info, Phone } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
+import { useAccount } from "../context/AccountContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
 
 export default function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t, dir } = useLanguage();
+  const { account } = useAccount();
   const closedTransform = dir === "rtl" ? "translateX(100%)" : "translateX(-100%)";
 
   const links = [
     { to: "/", label: t("menu.home"), icon: Home },
+    { to: "/account", label: account?.name ? t("account.greeting", { name: account.name }) : t("account.loginTitle"), icon: User },
     { to: "/products", label: t("menu.products"), icon: Package },
-    { to: "/wishlist", label: t("menu.wishlist"), icon: Heart },
     { to: "/cart", label: t("menu.cart"), icon: ShoppingCart },
-    { to: "/account", label: t("menu.account"), icon: User },
+    { to: "/wishlist", label: t("menu.wishlist"), icon: Heart },
   ];
 
   return (

@@ -13,6 +13,9 @@ export default function Home() {
     setListContext({ type: "home" });
   }, [setListContext]);
 
+  const mainCategories = categories.slice(0, 8);
+  const otherCategory = categories[8];
+
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6">
       {/* 12. Prominent search hero */}
@@ -34,19 +37,14 @@ export default function Home() {
             {t("home.categoriesTitle")}
           </h2>
         </div>
-        <div className="grid auto-cols-[112px] grid-flow-col grid-rows-2 gap-3 overflow-x-auto pb-2 sm:auto-cols-[140px] sm:gap-4">
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              to={`/category/${cat.id}`}
-              className="glass animate-fade-up flex flex-col items-center gap-2 rounded-2xl px-2 py-4 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-glow)]"
-            >
+        <div className="grid grid-cols-4 gap-3 sm:gap-4">
+          {mainCategories.map((cat) => (
+            <Link key={cat.id} to={`/category/${cat.id}`} className="glass animate-fade-up flex min-w-0 flex-col items-center gap-2 rounded-2xl px-1 py-4 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-glow)]">
               <span className="text-2xl">{cat.icon}</span>
-              <span className="text-xs font-semibold leading-4 sm:text-sm" style={{ color: "var(--text-primary)" }}>
-                {cat.name[lang]}
-              </span>
+              <span className="w-full truncate text-[11px] font-semibold leading-4 sm:text-sm" style={{ color: "var(--text-primary)" }}>{cat.name[lang]}</span>
             </Link>
           ))}
+          {otherCategory && <Link to={`/category/${otherCategory.id}`} className="glass animate-fade-up col-span-4 mx-auto flex w-1/2 min-w-0 flex-col items-center gap-1 rounded-2xl px-2 py-3 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-glow)]"><span className="text-xl">{otherCategory.icon}</span><span className="text-xs font-bold" style={{ color: "var(--text-primary)" }}>{otherCategory.name[lang]}</span></Link>}
         </div>
       </section>
 

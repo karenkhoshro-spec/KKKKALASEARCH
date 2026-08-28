@@ -39,7 +39,7 @@ const categoryNames = categoryRows
   .sort((a, b) => Number(a.sort_order) - Number(b.sort_order))
   .map((row) => row.category_name)
   .filter(Boolean);
-const primaryNames = categoryNames.length === 15 ? categoryNames : [
+const primaryNames = categoryNames.length >= 8 ? categoryNames.slice(0, 8).concat("سایر") : [
   "سبد خرید", "سبد پیکنیک", "چهار پایه", "جا پودری/اسکاجی", "سبد میوه و سبزی",
   "آبکش و سبد و کاسه", "فریزری", "جاصابونی", "جا ادویه", "پارچ و لیوان",
   "آبمیوه گیری", "جا یخی", "سطل", "لگن و وان", "سایر",
@@ -53,7 +53,7 @@ const categoryMatchers: [string, string[]][] = [
 ];
 function categoryIdFor(name: string) {
   if (/جا کره‌ای|جا قاشقی|گلدان/.test(name)) return "other";
-  return categoryMatchers.find(([, words]) => words.some((word) => name.includes(word)))?.[0] ?? "other";
+  return categoryMatchers.slice(0, 8).find(([, words]) => words.some((word) => name.includes(word)))?.[0] ?? "other";
 }
 const icons = ["🛒", "🧺", "🪑", "🧽", "🍎", "🥣", "❄️", "🧼", "🧂", "🥤", "🧃", "🧊", "🪣", "🛁", "📦"];
 export const importedCategories: Category[] = primaryNames.map((name, index) => ({
