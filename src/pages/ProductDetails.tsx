@@ -102,7 +102,8 @@ export default function ProductDetails() {
           </p>
 
           {product.features.length > 0 && (
-            <div className="mt-5">
+            <details className="glass mt-5 rounded-2xl p-4">
+              <summary className="cursor-pointer text-sm font-bold" style={{ color: "var(--text-primary)" }}>{t("product.specTitle")}</summary>
               <h3 className="mb-2 text-sm font-bold" style={{ color: "var(--text-primary)" }}>
                 {t("product.features")}
               </h3>
@@ -114,7 +115,7 @@ export default function ProductDetails() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </details>
           )}
 
           {product.variations && product.variations.length > 0 && (
