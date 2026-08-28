@@ -140,31 +140,6 @@ export default function ProductDetails() {
             </div>
           )}
 
-          {product.variations && product.variations.length > 0 && (
-            <div className="mt-5">
-              <h3 className="mb-2 text-sm font-bold" style={{ color: "var(--text-primary)" }}>
-                {t("product.variation")}
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {product.variations.map((v) => (
-                  <button
-                    key={v.id}
-                    onClick={() => setVariationId(v.id)}
-                    className="flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-all"
-                    style={{
-                      borderColor: variationId === v.id ? "var(--accent-1)" : "var(--border-soft)",
-                      background: variationId === v.id ? "var(--chip-bg)" : "transparent",
-                      color: "var(--text-primary)",
-                    }}
-                  >
-                    {v.color && <span className="h-3 w-3 rounded-full" style={{ background: v.color }} />}
-                    {v.name[lang]}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           <div className="mt-6 flex items-center gap-4">
             <span className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
               {t("product.quantity")}
