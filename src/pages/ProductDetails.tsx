@@ -20,6 +20,7 @@ export default function ProductDetails() {
   const product = getProductById(id);
   const [quantity, setQuantity] = useState(1);
   const [variationId, setVariationId] = useState(product?.variations?.[0]?.id);
+  const [showSpecs, setShowSpecs] = useState(false);
 
   if (!product) {
     return (
@@ -105,20 +106,22 @@ export default function ProductDetails() {
           </p>
 
           {product.features.length > 0 && (
-            <details className="glass mt-5 rounded-2xl p-4">
-              <summary className="cursor-pointer text-sm font-bold" style={{ color: "var(--text-primary)" }}>{t("product.specTitle")}</summary>
-              <h3 className="mb-2 text-sm font-bold" style={{ color: "var(--text-primary)" }}>
-                {t("product.features")}
-              </h3>
-              <ul className="flex flex-col gap-1.5">
-                {product.features.map((f, i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: "var(--accent-1)" }} />
-                    {f[lang]}
-                  </li>
-                ))}
-              </ul>
-            </details>
+            <div className="glass mt-5 rounded-2xl p-4">
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{t("product.specTitle")}</h3>
+                <button type="button" onClick={() => setShowSpecs((open) => !open)} className="rounded-xl px-3 py-1.5 text-xs font-bold transition-colors hover:bg-white/10" style={{ color: "var(--accent-1)" }}>
+                  {showSpecs ? t("product.less") : t("product.more")}
+                </button>
+              </div>
+              <p className="mt-2 text-sm leading-6" style={{ color: "var(--text-secondary)" }}>{product.features[0][lang]}</p>
+              <div className={`grid transition-[grid-template-rows] duration-300 ${showSpecs ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
+                <div className="overflow-hidden">
+                  <ul className="mt-3 flex flex-col gap-1.5 border-t pt-3" style={{ borderColor: "var(--border-soft)" }}>
+                    {product.features.slice(1).map((f, i) => <li key={i} className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}><span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: "var(--accent-1)" }} />{f[lang]}</li>)}
+                  </ul>
+                </div>
+              </div>
+            </div>
           )}
 
           {product.variations && product.variations.length > 0 && (

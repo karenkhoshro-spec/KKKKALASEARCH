@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { X, Home, Grid3x3, Package, Heart, ShoppingCart, User, Info, Phone } from "lucide-react";
+import { X, Home, Grid3x3, Package, Heart, ShoppingCart, User, Info, Phone, Sparkles } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useAccount } from "../context/AccountContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
+import Logo from "./Logo";
 
 export default function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t, dir } = useLanguage();
@@ -31,9 +32,10 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
         style={{ transform: open ? "translateX(0)" : closedTransform }}
       >
         <div className="flex items-center justify-between px-4 pt-4">
-          <h2 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
-            {t("menu.title")}
-          </h2>
+          <div className="glass flex items-center gap-2 rounded-2xl px-3 py-2">
+            <Logo compact />
+            <Sparkles size={15} className="animate-spin-slow" style={{ color: "var(--accent-3)" }} />
+          </div>
           <button
             onClick={onClose}
             aria-label={t("menu.close")}
