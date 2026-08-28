@@ -86,7 +86,7 @@ export const translations: Record<Lang, Dict> = {
       back: "بازگشت",
       relatedTitle: "محصولات مشابه",
       toman: "تومان",
-      priceUnknown: "قیمت نامشخص",
+      priceUnknown: "قیمت موجود نیست",
       imageUnavailable: "تصویر موجود نیست",
       requestProduction: "درخواست تولید",
       productCode: "کد محصول",
