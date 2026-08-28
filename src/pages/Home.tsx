@@ -23,7 +23,7 @@ export default function Home() {
         <h1 className="animate-fade-up text-2xl font-extrabold leading-tight sm:text-3xl md:text-4xl" style={{ color: "var(--text-primary)" }}>
           {t("home.heroTitle")}
         </h1>
-        <p className="animate-fade-up mx-auto mt-2 max-w-xl text-sm sm:text-base" style={{ color: "var(--text-secondary)", animationDelay: "0.05s" }}>
+        <p className="animate-fade-up mx-auto mt-2 max-w-xl text-sm font-bold sm:text-base" style={{ color: "var(--text-secondary)", animationDelay: "0.05s" }}>
           {t("home.heroSubtitle")}
         </p>
         <div className="mt-6">

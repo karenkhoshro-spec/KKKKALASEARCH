@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, ShoppingCart } from "lucide-react";
+import { Menu, ShoppingCart, UserRound } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useCart } from "../context/CartContext";
 import Logo from "./Logo";
@@ -39,6 +39,13 @@ export default function Header() {
 
             {/* Actions group */}
             <div className="flex items-center justify-end gap-0.5 sm:gap-1.5">
+              <Link
+                to="/account"
+                aria-label={t("header.account")}
+                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-white/10"
+              >
+                <UserRound size={18} style={{ color: "var(--text-primary)" }} />
+              </Link>
               <Link
                 to="/cart"
                 aria-label={t("header.cart")}
