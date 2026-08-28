@@ -40,6 +40,10 @@ export default function ProductDetails() {
   const activeImage = selectedVariation?.image || product.image;
   const activeUrl = selectedVariation?.url || product.ashkanProductUrl;
   const activeSpec = selectedVariation?.technicalSpec || product.description[lang];
+  const allSpecifications = Array.from(new Set([
+    ...product.features.map((feature) => feature[lang]),
+    ...(product.variations ?? []).map((variation) => variation.technicalSpec).filter((spec): spec is string => Boolean(spec && spec.trim() && spec.trim() !== "-")),
+  ].map((spec) => spec.trim()).filter(Boolean)));
   const colorVariations = (product.variations ?? []).filter((v) => v.colorName);
   const uniqueColors = Array.from(new Map(colorVariations.map((v) => [v.colorName, v])).values());
 
@@ -108,22 +112,22 @@ export default function ProductDetails() {
             {activeSpec}
           </p>
 
-          {product.features.length > 0 && (
+          {allSpecifications.length > 0 && (
             <div className="glass mt-5 rounded-2xl p-4">
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{t("product.specTitle")}</h3>
-                <button type="button" onClick={() => setShowSpecs((open) => !open)} className="rounded-xl px-3 py-1.5 text-xs font-bold transition-colors hover:bg-white/10" style={{ color: "var(--accent-1)" }}>
+                {allSpecifications.length > 1 && <button type="button" onClick={() => setShowSpecs((open) => !open)} className="rounded-xl px-3 py-1.5 text-xs font-bold transition-colors hover:bg-white/10" style={{ color: "var(--accent-1)" }}>
                   {showSpecs ? t("product.less") : t("product.more")}
-                </button>
+                </button>}
               </div>
-              <p className="mt-2 text-sm leading-6" style={{ color: "var(--text-secondary)" }}>{product.features[0][lang]}</p>
-              <div className={`grid transition-[grid-template-rows] duration-300 ${showSpecs ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
+              <p className="mt-2 text-sm leading-6" style={{ color: "var(--text-secondary)" }}>{allSpecifications[0]}</p>
+              {allSpecifications.length > 1 && <div className={`grid transition-[grid-template-rows] duration-300 ${showSpecs ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
                 <div className="overflow-hidden">
                   <ul className="mt-3 flex flex-col gap-1.5 border-t pt-3" style={{ borderColor: "var(--border-soft)" }}>
-                    {product.features.slice(1).map((f, i) => <li key={i} className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}><span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: "var(--accent-1)" }} />{f[lang]}</li>)}
+                    {allSpecifications.slice(1).map((specification, i) => <li key={i} className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}><span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: "var(--accent-1)" }} />{specification}</li>)}
                   </ul>
                 </div>
-              </div>
+              </div>}
             </div>
           )}
 
