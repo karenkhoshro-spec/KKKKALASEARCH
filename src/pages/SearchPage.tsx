@@ -24,7 +24,7 @@ export default function SearchPage() {
         <span />
       </div>
 
-      <h1 className="mb-1 text-lg font-bold sm:text-xl" style={{ color: "var(--text-primary)" }}>
+      <h1 className="mb-1 text-2xl font-bold sm:text-3xl" style={{ color: "var(--text-primary)" }}>
         {t("search.resultsFor")} «{query}»
       </h1>
       <p className="mb-6 text-sm" style={{ color: "var(--text-muted)" }}>

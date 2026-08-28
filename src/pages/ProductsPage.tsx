@@ -29,7 +29,7 @@ export default function ProductsPage() {
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
       <div className="mb-5 flex items-center justify-between">
         <BackButton to="/" />
-        <h1 className="text-lg font-bold sm:text-xl" style={{ color: "var(--text-primary)" }}>
+        <h1 className="text-2xl font-bold sm:text-3xl" style={{ color: "var(--text-primary)" }}>
           {t("menu.products")}
         </h1>
         <span />

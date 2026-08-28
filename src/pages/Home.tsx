@@ -35,7 +35,7 @@ export default function Home() {
 
       <section className="mb-14">
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-bold sm:text-xl" style={{ color: "var(--text-primary)" }}>
+          <h2 className="text-2xl font-bold sm:text-3xl" style={{ color: "var(--text-primary)" }}>
             {t("home.categoriesTitle")}
           </h2>
         </div>
