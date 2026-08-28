@@ -167,7 +167,7 @@ export default function ProductDetails() {
 
           <div className="mt-6 flex items-center gap-3">
             {available ? (
-              <button onClick={handleAddToCart} disabled={product.price === undefined} className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold text-white shadow-[var(--shadow-glow)] transition-transform duration-300 hover:scale-[1.01] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50" style={{ background: "linear-gradient(90deg, var(--accent-2), var(--accent-1))" }}>
+              <button onClick={handleAddToCart} className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold text-white shadow-[var(--shadow-glow)] transition-transform duration-300 hover:scale-[1.01] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50" style={{ background: "linear-gradient(90deg, var(--accent-2), var(--accent-1))" }}>
                 <ShoppingCart size={17} />
                 {t("product.addToCart")}
               </button>
