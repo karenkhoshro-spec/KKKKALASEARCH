@@ -9,7 +9,7 @@ export interface Product {
   features: LocalizedText[]; categoryId: string; price?: number; oldPrice?: number;
   image: string; gallery?: string[]; inStock: boolean; stockCount?: number;
   packQuantity?: number; sku?: string; productCode?: string; brand?: string;
-  variations?: ProductVariation[]; variants?: ProductVariation[]; ashkanProductUrl?: string;
+  variations?: ProductVariation[]; variants?: ProductVariation[]; subcategoryId?: string; ashkanProductUrl?: string;
   sourceRows?: Record<string, string>[];
 }
 export interface Category { id: string; name: LocalizedText; icon: string; sortOrder?: number; }
