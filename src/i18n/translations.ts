@@ -43,7 +43,7 @@ export const translations: Record<Lang, Dict> = {
     },
     home: {
       heroTitle: "برای چه محصولی می‌خواهید؟",
-      heroSubtitle: "جستجوی هوشمند بین هزاران محصول پلاستیک",
+      heroSubtitle: "جستجوی هوشمند بین هزاران محصول پلاستیک خانگی",
       searchCta: "جستجو کن",
       categoriesTitle: "دسته‌بندی محصولات",
       featuredTitle: "محصولات پرطرفدار",
