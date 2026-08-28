@@ -13,7 +13,7 @@ export interface Product {
   sourceRows?: Record<string, string>[];
 }
 export interface Category { id: string; name: LocalizedText; icon: string; sortOrder?: number; }
-export interface CartVariation { id: string; name: string; sku?: string; }
+export interface CartVariation { id: string; name: string; sku?: string; price?: number; }
 export interface CartItem { productId: string; name: string; image: string; price?: number; quantity: number; variation?: CartVariation; }
 export type ListContextType = { type: "home" } | { type: "search"; query: string } | { type: "category"; categoryId: string } | { type: "products" } | { type: "wishlist" };
 export interface Account { phone: string; name?: string; firstName?: string; lastName?: string; }

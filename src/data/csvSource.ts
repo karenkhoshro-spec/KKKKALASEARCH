@@ -1,6 +1,7 @@
 import productCsv from "../../KalaSearch_Products_Import.csv?raw";
 import categoryCsv from "../../KalaSearch_Categories.csv?raw";
 import ashkanCsv from "../../KalaSearch_Ashkan_Links.csv?raw";
+import inventoryCsv from "../../kala_search_inventory.csv?raw";
 import type { Category, LocalizedText, Product, ProductVariation } from "../types";
 
 export interface ProductSourceRow { [key: string]: string; }
@@ -24,8 +25,20 @@ function parseCsv(input: string): ProductSourceRow[] {
 
 const productsRows = parseCsv(productCsv);
 const ashkanRows = parseCsv(ashkanCsv);
+const inventoryRows = parseCsv(inventoryCsv);
 const categoryRows = parseCsv(categoryCsv);
+const normalizePersian = (value: string) => value.normalize("NFKC").replace(/[يى]/g, "ی").replace(/[ك]/g, "ک").replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))).replace(/[\u200c\u200f\u200e]/g, "").replace(/[^\p{L}\p{N}]+/gu, "").toLocaleLowerCase();
+const parsePrice = (value?: string) => { const normalized = (value ?? "").replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))).replace(/[٬,\s]/g, ""); const n = Number(normalized); return normalized && Number.isFinite(n) && n > 0 ? n : undefined; };
 const numberOrUndefined = (value?: string) => { const n = Number(value ?? ""); return value?.trim() && Number.isFinite(n) ? n : undefined; };
+const inventoryBySku = new Map(inventoryRows.map((row) => [row.sku_variant, row]));
+const inventoryNameByNormalized = new Map(inventoryRows.map((row) => [normalizePersian(row.product_name), row]));
+export interface ImportedPriceMapping { productName: string; matchedProduct: string; price?: number; matchStatus: "exact" | "normalized-exact" | "fuzzy" | "unmatched"; confidence: number; sourceSku: string; }
+export const importedPriceMappings: ImportedPriceMapping[] = productsRows.map((row) => {
+  const inventory = inventoryBySku.get(row.variant_sku) ?? inventoryNameByNormalized.get(normalizePersian(row.variant_name));
+  const exactIdentity = inventory?.sku_variant === row.variant_sku && inventory?.product_code === row.product_id;
+  const normalizedName = inventory && normalizePersian(inventory.product_name) === normalizePersian(row.variant_name);
+  return { productName: row.product_name, matchedProduct: inventory?.product_code === row.product_id ? row.product_name : "", price: parsePrice(inventory?.outbound_or_value), matchStatus: exactIdentity ? "exact" : normalizedName ? "normalized-exact" : "unmatched", confidence: exactIdentity ? 1 : normalizedName ? 0.99 : 0, sourceSku: inventory?.sku_variant ?? "" };
+});
 const localized = (value: string): LocalizedText => ({ fa: value, en: value, ar: value });
 const ashkanByVariantSku = new Map(ashkanRows.map((row) => [row["کد"], row]));
 const mergedRows: ProductSourceRow[] = productsRows.map((source) => {
@@ -72,13 +85,16 @@ const colorTokens: Record<string, string> = {
   "آبی روشن": "#60a5fa", "آبی تیره": "#1d4ed8", "سبز روشن": "#86efac", "سبز تیره": "#15803d", "قرمز روشن": "#f87171", "قرمز تیره": "#b91c1c", "قهوه‌ای": "#8b5e3c", "قهوه ای": "#8b5e3c", "سرمه‌ای": "#1e3a8a", "سرمه ای": "#1e3a8a", "نقره‌ای": "#cbd5e1", "نقره ای": "#cbd5e1", "بی‌رنگ": "#f8fafc", "بی رنگ": "#f8fafc", "صورتی": "#f9a8d4", "طوسی": "#94a3b8", "خاکستری": "#6b7280", "کرم": "#d6c7a1", "موکا": "#8b6f5a", "وانیلی": "#f3e5ab", "عسلی": "#d69e2e", "کرپ": "#d8c3a5", "سفید": "#f8fafc", "قرمز": "#ef4444", "سبز": "#22c55e", "آبی": "#3b82f6", "مشکی": "#111827", "سیاه": "#111827", "زرد": "#eab308", "نارنجی": "#f97316", "بنفش": "#a855f7", "شفاف": "#e2e8f0", "بژ": "#d6c7a1", "طلایی": "#d4a72c", "مسی": "#b87333"
 };
 function extractColor(value: string) { const token = Object.keys(colorTokens).sort((a, b) => b.length - a.length).find((name) => value.includes(name)); return token ? { name: token, hex: colorTokens[token] } : undefined; }
-function toVariation(row: ProductSourceRow): ProductVariation { const color = extractColor(row.variant_name || ""); return { id: row.variant_sku, name: localized(row.variant_name || row.product_name), color: color?.hex, colorName: color?.name, sku: row.variant_sku || undefined, price: numberOrUndefined(row.price), image: row.main_image || row.image_1 || row.image_2 || undefined, stockCount: numberOrUndefined(row.stock), packQuantity: numberOrUndefined(row.pack_quantity), inStock: row.availability === "موجود", url: row.ashkan_url || undefined, technicalSpec: row.technical_spec || undefined }; }
+function toVariation(row: ProductSourceRow): ProductVariation { const color = extractColor(row.variant_name || ""); return { id: row.variant_sku, name: localized(row.variant_name || row.product_name), color: color?.hex, colorName: color?.name, sku: row.variant_sku || undefined, price: parsePrice(inventoryBySku.get(row.variant_sku)?.outbound_or_value), image: row.main_image || row.image_1 || row.image_2 || undefined, stockCount: numberOrUndefined(row.stock), packQuantity: numberOrUndefined(row.pack_quantity), inStock: row.availability === "موجود", url: row.ashkan_url || undefined, technicalSpec: row.technical_spec || undefined }; }
 
 export const importedProducts: Product[] = Array.from(new Set(mergedRows.map((row) => row.product_id))).map((productId) => {
-  const rows = mergedRows.filter((row) => row.product_id === productId); const first = rows[0]; const variations = rows.map(toVariation); const sub = otherSubcategory(first.product_name);
-  return { id: productId, slug: productId, name: localized(first.product_name), description: localized(first.technical_spec || ""), features: rows.filter((row) => row.technical_spec && row.technical_spec !== "-").map((row) => localized(row.technical_spec)), categoryId: categoryIdFor(first.product_name), subcategoryId: sub.id, price: numberOrUndefined(first.price), image: first.main_image || first.image_1 || first.image_2 || "", gallery: [first.image_1, first.image_2].filter(Boolean), inStock: rows.some((row) => row.availability === "موجود"), stockCount: numberOrUndefined(first.stock), packQuantity: numberOrUndefined(first.pack_quantity), sku: first.variant_sku || undefined, productCode: productId, brand: undefined, ashkanProductUrl: first.ashkan_url || undefined, variants: variations, variations, sourceRows: rows };
+  const rows = mergedRows.filter((row) => row.product_id === productId); const first = rows[0]; const variations = rows.map(toVariation); const sub = otherSubcategory(first.product_name); const validPrices = variations.map((variation) => variation.price).filter((price): price is number => price !== undefined);
+  return { id: productId, slug: productId, name: localized(first.product_name), description: localized(first.technical_spec || ""), features: rows.filter((row) => row.technical_spec && row.technical_spec !== "-").map((row) => localized(row.technical_spec)), categoryId: categoryIdFor(first.product_name), subcategoryId: sub.id, price: validPrices[0], image: first.main_image || first.image_1 || first.image_2 || "", gallery: [first.image_1, first.image_2].filter(Boolean), inStock: rows.some((row) => row.availability === "موجود"), stockCount: numberOrUndefined(first.stock), packQuantity: numberOrUndefined(first.pack_quantity), sku: first.variant_sku || undefined, productCode: productId, brand: undefined, ashkanProductUrl: first.ashkan_url || undefined, variants: variations, variations, sourceRows: rows };
 });
 
+const inventoryPriceValuesByProduct = new Map<string, Set<number>>();
+for (const row of productsRows) { const price = parsePrice(inventoryBySku.get(row.variant_sku)?.outbound_or_value); if (price !== undefined) { const values = inventoryPriceValuesByProduct.get(row.product_id) ?? new Set<number>(); values.add(price); inventoryPriceValuesByProduct.set(row.product_id, values); } }
+export const importedPriceStats = { totalInventoryRecords: inventoryRows.length, matched: importedProducts.filter((product) => importedPriceMappings.some((mapping) => mapping.matchedProduct === product.name.fa && mapping.matchStatus !== "unmatched")).length, unmatched: importedProducts.filter((product) => !importedPriceMappings.some((mapping) => mapping.matchedProduct === product.name.fa && mapping.matchStatus !== "unmatched")).length, fuzzyMatches: importedPriceMappings.filter((mapping) => mapping.matchStatus === "fuzzy").length, conflicts: Array.from(inventoryPriceValuesByProduct.values()).filter((values) => values.size > 1).length, invalidPrices: inventoryRows.filter((row) => parsePrice(row.outbound_or_value) === undefined).length, duplicateSkus: inventoryRows.length - new Set(inventoryRows.map((row) => row.sku_variant)).size };
 export const importedSourceStats = { rows: mergedRows.length, products: importedProducts.length, variants: mergedRows.length, available: mergedRows.filter((row) => row.availability === "موجود").length, unavailable: mergedRows.filter((row) => row.availability === "ناموجود").length, matchedAshkanRows: mergedRows.filter((row) => ashkanByVariantSku.has(row.variant_sku)).length };
 export function getImportedProductById(id: string) { return importedProducts.find((product) => product.id === id); }
 export function getImportedProductsByCategory(categoryId: string, subcategoryId?: string) { return importedProducts.filter((product) => product.categoryId === categoryId && (!subcategoryId || product.subcategoryId === subcategoryId)); }

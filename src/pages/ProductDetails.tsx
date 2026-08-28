@@ -36,7 +36,7 @@ export default function ProductDetails() {
 
   const selectedVariation = product.variations?.find((v) => v.id === variationId);
   const available = selectedVariation?.inStock ?? product.inStock;
-  const activePrice = selectedVariation?.price ?? product.price;
+  const activePrice = selectedVariation ? selectedVariation.price : product.price;
   const activeImage = selectedVariation?.image || product.image;
   const activeUrl = selectedVariation?.url || product.ashkanProductUrl;
   const activeSpec = selectedVariation?.technicalSpec || product.description[lang];
@@ -52,7 +52,7 @@ export default function ProductDetails() {
       product,
       product.name[lang],
       quantity,
-      selectedVariation ? { id: selectedVariation.id, name: selectedVariation.name[lang], sku: selectedVariation.sku } : undefined
+      selectedVariation ? { id: selectedVariation.id, name: selectedVariation.name[lang], sku: selectedVariation.sku, price: selectedVariation.price } : undefined
     );
     showToast(t("notifications.addedToCart"), "success");
     // Stay on the current product page — do NOT navigate away automatically.
@@ -100,13 +100,9 @@ export default function ProductDetails() {
             <span>{t("product.packQuantity")}: {selectedVariation?.packQuantity ?? product.packQuantity ?? "-"}</span>
           </div>
 
-          {available && activePrice !== undefined && (
-            <div className="mt-4 flex items-baseline gap-3">
-              <span className="text-2xl font-extrabold" style={{ color: "var(--accent-1)" }}>
-                {activePrice.toLocaleString()} {t("product.toman")}
-              </span>
-            </div>
-          )}
+          <div className="mt-4 flex items-baseline gap-3">
+            {activePrice !== undefined ? <span className="text-2xl font-extrabold" style={{ color: "var(--accent-1)" }}>{activePrice.toLocaleString()} {t("product.toman")}</span> : <span className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>{t("product.priceUnknown")}</span>}
+          </div>
 
           <p className="mt-5 text-sm leading-7" style={{ color: "var(--text-secondary)" }}>
             {activeSpec}
