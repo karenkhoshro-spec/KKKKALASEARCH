@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, Heart, ShoppingCart } from "lucide-react";
+import { Menu, ShoppingCart } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useCart } from "../context/CartContext";
-import { useWishlist } from "../context/WishlistContext";
 import Logo from "./Logo";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
@@ -12,7 +11,6 @@ import SideMenu from "./SideMenu";
 export default function Header() {
   const { t } = useLanguage();
   const { count } = useCart();
-  const { ids } = useWishlist();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -43,21 +41,6 @@ export default function Header() {
 
             {/* Actions group */}
             <div className="flex items-center justify-end gap-0.5 sm:gap-1.5">
-              <Link
-                to="/wishlist"
-                aria-label={t("header.wishlist")}
-                className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-white/10"
-              >
-                <Heart size={18} style={{ color: "var(--text-primary)" }} />
-                {ids.length > 0 && (
-                  <span
-                    className="absolute -top-0.5 -end-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[10px] font-bold text-white"
-                    style={{ background: "var(--accent-3)" }}
-                  >
-                    {ids.length}
-                  </span>
-                )}
-              </Link>
               <Link
                 to="/cart"
                 aria-label={t("header.cart")}
