@@ -56,7 +56,7 @@ function ProductCard({ product, minimal = false }: { product: Product; minimal?:
   const markImgLoaded = (el: HTMLImageElement | null) => { if (el?.complete && el.naturalWidth > 0) setImgLoaded(true); };
 
   return (
-    <div className={`ks-product-card group animate-fade-up relative flex flex-col overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-1 ${minimal ? "p-3" : ""}`}>
+    <div className={`ks-product-card group animate-fade-up relative flex flex-col overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-1 ${minimal ? "is-minimal" : ""}`}>
       {!minimal && (
         <div className="ks-product-image-wrapper">
           {hasValidUrl ? (

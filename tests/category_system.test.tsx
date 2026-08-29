@@ -1,13 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { renderToString } from "react-dom/server";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { categories } from "../src/data/categories";
 import { importedOtherSubcategories } from "../src/data/csvSource";
 import { getOtherSubcategoryCounts, getProductsByCategory } from "../src/data/products";
 import CategoryIcon from "../src/components/CategoryIcon";
 import CategoryNav from "../src/components/CategoryNav";
+import CategoryOverlayHeader from "../src/components/CategoryOverlayHeader";
+import CategoryPage from "../src/pages/CategoryPage";
 import Logo from "../src/components/Logo";
 import { LanguageProvider } from "../src/i18n/LanguageContext";
+import { ListContextProvider } from "../src/context/ListContext";
 
 describe("KalaSearch Crystal Design System — Category Navigation", () => {
   it("has exactly 9 primary categories (8 main + 1 other)", () => {
@@ -102,6 +105,44 @@ describe("KalaSearch Crystal Design System — Category Navigation", () => {
     expect(getProductsByCategory("other", "bucket").length).toBeGreaterThan(0);
     expect(getProductsByCategory("other", "spice").length).toBeGreaterThan(0);
     expect(getProductsByCategory("other", "cleaning-tools").length).toBeGreaterThan(0);
+  });
+
+  it("renders CategoryOverlayHeader with back button on the left and NO close X button", () => {
+    const html = renderToString(
+      <MemoryRouter>
+        <LanguageProvider>
+          <CategoryOverlayHeader
+            categoryId="basin-bathtub"
+            title="لگن و وان"
+            productCount={53}
+          />
+        </LanguageProvider>
+      </MemoryRouter>
+    );
+
+    expect(html).toContain("بازگشت");
+    expect(html).toContain("لگن و وان");
+    expect(html).toContain("53");
+    // No X close button in category header
+    expect(html).not.toContain("aria-label=\"بستن\"");
+  });
+
+  it("renders CategoryPage for 'other' with subcategory cards and no counts under cards", () => {
+    const html = renderToString(
+      <MemoryRouter initialEntries={["/category/other"]}>
+        <LanguageProvider>
+          <ListContextProvider>
+            <Routes>
+              <Route path="/category/:categoryId" element={<CategoryPage />} />
+            </Routes>
+          </ListContextProvider>
+        </LanguageProvider>
+      </MemoryRouter>
+    );
+
+    expect(html).toContain("ks-other-sub-card");
+    expect(html).toContain("بازگشت");
+    expect(html).toContain("سایر");
   });
 
   it("renders CategoryNav with two 4-item rows + centered 'other' tile", () => {
