@@ -64,19 +64,14 @@ export default function CategoryPage() {
         const selectedSub = subcategories.find((s) => s.id === subcategoryId);
         return (
           <section className="glass mb-6 rounded-3xl p-4 sm:p-5" style={{ border: "1px solid var(--border-soft)" }}>
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="flex items-center gap-2 text-lg font-bold" style={{ color: "var(--text-primary)" }}>
-                <span>{subcategoryIcons[subcategoryId] ?? "📁"}</span>
-                {selectedSub?.name[lang]}
-              </h2>
-              <button
-                type="button"
-                onClick={() => setSubcategoryId(undefined)}
-                className="rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors"
-                style={{ color: "var(--accent-1)", border: "1px solid var(--border-soft)", background: "var(--input-bg)" }}
+            <div className="mb-4">
+              <span
+                className="inline-flex w-fit items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-bold"
+                style={{ color: "var(--accent-1)", border: "1.5px solid var(--accent-1)", background: "rgba(127,127,127,0.10)" }}
               >
-                {t("category.allSubcategories")}
-              </button>
+                <span aria-hidden="true">{subcategoryIcons[subcategoryId] ?? "📁"}</span>
+                {selectedSub?.name[lang]}
+              </span>
             </div>
             {list.length === 0 ? (
               <p className="py-16 text-center text-sm" style={{ color: "var(--text-muted)" }}>{t("search.noResults")}</p>
