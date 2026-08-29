@@ -65,10 +65,9 @@ export default function CategoryPage() {
         return (
           <section className="glass mb-6 rounded-3xl p-4 sm:p-5" style={{ border: "1px solid var(--border-soft)" }}>
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="flex items-baseline gap-2 text-lg font-bold" style={{ color: "var(--text-primary)" }}>
+              <h2 className="flex items-center gap-2 text-lg font-bold" style={{ color: "var(--text-primary)" }}>
                 <span>{subcategoryIcons[subcategoryId] ?? "📁"}</span>
                 {selectedSub?.name[lang]}
-                <span className="text-sm font-medium" style={{ color: "var(--text-muted)" }}>({list.length} {t("category.productsCount")})</span>
               </h2>
               <button
                 type="button"
