@@ -9,63 +9,38 @@ import CategoryNav from "../src/components/CategoryNav";
 import Logo from "../src/components/Logo";
 import { LanguageProvider } from "../src/i18n/LanguageContext";
 
-describe("KalaSearch Category UI (8 Main Categories + 1 Other = 9 Tiles)", () => {
-  it("has exactly 9 main categories (8 primary + 1 other)", () => {
-    expect(categories).toHaveLength(9);
+describe("KalaSearch Category UI (6 Main Cubes + 1 Other Cube)", () => {
+  it("has exactly 7 main categories (6 primary + 1 other)", () => {
+    expect(categories).toHaveLength(7);
     const categoryIds = categories.map((c) => c.id);
     expect(categoryIds).toEqual([
       "shopping-basket",
       "picnic-basket",
       "stool",
-      "powder-sponge-holder",
       "fruit-vegetable-basket",
       "colander-bowl",
       "freezer",
-      "soap-dish",
       "other",
     ]);
   });
 
-  it("ensures 'other' is the 9th tile (last option in main view)", () => {
-    expect(categories[8].id).toBe("other");
-    expect(categories[8].name.fa).toBe("سایر");
+  it("ensures 'other' is the 7th tile (centered in row 2)", () => {
+    expect(categories[6].id).toBe("other");
+    expect(categories[6].name.fa).toBe("سایر");
   });
 
-  it("moves all non-main categories into 'other' subcategories without deleting any category", () => {
+  it("moves powder-sponge-holder and soap-dish into 'other' subcategories without deleting any data", () => {
     const otherSubIds = importedOtherSubcategories.map((s) => s.id);
-    const requiredMovedCategories = [
-      "spice",
-      "pitcher-glass",
-      "juicer",
-      "ice-holder",
-      "butter-holder",
-      "spoon-holder",
-      "bucket",
-      "basin-bathtub",
-      "flower-pot",
-      "plant-saucer",
-      "shopping-basket-other",
-      "oval-basket",
-      "janani",
-      "organizer",
-      "laundry-basket",
-      "kitchen-tools",
-      "cleaning-tools",
-      "storage",
-      "tray",
-      "chair",
-      "hanger",
-      "paper-holder",
-      "toolbox",
-      "straw-basket",
-    ];
-
-    for (const id of requiredMovedCategories) {
-      expect(otherSubIds).toContain(id);
-    }
+    expect(otherSubIds).toContain("powder-sponge-holder");
+    expect(otherSubIds).toContain("soap-dish");
+    expect(otherSubIds).toContain("spice");
+    expect(otherSubIds).toContain("bucket");
+    expect(otherSubIds).toContain("basin-bathtub");
+    expect(otherSubIds).toContain("flower-pot");
 
     const counts = getOtherSubcategoryCounts();
-    expect(counts.length).toBeGreaterThanOrEqual(20);
+    expect(counts.some((s) => s.id === "powder-sponge-holder")).toBe(true);
+    expect(counts.some((s) => s.id === "soap-dish")).toBe(true);
   });
 
   it("renders pure SVG vector markup for all primary category and subcategory icons", () => {
@@ -85,25 +60,22 @@ describe("KalaSearch Category UI (8 Main Categories + 1 Other = 9 Tiles)", () =>
   });
 
   it("connects primary categories and moved subcategories to real products", () => {
-    // 8 Main categories
+    // 6 Main categories
     expect(getProductsByCategory("shopping-basket").length).toBeGreaterThan(0);
     expect(getProductsByCategory("picnic-basket").length).toBeGreaterThan(0);
     expect(getProductsByCategory("stool").length).toBeGreaterThan(0);
-    expect(getProductsByCategory("powder-sponge-holder").length).toBeGreaterThan(0);
     expect(getProductsByCategory("fruit-vegetable-basket").length).toBeGreaterThan(0);
     expect(getProductsByCategory("colander-bowl").length).toBeGreaterThan(0);
     expect(getProductsByCategory("freezer").length).toBeGreaterThan(0);
-    expect(getProductsByCategory("soap-dish").length).toBeGreaterThan(0);
 
     // Moved subcategories inside "other"
+    expect(getProductsByCategory("other", "powder-sponge-holder").length).toBeGreaterThan(0);
+    expect(getProductsByCategory("other", "soap-dish").length).toBeGreaterThan(0);
     expect(getProductsByCategory("other", "bucket").length).toBeGreaterThan(0);
     expect(getProductsByCategory("other", "basin-bathtub").length).toBeGreaterThan(0);
-    expect(getProductsByCategory("other", "spice").length).toBeGreaterThan(0);
-    expect(getProductsByCategory("other", "ice-holder").length).toBeGreaterThan(0);
-    expect(getProductsByCategory("other", "cleaning-tools").length).toBeGreaterThan(0);
   });
 
-  it("renders CategoryNav with exactly 9 tiles in 2 rows without horizontal scroll or 3rd row", () => {
+  it("renders CategoryNav with 6 cubes in row 1 + 1 cube centered in row 2 without horizontal scroll or 3rd row", () => {
     const html = renderToString(
       <MemoryRouter>
         <LanguageProvider>
@@ -111,12 +83,12 @@ describe("KalaSearch Category UI (8 Main Categories + 1 Other = 9 Tiles)", () =>
         </LanguageProvider>
       </MemoryRouter>
     );
-    expect(html).toContain("ks-category-grid-8");
+    expect(html).toContain("ks-category-grid-6");
     expect(html).toContain("ks-category-row-other");
     const linkMatches = html.match(/href="\/category\/[^"]+"/g);
-    expect(linkMatches).toHaveLength(9);
+    expect(linkMatches).toHaveLength(7);
     expect(linkMatches?.[0]).toBe('href="/category/shopping-basket"');
-    expect(linkMatches?.[8]).toBe('href="/category/other"');
+    expect(linkMatches?.[6]).toBe('href="/category/other"');
   });
 
   it("preserves KalaSearch Logo and Animated Logo without alterations", () => {

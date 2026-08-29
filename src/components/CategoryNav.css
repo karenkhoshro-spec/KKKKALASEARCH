@@ -1,6 +1,6 @@
 /* ==========================================================================
-   KalaSearch - Category Navigation (8 Main Categories + 1 Other = 9 Tiles)
-   Strict 2-Row Balanced Layout with ZERO Horizontal Scroll.
+   KalaSearch - Category Navigation (6 Main Cubes + 1 Other Cube Centered)
+   Modern Neon Line Fantasy Cubes, Spacious Layout, Zero Overflow.
    ========================================================================== */
 
 .ks-category-container {
@@ -9,50 +9,50 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem; /* gap between row 1 and row 2 */
+  gap: 0.45rem;
 }
 
 @media (min-width: 640px) {
   .ks-category-container {
-    gap: 0.5rem;
+    gap: 0.65rem;
   }
 }
 
 @media (min-width: 1024px) {
   .ks-category-container {
-    gap: 0.75rem;
+    gap: 0.85rem;
   }
 }
 
-/* Row 1: Strict 8 Columns in 1 Row — NO 2nd row for these 8 items */
-.ks-category-grid-8 {
+/* Row 1: 6 Spacious Cubes in 1 Row */
+.ks-category-grid-6 {
   display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  gap: 0.25rem; /* 4px on ultra-small mobile */
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.35rem; /* ~5.6px */
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
 }
 
-@media (min-width: 360px) {
-  .ks-category-grid-8 {
-    gap: 0.35rem;
-  }
-}
-
-@media (min-width: 640px) {
-  .ks-category-grid-8 {
+@media (min-width: 480px) {
+  .ks-category-grid-6 {
     gap: 0.5rem;
   }
 }
 
-@media (min-width: 1024px) {
-  .ks-category-grid-8 {
+@media (min-width: 768px) {
+  .ks-category-grid-6 {
     gap: 0.75rem;
   }
 }
 
-/* Row 2: "Other" Tile Centered */
+@media (min-width: 1024px) {
+  .ks-category-grid-6 {
+    gap: 1rem;
+  }
+}
+
+/* Row 2: Centered "Other" Cube */
 .ks-category-row-other {
   display: flex;
   justify-content: center;
@@ -61,54 +61,55 @@
 }
 
 .ks-category-tile-other {
-  width: 25%;
-  min-width: 72px;
-  max-width: 130px;
+  width: calc(100% / 6 - 0.35rem);
+  min-width: 68px;
+  max-width: 140px;
 }
 
 @media (min-width: 640px) {
   .ks-category-tile-other {
-    width: 20%;
-    max-width: 150px;
+    min-width: 90px;
+    max-width: 160px;
   }
 }
 
 @media (min-width: 1024px) {
   .ks-category-tile-other {
-    width: 15%;
-    max-width: 160px;
+    min-width: 110px;
+    max-width: 180px;
   }
 }
 
-/* Compact Tile Card */
+/* Cubic Tile Card */
 .ks-category-tile {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  border-radius: 0.75rem;
+  border-radius: 0.85rem;
   background: var(--surface);
-  border: 1px solid var(--border-soft);
-  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  border: 1.2px solid var(--border-soft);
+  transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
   user-select: none;
   min-width: 0;
   width: 100%;
-  padding: 0.35rem 0.15rem;
+  padding: 0.45rem 0.2rem;
   box-sizing: border-box;
   text-decoration: none;
 }
 
 @media (min-width: 640px) {
   .ks-category-tile {
-    border-radius: 1rem;
-    padding: 0.6rem 0.35rem;
+    border-radius: 1.1rem;
+    padding: 0.75rem 0.4rem;
   }
 }
 
 @media (min-width: 1024px) {
   .ks-category-tile {
-    padding: 0.85rem 0.5rem;
+    border-radius: 1.25rem;
+    padding: 1rem 0.6rem;
   }
 }
 
@@ -117,8 +118,8 @@
 .ks-category-tile:focus-visible {
   background: var(--surface-strong);
   border-color: var(--accent-1);
-  box-shadow: 0 4px 18px var(--shadow-glow);
-  transform: translateY(-2px);
+  box-shadow: 0 6px 22px var(--shadow-glow);
+  transform: translateY(-3px);
 }
 
 .ks-category-tile:active {
@@ -128,15 +129,15 @@
 /* Light mode tile */
 html[data-theme="light"] .ks-category-tile {
   background: #ffffff;
-  border: 1.2px solid rgba(5, 199, 107, 0.28);
-  box-shadow: 0 2px 10px rgba(5, 150, 80, 0.05);
+  border: 1.5px solid rgba(5, 199, 107, 0.32);
+  box-shadow: 0 3px 12px rgba(5, 150, 80, 0.06);
 }
 
 html[data-theme="light"] .ks-category-tile:hover,
 html[data-theme="light"] .ks-category-tile:focus-visible {
-  background: rgba(236, 255, 244, 0.95);
+  background: rgba(236, 255, 244, 0.98);
   border-color: #17e17a;
-  box-shadow: 0 6px 18px rgba(23, 225, 122, 0.2);
+  box-shadow: 0 8px 24px rgba(23, 225, 122, 0.24);
 }
 
 /* Icon Sizing & Glow */
@@ -144,14 +145,14 @@ html[data-theme="light"] .ks-category-tile:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.15rem;
+  margin-bottom: 0.25rem;
   flex-shrink: 0;
 }
 
 .ks-category-icon {
   display: inline-block;
   color: var(--accent-1);
-  filter: drop-shadow(0 0 4px var(--accent-glow));
+  filter: drop-shadow(0 0 5px var(--accent-glow));
   transition: transform 0.2s ease, filter 0.2s ease, color 0.2s ease;
   will-change: transform, filter;
   max-width: 100%;
@@ -162,14 +163,14 @@ html[data-theme="light"] .ks-category-tile:focus-visible {
 .ks-category-tile:focus-visible .ks-category-icon,
 .subcategory-tile:hover .ks-category-icon,
 .subcategory-tile[aria-pressed="true"] .ks-category-icon {
-  filter: drop-shadow(0 0 6px var(--accent-glow)) drop-shadow(0 0 12px var(--accent-glow));
-  transform: scale(1.08);
+  filter: drop-shadow(0 0 7px var(--accent-glow)) drop-shadow(0 0 14px var(--accent-glow));
+  transform: scale(1.1);
 }
 
 /* Light mode icon overrides */
 html[data-theme="light"] .ks-category-icon {
   color: #05c76b;
-  filter: drop-shadow(0 0 3px rgba(23, 225, 122, 0.4));
+  filter: drop-shadow(0 0 4px rgba(23, 225, 122, 0.45));
 }
 
 html[data-theme="light"] .ks-category-tile:hover .ks-category-icon,
@@ -177,7 +178,7 @@ html[data-theme="light"] .ks-category-tile:focus-visible .ks-category-icon,
 html[data-theme="light"] .subcategory-tile:hover .ks-category-icon,
 html[data-theme="light"] .subcategory-tile[aria-pressed="true"] .ks-category-icon {
   color: #0aa856;
-  filter: drop-shadow(0 0 6px rgba(23, 225, 122, 0.6)) drop-shadow(0 0 12px rgba(23, 225, 122, 0.3));
+  filter: drop-shadow(0 0 7px rgba(23, 225, 122, 0.65)) drop-shadow(0 0 14px rgba(23, 225, 122, 0.35));
 }
 
 /* Category Label */
@@ -188,34 +189,34 @@ html[data-theme="light"] .subcategory-tile[aria-pressed="true"] .ks-category-ico
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 8px;
+  font-size: 9.5px;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.25;
   color: var(--text-primary);
   margin-top: 0.1rem;
 }
 
 @media (min-width: 360px) {
   .ks-category-label {
-    font-size: 9px;
+    font-size: 10.5px;
   }
 }
 
 @media (min-width: 480px) {
   .ks-category-label {
-    font-size: 10.5px;
+    font-size: 12px;
   }
 }
 
 @media (min-width: 768px) {
   .ks-category-label {
-    font-size: 12px;
+    font-size: 13px;
   }
 }
 
 @media (min-width: 1024px) {
   .ks-category-label {
-    font-size: 13px;
+    font-size: 14px;
   }
 }
 
