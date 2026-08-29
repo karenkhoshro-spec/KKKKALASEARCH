@@ -76,7 +76,13 @@ export default function CategoryPage() {
             {list.length === 0 ? (
               <p className="py-16 text-center text-sm" style={{ color: "var(--text-muted)" }}>{t("search.noResults")}</p>
             ) : (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">{list.map((p) => <ProductCard key={p.id} product={p} minimal />)}</div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
+                {list.map((p) => (
+                  <div key={p.id} className="glass overflow-hidden rounded-2xl">
+                    <ProductCard product={p} minimal />
+                  </div>
+                ))}
+              </div>
             )}
           </section>
         );
