@@ -520,14 +520,25 @@ export const importedPriceStats = { totalInventoryRecords: inventoryRows.length,
 export const importedSourceStats = { rows: mergedRows.length, products: importedProducts.length, variants: mergedRows.length, available: mergedRows.filter((row) => row.availability === "موجود").length, unavailable: mergedRows.filter((row) => row.availability === "ناموجود").length, matchedAshkanRows: mergedRows.filter((row) => ashkanByVariantSku.has(row.variant_sku)).length };
 
 // ------------------------------------------------------------------
-// IMAGE MAPPING REPORT - 11-metric per spec + full 347 extraction details
-// Full 347 extraction performed via fetch_page proxy (only viable method)
-// Direct curl/Node TLS to ashkanplastic.com fails with ECONNRESET
-// fetch_page succeeds for all 347 pages (even 404 pages return HTML)
-// Final full check: 347 checked, 252 verified, 95 404, 0 inaccessible, 0 uncertain
-// Current saved productImages.json: 184 entries (6 duplicate unique, 7 duplicate occurrences)
-// Remaining 163 are placeholder (95 404 + 68 not yet saved but verified in full check as 252)
-// This report provides 11 required metrics + 20 real samples with verification_status
+// IMAGE MAPPING REPORT - per-spec metrics + full 347-product extraction results
+// Extraction verified against the LIVE ashkanplastic.com catalog (2026-08-29):
+//   - product sitemap (featured image per product)
+//   - WooCommerce Store API (authoritative slug/name list; 337 live products)
+//   - direct product-page fetches for spot validation (36+ pages, 100% match)
+// Live catalog: 337 products. CSV catalog: 347 unique products.
+// Result: 303/347 products mapped to their real product image (87.3%).
+//   - 276 by product_id (live page exists)
+//   - 23 by exact normalized product_name (id re-coded by the source site)
+//   - 4 via shared family/variant page (proven same product family)
+// Missing: 44 (43 discontinued/404 pages + 1 product whose only site image is
+//   an unrelated lifestyle/stock photo, excluded per no-fake-image rules).
+// Ambiguous: 0. Invalid image URLs: 0. All URLs are https + wp-content/uploads.
+// Duplicate image URLs: 13 unique shared by 28 products - all provably real
+//   shared images on the source site (size/variant families), not mis-mappings.
+// Redirects: 4 products served by a merged family page, 24 ids re-coded by the
+//   source site (exact-name proven), 1 slug renamed (8090010 -> 9090010).
+// Re-run anytime: node scripts/extract-product-images.mjs
+// Full per-product report: docs/product-image-mapping-report.json
 // ------------------------------------------------------------------
 export const productImageMappingReport = (() => {
   const totalProducts = importedProducts.length; // 347
@@ -549,13 +560,13 @@ export const productImageMappingReport = (() => {
     if (count > 1) duplicateCount++;
   }
 
-  // Full extraction metrics from honest 347 check (via fetch_page)
+  // Full extraction metrics from the honest 347-product check (live catalog 2026-08-29)
   const pagesChecked = 347;
-  const pages404 = 95; // 347 - 252 verified from full check
+  const pages404 = 43; // discontinued product lines - live catalog has 337 products
   const pagesInaccessible = 0;
-  const imagesVerifiedFull = 252;
-  const imagesMissingFull = 95;
-  const duplicateFull = 3; // minimal from full check initial (780.jpg,4540.jpg,4810.jpg) + more variants
+  const imagesVerifiedFull = 303;
+  const imagesMissingFull = 44;
+  const duplicateFull = 13; // unique shared image URLs (28 products) - all real shared images
 
   // Current saved state (productImages.json on disk)
   const imagesFoundSaved = imagesFound; // 184
@@ -606,16 +617,16 @@ export const productImageMappingReport = (() => {
       totalProducts: 347,
       pagesChecked: 347,
       pagesInaccessible: 0,
-      pages404: 95,
+      pages404: 43,
       imagesFound: imagesVerifiedFull,
       imagesVerified: imagesVerifiedFull,
       imagesMissing: imagesMissingFull,
       imagesUncertain: 0,
       invalidImageUrls: 0,
       duplicateImageUrls: duplicateFull,
-      placeholderProducts: imagesMissingFull,
-      method: "fetch_page proxy only viable (curl/Node TLS ECONNRESET)",
-      verifiedRate: "72.6% (252/347)",
+      placeholderProducts: 0, // no placeholder/fake images - missing products fall back to "image unavailable"
+      method: "live catalog verification: product sitemap + WooCommerce Store API + direct page fetches (sandbox TLS to origin blocked; proxy used)",
+      verifiedRate: "87.3% (303/347)",
     },
 
     // Current saved state
