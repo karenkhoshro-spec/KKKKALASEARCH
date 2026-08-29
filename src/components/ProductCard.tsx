@@ -4,7 +4,7 @@ import { ExternalLink } from "lucide-react";
 import type { Product } from "../types";
 import { useLanguage } from "../i18n/LanguageContext";
 import { isValidProductUrl } from "../data/csvSource";
-import { isValidImageUrl, imageRelayCandidates } from "../data/productImageResolver";
+import { isValidImageUrl, fullImageChain } from "../data/productImageResolver";
 import "./ProductCard.css";
 
 function getProductUrl(product: Product): string | undefined {
@@ -39,17 +39,17 @@ export default function ProductCard({ product, minimal = false }: { product: Pro
   const initialImageUrl = getProductImageUrl(product);
   const [imgLoaded, setImgLoaded] = useState(false);
 
-  // Resilient chain: 1) real site URL direct (no-referrer) 2-3) SAME real image via relay CDNs -> placeholder
-  const relayCandidates = initialImageUrl ? imageRelayCandidates(initialImageUrl) : [];
-  const [imgAttempt, setImgAttempt] = useState(0); // 0 = direct real URL, 1..n = relay CDN mirrors
-  const imgSrc = imgAttempt === 0 ? initialImageUrl : relayCandidates[imgAttempt - 1];
-  const showImage = !!initialImageUrl && imgAttempt <= relayCandidates.length;
+  // Fast-first chain (relay webp -> real site URL -> 2nd relay -> placeholder)
+  const imageChain = initialImageUrl ? fullImageChain(initialImageUrl, 640) : [];
+  const [imgAttempt, setImgAttempt] = useState(0);
+  const imgSrc = imageChain[imgAttempt];
+  const showImage = !!imgSrc;
   const advanceImgAttempt = () => { setImgLoaded(false); setImgAttempt((a) => a + 1); };
   const handleImgError = advanceImgAttempt;
   // If an attempt stalls (neither load nor error), move on instead of leaving an empty box
   useEffect(() => {
-    if (!initialImageUrl || imgLoaded || imgAttempt > relayCandidates.length) return;
-    const timer = setTimeout(advanceImgAttempt, 8000);
+    if (!initialImageUrl || imgLoaded || imgAttempt >= imageChain.length) return;
+    const timer = setTimeout(advanceImgAttempt, 6000);
     return () => clearTimeout(timer);
   }, [initialImageUrl, imgSrc, imgLoaded]);
   // Cached images can finish loading before React attaches onLoad -> unstick the fade-in

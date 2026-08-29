@@ -8,7 +8,7 @@ import { useWishlist } from "../context/WishlistContext";
 import { useListContext, listContextToPath } from "../context/ListContext";
 import { getProductById } from "../data/products";
 import { isValidProductUrl } from "../data/csvSource";
-import { imageRelayCandidates } from "../data/productImageResolver";
+import { fullImageChain } from "../data/productImageResolver";
 import BackButton from "../components/BackButton";
 import "../components/ProductCard.css";
 
@@ -43,18 +43,16 @@ export default function ProductDetails() {
 
   // Product image: priority productImageUrl (from product_url page) > variation image > legacy image
   const rawActiveImage = selectedVariation?.image || (product as any).productImageUrl || product.image;
-  // Resilient chain: real URL direct (no-referrer) -> SAME real image via relay CDNs -> placeholder
-  const relayCandidates = rawActiveImage ? imageRelayCandidates(rawActiveImage) : [];
-  const [imgAttempt, setImgAttempt] = useState(0); // 0 = direct real URL, 1..n = relay CDN mirrors
+  // Fast-first chain (relay webp -> real site URL -> 2nd relay -> placeholder)
+  const imageChain = rawActiveImage ? fullImageChain(rawActiveImage, 900) : [];
+  const [imgAttempt, setImgAttempt] = useState(0);
   const [imgLoaded, setImgLoaded] = useState(false);
-  const activeImage = rawActiveImage && imgAttempt <= relayCandidates.length
-    ? imgAttempt === 0 ? rawActiveImage : relayCandidates[imgAttempt - 1]
-    : undefined;
+  const activeImage = imageChain[imgAttempt];
   useEffect(() => { setImgAttempt(0); setImgLoaded(false); }, [rawActiveImage]);
   // If an attempt stalls (neither load nor error), move on instead of leaving an empty box
   useEffect(() => {
-    if (!rawActiveImage || imgLoaded || imgAttempt > relayCandidates.length) return;
-    const timer = setTimeout(() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }, 8000);
+    if (!rawActiveImage || imgLoaded || imgAttempt >= imageChain.length) return;
+    const timer = setTimeout(() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }, 6000);
     return () => clearTimeout(timer);
   }, [rawActiveImage, activeImage, imgLoaded]);
 
@@ -97,7 +95,8 @@ export default function ProductDetails() {
                 src={activeImage}
                 alt={product.name[lang]}
                 className="h-full w-full object-contain"
-                loading="lazy"
+                loading="eager"
+                fetchPriority="high"
                 decoding="async"
                 referrerPolicy="no-referrer"
                 onLoad={() => setImgLoaded(true)}
