@@ -1,5 +1,17 @@
-import { importedProducts, getImportedProductById, getImportedProductsByCategory, searchImportedProducts } from "./csvSource";
-export const products = importedProducts;
-export const getProductById = getImportedProductById;
-export const getProductsByCategory = getImportedProductsByCategory;
-export const searchProducts = (query: string, _lang: "fa" | "en" | "ar") => searchImportedProducts(query);
+import { importedCategories, importedProducts, getImportedProductById, getImportedProductsByCategory, getImportedOtherSubcategoryCounts, searchImportedProducts } from "./csvSource";
+import { LocalCsvProductProvider } from "./providers/ProductProvider";
+
+/** The UI talks to this provider facade, not directly to a CSV schema. */
+export const productProvider = new LocalCsvProductProvider({
+  products: importedProducts,
+  categories: importedCategories,
+  getProductById: getImportedProductById,
+  getProductsByCategory: getImportedProductsByCategory,
+  searchProducts: searchImportedProducts,
+});
+
+export const products = productProvider.getProducts();
+export const getProductById = (id: string) => productProvider.getProductById(id);
+export const getProductsByCategory = (categoryId: string, subcategoryId?: string) => productProvider.getProducts().filter((product) => product.categoryId === categoryId && (!subcategoryId || product.subcategoryId === subcategoryId));
+export const searchProducts = (query: string, lang: "fa" | "en" | "ar") => productProvider.searchProducts(query, lang);
+export const getOtherSubcategoryCounts = getImportedOtherSubcategoryCounts;

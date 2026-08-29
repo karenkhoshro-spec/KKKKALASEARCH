@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useListContext } from "../context/ListContext";
 import { categories } from "../data/categories";
-import { getImportedOtherSubcategoryCounts, getImportedProductsByCategory } from "../data/csvSource";
+import { getOtherSubcategoryCounts, getProductsByCategory } from "../data/products";
 import ProductCard from "../components/ProductCard";
 import BackButton from "../components/BackButton";
 
@@ -20,8 +20,8 @@ export default function CategoryPage() {
   const { setListContext } = useListContext();
   const [subcategoryId, setSubcategoryId] = useState<string | undefined>();
   const category = categories.find((c) => c.id === categoryId);
-  const list = getImportedProductsByCategory(categoryId, subcategoryId);
-  const subcategories = categoryId === "other" ? getImportedOtherSubcategoryCounts() : [];
+  const list = getProductsByCategory(categoryId, subcategoryId);
+  const subcategories = categoryId === "other" ? getOtherSubcategoryCounts() : [];
 
   useEffect(() => { setListContext({ type: "category", categoryId }); setSubcategoryId(undefined); }, [categoryId, setListContext]);
 

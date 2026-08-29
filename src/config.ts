@@ -29,3 +29,8 @@ export const SELLER_DELIVERY_ENDPOINT = "";
 
 /** Seller contact number shown to the customer for manual follow-up. */
 export const SELLER_CONTACT_PHONE = "";
+
+/** Public, non-secret runtime configuration. Secrets must stay server-side. */
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
+export const PUBLIC_SITE_URL = import.meta.env.VITE_PUBLIC_SITE_URL ?? "";
+export const DATA_PROVIDER_MODE = import.meta.env.VITE_DATA_PROVIDER_MODE ?? "local-csv";
