@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
 import type { Product } from "../types";
@@ -32,7 +32,7 @@ function getProductImageUrl(product: Product): string | undefined {
   return trimmed;
 }
 
-export default function ProductCard({ product, minimal = false }: { product: Product; minimal?: boolean }) {
+function ProductCard({ product, minimal = false }: { product: Product; minimal?: boolean }) {
   const { lang, t } = useLanguage();
   const productUrl = getProductUrl(product);
   const hasValidUrl = !!productUrl;
@@ -145,3 +145,5 @@ export default function ProductCard({ product, minimal = false }: { product: Pro
     </div>
   );
 }
+
+export default memo(ProductCard);

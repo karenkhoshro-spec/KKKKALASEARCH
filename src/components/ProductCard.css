@@ -6,6 +6,9 @@
   overflow: hidden;
   border-radius: 1rem;
   transition: transform 300ms ease, box-shadow 300ms ease;
+  /* Perf: offscreen cards in large grids skip layout/paint work */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 460px;
 }
 .ks-product-card:hover {
   transform: translateY(-2px);
