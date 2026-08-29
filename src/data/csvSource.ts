@@ -1,5 +1,4 @@
 import productCsv from "../../KalaSearch_Products_Import.csv?raw";
-import categoryCsv from "../../KalaSearch_Categories.csv?raw";
 import ashkanCsv from "../../KalaSearch_Ashkan_Links.csv?raw";
 import inventoryCsv from "../../kala_search_inventory.csv?raw";
 import type { Category, LocalizedText, Product, ProductVariation } from "../types";
@@ -28,7 +27,6 @@ function parseCsv(input: string): ProductSourceRow[] {
 const productsRows = parseCsv(productCsv);
 const ashkanRows = parseCsv(ashkanCsv);
 const inventoryRows = parseCsv(inventoryCsv);
-const categoryRows = parseCsv(categoryCsv);
 
 export const normalizePersian = (value: string) => value.normalize("NFKC").replace(/[يى]/g, "ی").replace(/[ك]/g, "ک").replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))).replace(/[\u200c\u200f\u200e]/g, "").replace(/[^\p{L}\p{N}]+/gu, "").toLocaleLowerCase();
 
@@ -422,11 +420,10 @@ const mergedRows: ProductSourceRow[] = productsRows.map((source) => {
   };
 });
 
-const categoryNames = categoryRows.sort((a, b) => Number(a.sort_order) - Number(b.sort_order)).map((row) => row.category_name).filter(Boolean);
-const primaryNames = categoryNames.length >= 15 ? categoryNames : [
+const primaryNames = [
   "سبد خرید", "سبد پیکنیک", "چهار پایه", "جا پودری/اسکاجی", "سبد میوه و سبزی",
   "آبکش و سبد و کاسه", "فریزری", "جاصابونی", "جا ادویه", "پارچ و لیوان",
-  "آبمیوه گیری", "جا یخی", "سطل", "لگن و وان", "سایر"
+  "آبمیوه گیری", "سطل", "لگن و وان", "سایر"
 ];
 const primaryMatchers: [string, string[]][] = [
   ["shopping-basket", ["سبد خرید"]],
@@ -440,11 +437,11 @@ const primaryMatchers: [string, string[]][] = [
   ["spice", ["ادویه"]],
   ["pitcher-glass", ["پارچ", "لیوان"]],
   ["juicer", ["آبمیوه گیری", "آبمیوه"]],
-  ["ice-holder", ["جایخی", "جا یخی"]],
   ["bucket", ["سطل", "درب سطل"]],
   ["basin-bathtub", ["لگن", "وان"]],
 ];
 const otherRules: [string, string, string[]][] = [
+  ["ice-holder", "جا یخی", ["جایخی", "جا یخی"]],
   ["butter-holder", "جا کره‌ای", ["جا کره ای", "جا کره‌ای"]],
   ["spoon-holder", "جا قاشقی", ["جا قاشقی", "جاقاشقی"]],
   ["flower-pot", "گلدان", ["گلدان"]],

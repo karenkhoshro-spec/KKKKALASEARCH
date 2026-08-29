@@ -6,16 +6,15 @@ import { importedOtherSubcategories, importedProducts } from "../src/data/csvSou
 import { getOtherSubcategoryCounts, getProductsByCategory } from "../src/data/products";
 import CategoryIcon from "../src/components/CategoryIcon";
 import CategoryNav from "../src/components/CategoryNav";
-import CategoryPage from "../src/pages/CategoryPage";
 import Logo from "../src/components/Logo";
 import { LanguageProvider } from "../src/i18n/LanguageContext";
-import { ListContextProvider } from "../context/ListContext";
 
-describe("KalaSearch Neon Category & Icon System", () => {
-  it("has exactly 15 main categories (14 primary + سایر)", () => {
-    expect(categories).toHaveLength(15);
+describe("KalaSearch Category UI (Strict 2 Rows × 7 Items = 14 Tiles)", () => {
+  it("has exactly 14 main categories (13 normal + 1 other)", () => {
+    expect(categories).toHaveLength(14);
     const categoryIds = categories.map((c) => c.id);
     expect(categoryIds).toEqual([
+      // Row 1 (7 items)
       "shopping-basket",
       "picnic-basket",
       "stool",
@@ -23,24 +22,31 @@ describe("KalaSearch Neon Category & Icon System", () => {
       "fruit-vegetable-basket",
       "colander-bowl",
       "freezer",
+      // Row 2 (7 items: 6 normal + سایر)
       "soap-dish",
       "spice",
       "pitcher-glass",
       "juicer",
-      "ice-holder",
       "bucket",
       "basin-bathtub",
       "other",
     ]);
   });
 
-  it("keeps butter-holder, spoon-holder, and flower-pot inside 'other' subcategories", () => {
+  it("ensures 'other' is the 14th tile (last tile of row 2)", () => {
+    expect(categories[13].id).toBe("other");
+    expect(categories[13].name.fa).toBe("سایر");
+  });
+
+  it("keeps ice-holder, butter-holder, spoon-holder, and flower-pot inside 'other' subcategories", () => {
     const otherSubIds = importedOtherSubcategories.map((s) => s.id);
+    expect(otherSubIds).toContain("ice-holder");
     expect(otherSubIds).toContain("butter-holder");
     expect(otherSubIds).toContain("spoon-holder");
     expect(otherSubIds).toContain("flower-pot");
 
     const counts = getOtherSubcategoryCounts();
+    expect(counts.some((s) => s.id === "ice-holder")).toBe(true);
     expect(counts.some((s) => s.id === "butter-holder")).toBe(true);
     expect(counts.some((s) => s.id === "spoon-holder")).toBe(true);
     expect(counts.some((s) => s.id === "flower-pot")).toBe(true);
@@ -62,7 +68,7 @@ describe("KalaSearch Neon Category & Icon System", () => {
     }
   });
 
-  it("connects primary categories to real products", () => {
+  it("connects primary categories and subcategories to real products", () => {
     const bucketProducts = getProductsByCategory("bucket");
     expect(bucketProducts.length).toBeGreaterThan(0);
 
@@ -74,9 +80,12 @@ describe("KalaSearch Neon Category & Icon System", () => {
 
     const shoppingBasketProducts = getProductsByCategory("shopping-basket");
     expect(shoppingBasketProducts.length).toBeGreaterThan(0);
+
+    const iceProducts = getProductsByCategory("other", "ice-holder");
+    expect(iceProducts.length).toBeGreaterThan(0);
   });
 
-  it("renders CategoryNav with 2-row scroll layout and all 15 category tiles", () => {
+  it("renders CategoryNav with exactly 14 tiles in 2 rows x 7 cols without horizontal scroll or 3rd row", () => {
     const html = renderToString(
       <MemoryRouter>
         <LanguageProvider>
@@ -84,10 +93,11 @@ describe("KalaSearch Neon Category & Icon System", () => {
         </LanguageProvider>
       </MemoryRouter>
     );
-    expect(html).toContain("ks-category-grid-2rows");
-    expect(html).toContain("/category/shopping-basket");
-    expect(html).toContain("/category/bucket");
-    expect(html).toContain("/category/other");
+    expect(html).toContain("ks-category-grid-14");
+    const linkMatches = html.match(/href="\/category\/[^"]+"/g);
+    expect(linkMatches).toHaveLength(14);
+    expect(linkMatches?.[0]).toBe('href="/category/shopping-basket"');
+    expect(linkMatches?.[13]).toBe('href="/category/other"');
   });
 
   it("preserves KalaSearch Logo and Animated Logo without alterations", () => {
