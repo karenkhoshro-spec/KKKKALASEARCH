@@ -166,8 +166,16 @@ export function clearImageCache(): void {
  * stays the original ashkanplastic.com asset — nothing is downloaded or
  * stored inside this project, and productImages.json keeps the real URLs.
  */
+export function imageRelayCandidates(realImageUrl: string): string[] {
+  const encoded = encodeURIComponent(realImageUrl);
+  return [
+    `https://images.weserv.nl/?url=${encoded}`,
+    `https://wsrv.nl/?url=${encoded}`,
+  ];
+}
+
 export function imageRelayUrl(realImageUrl: string): string {
-  return `https://images.weserv.nl/?url=${encodeURIComponent(realImageUrl)}`;
+  return imageRelayCandidates(realImageUrl)[0];
 }
 
 export async function resolveProductImageViaProxy(productUrl: string, proxyEndpoint = "/api/product-image"): Promise<string | undefined> {

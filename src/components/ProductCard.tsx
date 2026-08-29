@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
 import type { Product } from "../types";
 import { useLanguage } from "../i18n/LanguageContext";
 import { isValidProductUrl } from "../data/csvSource";
-import { isValidImageUrl, imageRelayUrl } from "../data/productImageResolver";
+import { isValidImageUrl, imageRelayCandidates } from "../data/productImageResolver";
 import "./ProductCard.css";
 
 function getProductUrl(product: Product): string | undefined {
@@ -37,14 +37,21 @@ export default function ProductCard({ product, minimal = false }: { product: Pro
   const productUrl = getProductUrl(product);
   const hasValidUrl = !!productUrl;
   const initialImageUrl = getProductImageUrl(product);
-  const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
 
-  // Resilient chain: 1) real site URL direct (no-referrer) 2) same real image via relay CDN 3) placeholder
-  const [imgRelay, setImgRelay] = useState(false);
-  const imgSrc = initialImageUrl ? (imgRelay ? imageRelayUrl(initialImageUrl) : initialImageUrl) : undefined;
-  const showImage = !!imgSrc && !imgError;
-  const handleImgError = () => { if (!imgRelay && initialImageUrl) setImgRelay(true); else setImgError(true); };
+  // Resilient chain: 1) real site URL direct (no-referrer) 2-3) SAME real image via relay CDNs -> placeholder
+  const relayCandidates = initialImageUrl ? imageRelayCandidates(initialImageUrl) : [];
+  const [imgAttempt, setImgAttempt] = useState(0); // 0 = direct real URL, 1..n = relay CDN mirrors
+  const imgSrc = imgAttempt === 0 ? initialImageUrl : relayCandidates[imgAttempt - 1];
+  const showImage = !!initialImageUrl && imgAttempt <= relayCandidates.length;
+  const advanceImgAttempt = () => { setImgLoaded(false); setImgAttempt((a) => a + 1); };
+  const handleImgError = advanceImgAttempt;
+  // If an attempt stalls (neither load nor error), move on instead of leaving an empty box
+  useEffect(() => {
+    if (!initialImageUrl || imgLoaded || imgAttempt > relayCandidates.length) return;
+    const timer = setTimeout(advanceImgAttempt, 8000);
+    return () => clearTimeout(timer);
+  }, [initialImageUrl, imgSrc, imgLoaded]);
   // Cached images can finish loading before React attaches onLoad -> unstick the fade-in
   const markImgLoaded = (el: HTMLImageElement | null) => { if (el?.complete && el.naturalWidth > 0) setImgLoaded(true); };
 

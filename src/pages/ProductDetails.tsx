@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ExternalLink, Minus, Plus, ShoppingCart, CheckCircle2, XCircle, Heart } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -8,7 +8,7 @@ import { useWishlist } from "../context/WishlistContext";
 import { useListContext, listContextToPath } from "../context/ListContext";
 import { getProductById } from "../data/products";
 import { isValidProductUrl } from "../data/csvSource";
-import { imageRelayUrl } from "../data/productImageResolver";
+import { imageRelayCandidates } from "../data/productImageResolver";
 import BackButton from "../components/BackButton";
 import "../components/ProductCard.css";
 
@@ -43,10 +43,20 @@ export default function ProductDetails() {
 
   // Product image: priority productImageUrl (from product_url page) > variation image > legacy image
   const rawActiveImage = selectedVariation?.image || (product as any).productImageUrl || product.image;
-  const [imgError, setImgError] = useState(false);
-  // Resilient chain: real URL direct (no-referrer) -> same real image via relay CDN -> placeholder
-  const [imgRelay, setImgRelay] = useState(false);
-  const activeImage = !imgError && rawActiveImage ? (imgRelay ? imageRelayUrl(rawActiveImage) : rawActiveImage) : undefined;
+  // Resilient chain: real URL direct (no-referrer) -> SAME real image via relay CDNs -> placeholder
+  const relayCandidates = rawActiveImage ? imageRelayCandidates(rawActiveImage) : [];
+  const [imgAttempt, setImgAttempt] = useState(0); // 0 = direct real URL, 1..n = relay CDN mirrors
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const activeImage = rawActiveImage && imgAttempt <= relayCandidates.length
+    ? imgAttempt === 0 ? rawActiveImage : relayCandidates[imgAttempt - 1]
+    : undefined;
+  useEffect(() => { setImgAttempt(0); setImgLoaded(false); }, [rawActiveImage]);
+  // If an attempt stalls (neither load nor error), move on instead of leaving an empty box
+  useEffect(() => {
+    if (!rawActiveImage || imgLoaded || imgAttempt > relayCandidates.length) return;
+    const timer = setTimeout(() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }, 8000);
+    return () => clearTimeout(timer);
+  }, [rawActiveImage, activeImage, imgLoaded]);
 
   // Bulk mapping: productUrl via data layer, with validation
   const rawActiveUrl = selectedVariation?.url || product.productUrl || product.ashkanProductUrl;
@@ -90,7 +100,8 @@ export default function ProductDetails() {
                 loading="lazy"
                 decoding="async"
                 referrerPolicy="no-referrer"
-                onError={() => { if (!imgRelay && rawActiveImage) setImgRelay(true); else setImgError(true); }}
+                onLoad={() => setImgLoaded(true)}
+                onError={() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }}
               />
             ) : (
               <span className="text-sm" style={{ color: "var(--text-muted)" }}>{t("product.imageUnavailable")}</span>
