@@ -7,7 +7,9 @@ import { useToast } from "../context/ToastContext";
 import { useWishlist } from "../context/WishlistContext";
 import { useListContext, listContextToPath } from "../context/ListContext";
 import { getProductById } from "../data/products";
+import { isValidProductUrl } from "../data/csvSource";
 import BackButton from "../components/BackButton";
+import "../components/ProductCard.css";
 
 export default function ProductDetails() {
   const { id = "" } = useParams();
@@ -37,8 +39,15 @@ export default function ProductDetails() {
   const selectedVariation = product.variations?.find((v) => v.id === variationId);
   const available = selectedVariation?.inStock ?? product.inStock;
   const activePrice = selectedVariation ? selectedVariation.price : product.price;
-  const activeImage = selectedVariation?.image || product.image;
-  const activeUrl = selectedVariation?.url || product.ashkanProductUrl;
+
+  // Product image: priority productImageUrl (from product_url page) > variation image > legacy image
+  const rawActiveImage = selectedVariation?.image || (product as any).productImageUrl || product.image;
+  const [imgError, setImgError] = useState(false);
+  const activeImage = !imgError && rawActiveImage ? rawActiveImage : undefined;
+
+  // Bulk mapping: productUrl via data layer, with validation
+  const rawActiveUrl = selectedVariation?.url || product.productUrl || product.ashkanProductUrl;
+  const activeUrl = rawActiveUrl && isValidProductUrl(rawActiveUrl) ? rawActiveUrl.trim() : undefined;
   const activeSpec = selectedVariation?.technicalSpec || product.description[lang];
   const allSpecifications = Array.from(new Set([
     ...product.features.map((feature) => feature[lang]),
@@ -69,9 +78,25 @@ export default function ProductDetails() {
       <div className="grid gap-8 md:grid-cols-2">
         <div className="flex flex-col gap-4">
           <div className="glass product-media h-[min(38vh,320px)] rounded-3xl p-5 sm:h-[360px] sm:p-6 md:h-[420px]">
-            {activeImage ? <img src={activeImage} alt={product.name[lang]} className="h-full w-full object-contain" /> : <span className="text-sm" style={{ color: "var(--text-muted)" }}>{t("product.imageUnavailable")}</span>}
+            {activeImage ? (
+              <img
+                src={activeImage}
+                alt={product.name[lang]}
+                className="h-full w-full object-contain"
+                loading="lazy"
+                decoding="async"
+                onError={() => setImgError(true)}
+              />
+            ) : (
+              <span className="text-sm" style={{ color: "var(--text-muted)" }}>{t("product.imageUnavailable")}</span>
+            )}
           </div>
-          {activeUrl && <a href={activeUrl} target="_blank" rel="noopener noreferrer" className="glass inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all hover:scale-[1.02]" style={{ color: "var(--accent-1)" }}><ExternalLink size={15} />{t("product.viewOnAshkan")}</a>}
+          {activeUrl && (
+            <div className="flex flex-col gap-2">
+              <a href={activeUrl} target="_blank" rel="noopener noreferrer" className="glass inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all hover:scale-[1.02]" style={{ color: "var(--accent-1)" }}><ExternalLink size={15} />{t("product.viewOnAshkan")}</a>
+              <a href={activeUrl} target="_blank" rel="noopener noreferrer" className="ks-product-details-url-cta" aria-label={`مشاهده صفحه کامل محصول ${product.name[lang]}`}>مشاهده صفحه کامل محصول ↗</a>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col">
