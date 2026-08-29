@@ -28,7 +28,29 @@ export default function CategoryPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
       <div className="mb-5 flex items-center justify-between"><BackButton to="/" label={t("category.back")} /><h1 className="flex items-center gap-2 text-2xl font-bold sm:text-3xl" style={{ color: "var(--text-primary)" }}><span>{category?.icon}</span>{category ? category.name[lang] : ""}</h1><span /></div>
-      {subcategories.length > 0 && <div className="mb-5 flex flex-wrap gap-2 rounded-2xl p-2">{subcategories.map((sub) => <button type="button" key={sub.id} onClick={() => setSubcategoryId(subcategoryId === sub.id ? undefined : sub.id)} className="glass subcategory-tile inline-flex min-w-[92px] flex-col items-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors" style={{ borderColor: subcategoryId === sub.id ? "var(--accent-1)" : "var(--border-soft)", color: "var(--text-primary)" }}><span aria-hidden="true" className="text-xl leading-none">{subcategoryIcons[sub.id] ?? "📁"}</span><span>{sub.name[lang]}</span></button>)}</div>}
+      {subcategories.length > 0 && (
+        <div className="mb-5 grid grid-cols-3 gap-2 rounded-2xl p-2 sm:grid-cols-4 md:grid-cols-6">
+          {[...subcategories].sort((a, b) => b.count - a.count || a.name.fa.localeCompare(b.name.fa, "fa")).map((sub) => {
+            const selected = subcategoryId === sub.id;
+            return (
+              <button
+                type="button"
+                key={sub.id}
+                onClick={() => setSubcategoryId(selected ? undefined : sub.id)}
+                aria-pressed={selected}
+                className="glass subcategory-tile inline-flex h-full flex-col items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs font-semibold transition-colors"
+                style={{ borderColor: selected ? "var(--accent-1)" : "var(--border-soft)", color: "var(--text-primary)", ...(selected ? { boxShadow: "0 0 0 2px var(--accent-1)" } : {}) }}
+              >
+                <span aria-hidden="true" className="text-xl leading-none">{subcategoryIcons[sub.id] ?? "📁"}</span>
+                <span className="text-center leading-5">{sub.name[lang]}</span>
+                <span className="rounded-full px-1.5 text-[10px] font-medium" style={{ background: "var(--input-bg)", color: "var(--text-muted)" }}>
+                  {sub.count} {t("category.productsCount")}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
       {subcategories.length === 0 && <p className="mb-5 text-sm" style={{ color: "var(--text-muted)" }}>{list.length} {t("category.productsCount")}</p>}
       {subcategories.length > 0 && !subcategoryId ? (
         <p className="py-16 text-center text-sm" style={{ color: "var(--text-muted)" }}>{t("category.selectSubcategory")}</p>
