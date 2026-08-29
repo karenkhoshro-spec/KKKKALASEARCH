@@ -158,6 +158,18 @@ export function clearImageCache(): void {
  * - Client fetches from proxy, not directly from external site
  * - Cache in localStorage + memory to avoid repeated requests
  */
+/**
+ * Resilient image-loading relay (production pattern):
+ * Some browsers/networks cannot load ashkanplastic.com images directly
+ * (hotlink protection, geo-blocking, flaky routes). This returns a URL that
+ * serves the SAME real origin file through a public image CDN. The source
+ * stays the original ashkanplastic.com asset — nothing is downloaded or
+ * stored inside this project, and productImages.json keeps the real URLs.
+ */
+export function imageRelayUrl(realImageUrl: string): string {
+  return `https://images.weserv.nl/?url=${encodeURIComponent(realImageUrl)}`;
+}
+
 export async function resolveProductImageViaProxy(productUrl: string, proxyEndpoint = "/api/product-image"): Promise<string | undefined> {
   if (!productUrl) return undefined;
   const cached = imageCache.get(productUrl);
