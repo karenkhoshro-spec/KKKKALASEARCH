@@ -7,14 +7,16 @@ import "./CategoryNav.css";
 export default function CategoryNav() {
   const { lang } = useLanguage();
 
-  const mainCategories = categories.slice(0, 6);
-  const otherCategory = categories[6];
+  const mainCategories = categories.slice(0, 8);
+  const row1 = mainCategories.slice(0, 4);
+  const row2 = mainCategories.slice(4, 8);
+  const otherCategory = categories[8];
 
   return (
     <nav className="ks-category-container" aria-label="دسته‌بندی‌های کالا سرچ">
-      {/* Row 1: 6 Spacious Main Category Cubes */}
-      <div className="ks-category-grid-6">
-        {mainCategories.map((cat, index) => (
+      {/* Row 1: 4 Primary Categories */}
+      <div className="ks-category-grid-4">
+        {row1.map((cat, index) => (
           <Link
             key={cat.id}
             to={`/category/${cat.id}`}
@@ -22,31 +24,45 @@ export default function CategoryNav() {
             style={{ animationDelay: `${Math.min(index * 0.03, 0.2)}s` }}
             aria-label={cat.name[lang]}
           >
-            <div className="ks-category-icon-wrapper h-6 w-6 sm:h-8 sm:w-8 lg:h-11 lg:w-11">
-              <CategoryIcon id={cat.id} size={30} className="h-full w-full object-contain" />
+            <div className="ks-category-icon-wrapper h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10">
+              <CategoryIcon id={cat.id} size={28} className="h-full w-full object-contain" />
             </div>
-            <span className="ks-category-label">
-              {cat.name[lang]}
-            </span>
+            <span className="ks-category-label">{cat.name[lang]}</span>
           </Link>
         ))}
       </div>
 
-      {/* Row 2: Centered "Other" Cube */}
+      {/* Row 2: 4 Primary Categories */}
+      <div className="ks-category-grid-4">
+        {row2.map((cat, index) => (
+          <Link
+            key={cat.id}
+            to={`/category/${cat.id}`}
+            className="ks-category-tile animate-fade-up"
+            style={{ animationDelay: `${Math.min((index + 4) * 0.03, 0.25)}s` }}
+            aria-label={cat.name[lang]}
+          >
+            <div className="ks-category-icon-wrapper h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10">
+              <CategoryIcon id={cat.id} size={28} className="h-full w-full object-contain" />
+            </div>
+            <span className="ks-category-label">{cat.name[lang]}</span>
+          </Link>
+        ))}
+      </div>
+
+      {/* Final Category: "سایر" Centered */}
       {otherCategory && (
         <div className="ks-category-row-other">
           <Link
             to={`/category/${otherCategory.id}`}
             className="ks-category-tile ks-category-tile-other animate-fade-up"
-            style={{ animationDelay: "0.22s" }}
+            style={{ animationDelay: "0.28s" }}
             aria-label={otherCategory.name[lang]}
           >
-            <div className="ks-category-icon-wrapper h-6 w-6 sm:h-8 sm:w-8 lg:h-11 lg:w-11">
-              <CategoryIcon id={otherCategory.id} size={30} className="h-full w-full object-contain" />
+            <div className="ks-category-icon-wrapper h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10">
+              <CategoryIcon id={otherCategory.id} size={28} className="h-full w-full object-contain" />
             </div>
-            <span className="ks-category-label">
-              {otherCategory.name[lang]}
-            </span>
+            <span className="ks-category-label">{otherCategory.name[lang]}</span>
           </Link>
         </div>
       )}
