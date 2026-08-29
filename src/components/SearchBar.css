@@ -1,6 +1,6 @@
 /* ==========================================================================
-   KalaSearch - Purple Gemstone Search Button & Crystal Glass Search Bar
-   Premium Futuristic Glassmorphism & Faceted Purple Crystal Styling
+   KalaSearch - Purple Gemstone / Diamond Crystal Search Component
+   Premium Futuristic Glassmorphism with Faceted Crystal Styling
    ========================================================================== */
 
 .ks-search-form {
@@ -11,36 +11,38 @@
   margin-right: auto;
 }
 
-/* Outer Luminous Locket / Border Halo */
+/* ==========================================================================
+   1. OUTER LUMINOUS BORDER / GLASS CAPSULE
+   ========================================================================== */
 .ks-search-wrapper {
   position: relative;
   border-radius: 22px;
   padding: 2px;
   background: linear-gradient(
     135deg,
-    rgba(168, 85, 247, 0.6) 0%,
+    rgba(168, 85, 247, 0.65) 0%,
     rgba(124, 58, 237, 0.25) 30%,
-    rgba(236, 72, 153, 0.4) 65%,
-    rgba(168, 85, 247, 0.6) 100%
+    rgba(236, 72, 153, 0.45) 65%,
+    rgba(168, 85, 247, 0.65) 100%
   );
   box-shadow:
-    0 0 20px rgba(147, 51, 234, 0.22),
-    0 4px 16px rgba(0, 0, 0, 0.35);
+    0 0 22px rgba(147, 51, 234, 0.25),
+    0 4px 18px rgba(0, 0, 0, 0.38);
   transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .ks-search-wrapper.is-focused {
   background: linear-gradient(
     135deg,
-    rgba(192, 132, 252, 0.85) 0%,
-    rgba(147, 51, 234, 0.45) 30%,
-    rgba(244, 114, 182, 0.65) 65%,
-    rgba(168, 85, 247, 0.9) 100%
+    rgba(192, 132, 252, 0.9) 0%,
+    rgba(147, 51, 234, 0.5) 30%,
+    rgba(244, 114, 182, 0.7) 65%,
+    rgba(168, 85, 247, 0.95) 100%
   );
   box-shadow:
-    0 0 35px rgba(168, 85, 247, 0.45),
-    0 0 60px rgba(124, 58, 237, 0.2),
-    0 8px 24px rgba(0, 0, 0, 0.45);
+    0 0 38px rgba(168, 85, 247, 0.5),
+    0 0 65px rgba(124, 58, 237, 0.25),
+    0 8px 26px rgba(0, 0, 0, 0.48);
   transform: translateY(-1px);
 }
 
@@ -50,11 +52,13 @@
   align-items: center;
   gap: 0.6rem;
   border-radius: 20px;
-  background: rgba(15, 8, 32, 0.78);
+  background: rgba(14, 7, 30, 0.82);
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow:
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.15),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.4);
   transition: all 0.3s ease;
   padding: 0.45rem 0.55rem 0.45rem 0.85rem;
 }
@@ -67,9 +71,11 @@
 }
 
 .ks-search-wrapper.is-focused .ks-search-inner {
-  background: rgba(18, 10, 38, 0.9);
-  border-color: rgba(192, 132, 252, 0.28);
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.18);
+  background: rgba(18, 9, 38, 0.92);
+  border-color: rgba(192, 132, 252, 0.32);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.2),
+    inset 0 -1px 3px rgba(0, 0, 0, 0.5);
 }
 
 /* Search Icon inside Input */
@@ -113,8 +119,8 @@
 }
 
 /* ==========================================================================
-   PURPLE GEMSTONE SEARCH BUTTON
-   Faceted 3D Crystal Gem appearance with glass reflection & inner glow
+   2. PURPLE GEMSTONE SEARCH BUTTON (DARK MODE)
+   Faceted 3D Crystal Gem with realistic glass reflection & inner glow
    ========================================================================== */
 
 .ks-gem-button {
@@ -134,21 +140,21 @@
   isolation: isolate;
   flex-shrink: 0;
   padding: 0.55rem 0.95rem;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   letter-spacing: -0.01em;
 
-  /* Deep purple/violet gemstone core with radial refraction */
+  /* Deep royal purple/violet gemstone core with multi-point specular refraction */
   background:
-    radial-gradient(circle at 50% 0%, rgba(232, 121, 249, 0.75) 0%, transparent 60%),
-    radial-gradient(circle at 50% 100%, rgba(88, 28, 135, 0.95) 0%, transparent 70%),
-    linear-gradient(135deg, #7c3aed 0%, #9333ea 40%, #6b21a8 70%, #4c1d95 100%);
+    radial-gradient(circle at 45% 15%, rgba(240, 171, 252, 0.8) 0%, transparent 45%),
+    radial-gradient(circle at 50% 100%, rgba(59, 7, 100, 0.95) 0%, transparent 70%),
+    linear-gradient(135deg, #7c3aed 0%, #9333ea 35%, #7e22ce 65%, #4c1d95 100%);
 
-  /* Faceted crystal 3D edge bevels & soft outer radiance */
+  /* Faceted crystal 3D edge bevels & soft purple outer radiance */
   box-shadow:
-    inset 0 1.5px 1px rgba(255, 255, 255, 0.8),
-    inset 0 -1.5px 2px rgba(0, 0, 0, 0.65),
-    inset 1.5px 0 2px rgba(232, 121, 249, 0.45),
-    inset -1.5px 0 2px rgba(59, 7, 100, 0.55),
+    inset 0 1.5px 1px rgba(255, 255, 255, 0.85),
+    inset 0 -1.5px 2px rgba(0, 0, 0, 0.7),
+    inset 1.5px 0 2px rgba(232, 121, 249, 0.5),
+    inset -1.5px 0 2px rgba(59, 7, 100, 0.6),
     0 2px 8px rgba(0, 0, 0, 0.45),
     0 0 18px rgba(168, 85, 247, 0.5);
 
@@ -174,8 +180,8 @@
   height: 48%;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.6) 0%,
-    rgba(255, 255, 255, 0.18) 55%,
+    rgba(255, 255, 255, 0.65) 0%,
+    rgba(255, 255, 255, 0.2) 55%,
     rgba(255, 255, 255, 0) 100%
   );
   border-radius: 12px 12px 16px 16px / 12px 12px 6px 6px;
@@ -192,7 +198,7 @@
     115deg,
     transparent 0%,
     transparent 40%,
-    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0.5) 50%,
     transparent 60%,
     transparent 100%
   );
@@ -209,9 +215,9 @@
   pointer-events: none;
   z-index: 1;
   background:
-    linear-gradient(45deg, transparent 48%, rgba(255, 255, 255, 0.15) 50%, transparent 52%),
-    linear-gradient(-45deg, transparent 48%, rgba(255, 255, 255, 0.12) 50%, transparent 52%);
-  opacity: 0.7;
+    linear-gradient(45deg, transparent 48%, rgba(255, 255, 255, 0.18) 50%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, rgba(255, 255, 255, 0.14) 50%, transparent 52%);
+  opacity: 0.75;
 }
 
 .ks-gem-text {
@@ -219,8 +225,8 @@
   z-index: 3;
   color: #ffffff;
   text-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.7),
-    0 0 10px rgba(216, 180, 254, 0.6);
+    0 1px 2px rgba(0, 0, 0, 0.75),
+    0 0 10px rgba(216, 180, 254, 0.65);
 }
 
 .ks-gem-sparkle-icon {
@@ -236,11 +242,11 @@
   transform: translateY(-1px) scale(1.025);
   box-shadow:
     inset 0 2px 1.5px rgba(255, 255, 255, 0.95),
-    inset 0 -2px 3px rgba(0, 0, 0, 0.75),
-    inset 2px 0 3px rgba(244, 114, 182, 0.65),
-    inset -2px 0 3px rgba(59, 7, 100, 0.65),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.8),
+    inset 2px 0 3px rgba(244, 114, 182, 0.7),
+    inset -2px 0 3px rgba(59, 7, 100, 0.7),
     0 4px 14px rgba(0, 0, 0, 0.5),
-    0 0 26px rgba(192, 132, 252, 0.75);
+    0 0 28px rgba(192, 132, 252, 0.8);
 }
 
 .ks-gem-button:hover::after {
@@ -254,75 +260,93 @@
 .ks-gem-button:active {
   transform: scale(0.97);
   box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.6),
+    inset 0 1px 2px rgba(0, 0, 0, 0.65),
     0 1px 4px rgba(0, 0, 0, 0.4),
-    0 0 14px rgba(168, 85, 247, 0.45);
+    0 0 14px rgba(168, 85, 247, 0.5);
 }
 
 /* ==========================================================================
-   LIGHT MODE COMPATIBILITY
-   Adapts cleanly to white + emerald identity without breaking dark mode
+   3. DIAMOND / WHITE CRYSTAL GEMSTONE (LIGHT MODE)
+   Clean transparent white crystal, silver/lavender refraction, high contrast
    ========================================================================== */
 
 html[data-theme="light"] .ks-search-wrapper {
   background: linear-gradient(
     135deg,
-    rgba(23, 225, 122, 0.55) 0%,
-    rgba(5, 199, 107, 0.25) 35%,
-    rgba(16, 185, 129, 0.4) 65%,
-    rgba(23, 225, 122, 0.55) 100%
+    rgba(168, 85, 247, 0.38) 0%,
+    rgba(203, 213, 225, 0.65) 30%,
+    rgba(244, 114, 182, 0.28) 65%,
+    rgba(168, 85, 247, 0.42) 100%
   );
   box-shadow:
-    0 0 20px rgba(23, 225, 122, 0.2),
-    0 4px 16px rgba(0, 0, 0, 0.06);
+    0 0 20px rgba(168, 85, 247, 0.12),
+    0 4px 18px rgba(15, 23, 42, 0.06);
 }
 
 html[data-theme="light"] .ks-search-wrapper.is-focused {
   background: linear-gradient(
     135deg,
-    rgba(23, 225, 122, 0.9) 0%,
-    rgba(5, 199, 107, 0.45) 35%,
-    rgba(16, 185, 129, 0.65) 65%,
-    rgba(23, 225, 122, 0.95) 100%
+    rgba(192, 132, 252, 0.65) 0%,
+    rgba(147, 51, 234, 0.35) 30%,
+    rgba(244, 114, 182, 0.45) 65%,
+    rgba(168, 85, 247, 0.7) 100%
   );
   box-shadow:
-    0 0 32px rgba(23, 225, 122, 0.38),
-    0 6px 20px rgba(5, 150, 80, 0.16);
+    0 0 32px rgba(168, 85, 247, 0.28),
+    0 6px 22px rgba(15, 23, 42, 0.08);
 }
 
 html[data-theme="light"] .ks-search-inner {
-  background: rgba(255, 255, 255, 0.94);
-  border-color: rgba(5, 199, 107, 0.24);
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(226, 232, 240, 0.85);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.95),
+    inset 0 -1px 2px rgba(203, 213, 225, 0.4);
 }
 
+/* Diamond Crystal Button for Light Mode */
 html[data-theme="light"] .ks-gem-button {
   background:
-    radial-gradient(circle at 50% 0%, rgba(134, 239, 172, 0.75) 0%, transparent 60%),
-    radial-gradient(circle at 50% 100%, rgba(5, 150, 80, 0.95) 0%, transparent 70%),
-    linear-gradient(135deg, #10b981 0%, #05c76b 40%, #047857 75%, #064e3b 100%);
+    radial-gradient(circle at 45% 15%, rgba(255, 255, 255, 1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(238, 242, 255, 0.9) 0%, transparent 60%),
+    linear-gradient(135deg, #ffffff 0%, #f8fafc 35%, #eef2ff 70%, #e2e8f0 100%);
+  color: #1e1b4b;
   box-shadow:
-    inset 0 1.5px 1px rgba(255, 255, 255, 0.85),
-    inset 0 -1.5px 2px rgba(0, 0, 0, 0.4),
-    0 2px 8px rgba(5, 150, 80, 0.35),
-    0 0 16px rgba(23, 225, 122, 0.45);
+    inset 0 1.5px 1.5px rgba(255, 255, 255, 1),
+    inset 0 -1.5px 2px rgba(148, 163, 184, 0.4),
+    inset 1.5px 0 2px rgba(224, 231, 255, 0.65),
+    inset -1.5px 0 2px rgba(203, 213, 225, 0.55),
+    0 2px 10px rgba(15, 23, 42, 0.08),
+    0 0 16px rgba(192, 132, 252, 0.25);
+}
+
+html[data-theme="light"] .ks-gem-button::before {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.4) 55%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 
 html[data-theme="light"] .ks-gem-button:hover {
   box-shadow:
-    inset 0 2px 1.5px rgba(255, 255, 255, 0.95),
-    inset 0 -2px 3px rgba(0, 0, 0, 0.5),
-    0 4px 14px rgba(5, 150, 80, 0.45),
-    0 0 24px rgba(23, 225, 122, 0.6);
+    inset 0 2px 2px rgba(255, 255, 255, 1),
+    inset 0 -2px 3px rgba(148, 163, 184, 0.5),
+    inset 2px 0 3px rgba(199, 210, 254, 0.7),
+    inset -2px 0 3px rgba(203, 213, 225, 0.65),
+    0 4px 16px rgba(15, 23, 42, 0.12),
+    0 0 24px rgba(192, 132, 252, 0.45);
 }
 
 html[data-theme="light"] .ks-gem-text {
+  color: #1e1b4b;
   text-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.5),
-    0 0 8px rgba(187, 247, 208, 0.6);
+    0 1px 1px rgba(255, 255, 255, 0.95),
+    0 0 6px rgba(238, 242, 255, 0.8);
 }
 
 html[data-theme="light"] .ks-gem-sparkle-icon {
-  color: #dcfce7;
-  filter: drop-shadow(0 0 4px #22c55e);
+  color: #7c3aed;
+  filter: drop-shadow(0 0 4px rgba(124, 58, 237, 0.45));
 }
