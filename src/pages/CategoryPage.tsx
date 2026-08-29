@@ -51,14 +51,42 @@ export default function CategoryPage() {
           })}
         </div>
       )}
-      {subcategories.length === 0 && <p className="mb-5 text-sm" style={{ color: "var(--text-muted)" }}>{list.length} {t("category.productsCount")}</p>}
-      {subcategories.length > 0 && !subcategoryId ? (
-        <p className="py-16 text-center text-sm" style={{ color: "var(--text-muted)" }}>{t("category.selectSubcategory")}</p>
-      ) : list.length === 0 ? (
-        <p className="py-16 text-center text-sm" style={{ color: "var(--text-muted)" }}>{t("search.noResults")}</p>
-      ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">{list.map((p) => <ProductCard key={p.id} product={p} minimal />)}</div>
+      {subcategories.length === 0 && (
+        <>
+          <p className="mb-5 text-sm" style={{ color: "var(--text-muted)" }}>{list.length} {t("category.productsCount")}</p>
+          {list.length === 0 ? <p className="py-16 text-center text-sm" style={{ color: "var(--text-muted)" }}>{t("search.noResults")}</p> : <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">{list.map((p) => <ProductCard key={p.id} product={p} minimal />)}</div>}
+        </>
       )}
+      {subcategories.length > 0 && !subcategoryId && (
+        <p className="py-16 text-center text-sm" style={{ color: "var(--text-muted)" }}>{t("category.selectSubcategory")}</p>
+      )}
+      {subcategories.length > 0 && subcategoryId && (() => {
+        const selectedSub = subcategories.find((s) => s.id === subcategoryId);
+        return (
+          <section className="glass mb-6 rounded-3xl p-4 sm:p-5" style={{ border: "1px solid var(--border-soft)" }}>
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="flex items-baseline gap-2 text-lg font-bold" style={{ color: "var(--text-primary)" }}>
+                <span>{subcategoryIcons[subcategoryId] ?? "📁"}</span>
+                {selectedSub?.name[lang]}
+                <span className="text-sm font-medium" style={{ color: "var(--text-muted)" }}>({list.length} {t("category.productsCount")})</span>
+              </h2>
+              <button
+                type="button"
+                onClick={() => setSubcategoryId(undefined)}
+                className="rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors"
+                style={{ color: "var(--accent-1)", border: "1px solid var(--border-soft)", background: "var(--input-bg)" }}
+              >
+                {t("category.allSubcategories")}
+              </button>
+            </div>
+            {list.length === 0 ? (
+              <p className="py-16 text-center text-sm" style={{ color: "var(--text-muted)" }}>{t("search.noResults")}</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">{list.map((p) => <ProductCard key={p.id} product={p} minimal />)}</div>
+            )}
+          </section>
+        );
+      })()}
     </div>
   );
 }
