@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
 import type { Product } from "../types";
 import { useLanguage } from "../i18n/LanguageContext";
 import { isValidProductUrl } from "../data/csvSource";
-import { isValidImageUrl } from "../data/productImageResolver";
+import { isValidImageUrl, fullImageChain } from "../data/productImageResolver";
 import "./ProductCard.css";
 
 function getProductUrl(product: Product): string | undefined {
@@ -32,15 +32,28 @@ function getProductImageUrl(product: Product): string | undefined {
   return trimmed;
 }
 
-export default function ProductCard({ product, minimal = false }: { product: Product; minimal?: boolean }) {
+function ProductCard({ product, minimal = false }: { product: Product; minimal?: boolean }) {
   const { lang, t } = useLanguage();
   const productUrl = getProductUrl(product);
   const hasValidUrl = !!productUrl;
   const initialImageUrl = getProductImageUrl(product);
-  const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
 
-  const showImage = !!initialImageUrl && !imgError;
+  // Fast-first chain (relay webp -> real site URL -> 2nd relay -> placeholder)
+  const imageChain = initialImageUrl ? fullImageChain(initialImageUrl, 640) : [];
+  const [imgAttempt, setImgAttempt] = useState(0);
+  const imgSrc = imageChain[imgAttempt];
+  const showImage = !!imgSrc;
+  const advanceImgAttempt = () => { setImgLoaded(false); setImgAttempt((a) => a + 1); };
+  const handleImgError = advanceImgAttempt;
+  // If an attempt stalls (neither load nor error), move on instead of leaving an empty box
+  useEffect(() => {
+    if (!initialImageUrl || imgLoaded || imgAttempt >= imageChain.length) return;
+    const timer = setTimeout(advanceImgAttempt, 6000);
+    return () => clearTimeout(timer);
+  }, [initialImageUrl, imgSrc, imgLoaded]);
+  // Cached images can finish loading before React attaches onLoad -> unstick the fade-in
+  const markImgLoaded = (el: HTMLImageElement | null) => { if (el?.complete && el.naturalWidth > 0) setImgLoaded(true); };
 
   return (
     <div className={`ks-product-card group animate-fade-up relative flex flex-col overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-1 ${minimal ? "p-3" : ""}`}>
@@ -57,13 +70,16 @@ export default function ProductCard({ product, minimal = false }: { product: Pro
               <div className="product-media aspect-square w-full p-4">
                 {showImage ? (
                   <img
-                    src={initialImageUrl}
+                    key={imgSrc}
+                    ref={markImgLoaded}
+                    src={imgSrc}
                     alt={product.name[lang]}
                     loading="lazy"
                     decoding="async"
+                    referrerPolicy="no-referrer"
                     className={`h-full w-full object-contain transition-transform duration-500 group-hover:scale-105 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
                     onLoad={() => setImgLoaded(true)}
-                    onError={() => setImgError(true)}
+                    onError={handleImgError}
                   />
                 ) : (
                   <span className="text-xs" style={{ color: "var(--text-muted)" }}>
@@ -89,13 +105,16 @@ export default function ProductCard({ product, minimal = false }: { product: Pro
               <div className="product-media aspect-square w-full p-4">
                 {showImage ? (
                   <img
-                    src={initialImageUrl}
+                    key={imgSrc}
+                    ref={markImgLoaded}
+                    src={imgSrc}
                     alt={product.name[lang]}
                     loading="lazy"
                     decoding="async"
+                    referrerPolicy="no-referrer"
                     className={`h-full w-full object-contain transition-transform duration-500 group-hover:scale-105 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
                     onLoad={() => setImgLoaded(true)}
-                    onError={() => setImgError(true)}
+                    onError={handleImgError}
                   />
                 ) : (
                   <span className="text-xs" style={{ color: "var(--text-muted)" }}>
@@ -126,3 +145,5 @@ export default function ProductCard({ product, minimal = false }: { product: Pro
     </div>
   );
 }
+
+export default memo(ProductCard);

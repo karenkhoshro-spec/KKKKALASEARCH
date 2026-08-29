@@ -6,6 +6,26 @@
   overflow: hidden;
   border-radius: 1rem;
   transition: transform 300ms ease, box-shadow 300ms ease;
+  /* Perf: offscreen cards in large grids skip layout/paint work */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 460px;
+}
+
+/* Frame for products inside the subcategory panel (Other page).
+   Solid surface (no nested backdrop-blur) and full rendering —
+   prevents the initial weird/jumping box when the panel opens. */
+.ks-subcategory-frame {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 1rem;
+  overflow: hidden;
+  contain: paint;
+}
+.ks-subcategory-frame .ks-product-card {
+  content-visibility: visible;
+  contain-intrinsic-size: auto;
+  animation: none;
+  box-shadow: none;
 }
 .ks-product-card:hover {
   transform: translateY(-2px);

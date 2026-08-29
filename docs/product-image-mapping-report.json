@@ -1,0 +1,2906 @@
+{
+  "summary": {
+    "generated_at": "2026-08-29",
+    "source_site": "https://ashkanplastic.com",
+    "method": "Live catalog verification: product sitemap (featured image per product) + WooCommerce Store API (slug/name) + direct product-page fetches for validation. Persian normalization per csvSource.normalizePersian (NFKC, ي->ی, ك->ک, Persian digits, ZWNJ, lowercase). No guessed or placeholder images.",
+    "total_unique_products": 347,
+    "matched_product_urls": 347,
+    "missing_product_urls": 0,
+    "live_products_on_source_site": 337,
+    "verified_images": 303,
+    "missing_images": 44,
+    "unverified_images": 0,
+    "invalid_image_urls": 0,
+    "ambiguous_mappings": 0,
+    "duplicate_image_urls_unique": 13,
+    "duplicate_image_urls_products": 28,
+    "product_pages_404": 43,
+    "redirected_or_recoded_product_pages": 28,
+    "status_counts": {
+      "verified": 276,
+      "missing": 44,
+      "verified-name-match": 23,
+      "verified-family": 4
+    },
+    "duplicate_image_url_groups": [
+      {
+        "image_url": "https://ashkanplastic.com/wp-content/uploads/3cfb595bfb53cdcdef0a9a8aeafa64c334d47db6_1762595879.webp",
+        "product_ids": [
+          "2695010",
+          "2693010",
+          "2694010"
+        ]
+      },
+      {
+        "image_url": "https://ashkanplastic.com/wp-content/uploads/4810.jpg",
+        "product_ids": [
+          "4998010",
+          "4997010",
+          "4997011"
+        ]
+      },
+      {
+        "image_url": "https://ashkanplastic.com/wp-content/uploads/780.jpg",
+        "product_ids": [
+          "1100316",
+          "1100318"
+        ]
+      },
+      {
+        "image_url": "https://ashkanplastic.com/wp-content/uploads/62d1756ba8082ff20c54698928f1c8dc63daa8e2_1765112266.webp",
+        "product_ids": [
+          "3290011",
+          "3290010"
+        ]
+      },
+      {
+        "image_url": "https://ashkanplastic.com/wp-content/uploads/3850.jpg",
+        "product_ids": [
+          "4540012",
+          "4540014"
+        ]
+      },
+      {
+        "image_url": "https://ashkanplastic.com/wp-content/uploads/4540.jpg",
+        "product_ids": [
+          "4440010",
+          "4442010"
+        ]
+      },
+      {
+        "image_url": "https://ashkanplastic.com/wp-content/uploads/1200.jpg",
+        "product_ids": [
+          "5025010",
+          "5095010"
+        ]
+      },
+      {
+        "image_url": "https://ashkanplastic.com/wp-content/uploads/3980a.jpg",
+        "product_ids": [
+          "7238010",
+          "7237010"
+        ]
+      },
+      {
+        "image_url": "https://ashkanplastic.com/wp-content/uploads/4070.jpg",
+        "product_ids": [
+          "7100911",
+          "7100910"
+        ]
+      },
+      {
+        "image_url": "https://ashkanplastic.com/wp-content/uploads/3200.jpg",
+        "product_ids": [
+          "8810011",
+          "8810010"
+        ]
+      },
+      {
+        "image_url": "https://ashkanplastic.com/wp-content/uploads/3220.jpg",
+        "product_ids": [
+          "8810015",
+          "8810014"
+        ]
+      },
+      {
+        "image_url": "https://ashkanplastic.com/wp-content/uploads/4200.jpg",
+        "product_ids": [
+          "5570028",
+          "5570026"
+        ]
+      },
+      {
+        "image_url": "https://ashkanplastic.com/wp-content/uploads/4a27b489-4ca9-4289-b4ac-62b42bbd0320.png",
+        "product_ids": [
+          "2395010",
+          "2393010"
+        ]
+      }
+    ],
+    "notes": [
+      "303/347 products (87.3%) show their real product image; 44 fall back to the ProductCard 'image unavailable' placeholder.",
+      "43 products were discontinued by the source site (their /product/<id>/ pages return 404 and the ids are absent from the live catalog).",
+      "1 live product (2440010) excluded: its only image on the source site is an unrelated lifestyle/stock photo.",
+      "All 13 duplicate image URLs are provably shared images on the source site (size/variant families), not mis-mappings.",
+      "24 product ids were re-coded by the source site; images assigned only where the normalized product name matches exactly (priority 4 of the spec)."
+    ]
+  },
+  "products": [
+    {
+      "product_id": "2493010",
+      "product_name": "ادویه پاش پارمیس 1",
+      "product_url": "https://ashkanplastic.com/product/2493010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/249501010.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2495010",
+      "product_name": "ادویه پاش پارمیس 3",
+      "product_url": "https://ashkanplastic.com/product/2495010/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "2499510",
+      "product_name": "جا ادویه طبقاتی سرآشپز",
+      "product_url": "https://ashkanplastic.com/product/2499510/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/5807c6b4b021b25f33023c2198a45c4f2e439e82_1740047937.webp",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 49951020"
+    },
+    {
+      "product_id": "1290031",
+      "product_name": "آبکش پارمیس 1 الوان",
+      "product_url": "https://ashkanplastic.com/product/1290031/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/pa1-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1100312",
+      "product_name": "آبکش تخت 1000",
+      "product_url": "https://ashkanplastic.com/product/1100312/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/750.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1100314",
+      "product_name": "آبکش تخت 2000",
+      "product_url": "https://ashkanplastic.com/product/1100314/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/760.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1100316",
+      "product_name": "آبکش تخت 3000",
+      "product_url": "https://ashkanplastic.com/product/1100316/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/780.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1100318",
+      "product_name": "آبکش تخت 4000",
+      "product_url": "https://ashkanplastic.com/product/1100318/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/780.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1100310",
+      "product_name": "آبکش تخت 500",
+      "product_url": "https://ashkanplastic.com/product/1100310/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/740.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1100320",
+      "product_name": "آبکش تخت 5000",
+      "product_url": "https://ashkanplastic.com/product/1100320/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/790.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1100322",
+      "product_name": "آبکش تخت 6000",
+      "product_url": "https://ashkanplastic.com/product/1100322/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/800.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1200010",
+      "product_name": "آبکش چلو 20",
+      "product_url": "https://ashkanplastic.com/product/1200010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/930a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1200012",
+      "product_name": "آبکش چلو 25",
+      "product_url": "https://ashkanplastic.com/product/1200012/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/940a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1200014",
+      "product_name": "آبکش چلو 30",
+      "product_url": "https://ashkanplastic.com/product/1200014/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/950a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1200016",
+      "product_name": "آبکش چلو 35",
+      "product_url": "https://ashkanplastic.com/product/1200016/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/960a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1200018",
+      "product_name": "آبکش چلو 45",
+      "product_url": "https://ashkanplastic.com/product/1200018/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/970a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1200020",
+      "product_name": "آبکش چلو 55",
+      "product_url": "https://ashkanplastic.com/product/1200020/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/980a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1200022",
+      "product_name": "آبکش چلو 65 (محرم)",
+      "product_url": "https://ashkanplastic.com/product/1200022/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/990a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1300014",
+      "product_name": "آبکش یاس 3 صورتی",
+      "product_url": "https://ashkanplastic.com/product/1300014/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "1300016",
+      "product_name": "آبکش یاس 4 کرم",
+      "product_url": "https://ashkanplastic.com/product/1300016/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "1302010",
+      "product_name": "آبکش یاس مینی صورتی",
+      "product_url": "https://ashkanplastic.com/product/1302010/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "1301010",
+      "product_name": "آبکش یاس نقلی الوان",
+      "product_url": "https://ashkanplastic.com/product/1301010/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "1605010",
+      "product_name": "آبمیوه گیری بزرگ آسان",
+      "product_url": "https://ashkanplastic.com/product/1605010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/554454.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1690010",
+      "product_name": "آبمیوه گیری بهنوش",
+      "product_url": "https://ashkanplastic.com/product/1690010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4500.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1603010",
+      "product_name": "آبمیوه گیری کوچک آسان",
+      "product_url": "https://ashkanplastic.com/product/1603010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1603010-3.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 160301008"
+    },
+    {
+      "product_id": "1625010",
+      "product_name": "آبمیوه گیری لوکس بزرگ اشکان",
+      "product_url": "https://ashkanplastic.com/product/1625010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2290.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1626010",
+      "product_name": "آبمیوه گیری لوکس سوپر اشکان",
+      "product_url": "https://ashkanplastic.com/product/1626010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2400.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1623010",
+      "product_name": "آبمیوه گیری لوکس کوچک اشکان",
+      "product_url": "https://ashkanplastic.com/product/1623010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2390.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1850010",
+      "product_name": "بادبزن شاندیز",
+      "product_url": "https://ashkanplastic.com/product/1850010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1010.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1890010",
+      "product_name": "بادبزن سلطانی",
+      "product_url": "https://ashkanplastic.com/product/1890010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/c767dc522c098e425d43b71fe2af9c7cc79cd8a1_1719942806.webp",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1890011",
+      "product_name": "بادبزن کولاک",
+      "product_url": "https://ashkanplastic.com/product/1890011/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1890011.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4498311",
+      "product_name": "باکس آوا سایز 1 تخت",
+      "product_url": "https://ashkanplastic.com/product/4498311/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4498013-2121.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4498610",
+      "product_name": "باکس گوزل 10 لیتری",
+      "product_url": "https://ashkanplastic.com/product/4498610/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4498610.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4498012",
+      "product_name": "باکس آوا سایز 2",
+      "product_url": "https://ashkanplastic.com/product/4498012/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/Untitled-5444.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4498013",
+      "product_name": "باکس آوا سایز 3",
+      "product_url": "https://ashkanplastic.com/product/4498013/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4498013.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2020010",
+      "product_name": "پادری اشکان",
+      "product_url": "https://ashkanplastic.com/product/2020010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2280.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2210810",
+      "product_name": "پارچ 2رنگ سیب",
+      "product_url": "https://ashkanplastic.com/product/2210810/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2610.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2220810",
+      "product_name": "پارچ 2رنگ گلبرگ اشکان",
+      "product_url": "https://ashkanplastic.com/product/2220810/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2220810.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2290010",
+      "product_name": "پارچ الماس",
+      "product_url": "https://ashkanplastic.com/product/2290010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2730.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2295011",
+      "product_name": "پارچ بزرگ دلسا",
+      "product_url": "https://ashkanplastic.com/product/2295011/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/parch2.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2293011",
+      "product_name": "پارچ کوچک دلسا",
+      "product_url": "https://ashkanplastic.com/product/2293011/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/parch1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2270010",
+      "product_name": "پارچ گلرو",
+      "product_url": "https://ashkanplastic.com/product/2270010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2270912999.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2270912",
+      "product_name": "پارچ گلرو (شفاف)",
+      "product_url": "https://ashkanplastic.com/product/2270912/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2590.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2295010",
+      "product_name": "پارچ لامیا بزرگ",
+      "product_url": "https://ashkanplastic.com/product/2295010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2293010100.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2293010",
+      "product_name": "پارچ لامیا کوچک",
+      "product_url": "https://ashkanplastic.com/product/2293010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/22930101000.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2290020",
+      "product_name": "پارچ موج مدل 103 شفاف",
+      "product_url": "https://ashkanplastic.com/product/2290020/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/875875-Copy-2048x2048.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7120020",
+      "product_name": "پیمانه لوکس مدرج اشکان",
+      "product_url": "https://ashkanplastic.com/product/7120020/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4110.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8993020",
+      "product_name": "تخته گوشت کوچک دلسا - الوان",
+      "product_url": "https://ashkanplastic.com/product/8993020/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "8994020",
+      "product_name": "تخته گوشت متوسط دلسا - الوان",
+      "product_url": "https://ashkanplastic.com/product/8994020/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "6560010",
+      "product_name": "تفاله گیر روشا",
+      "product_url": "https://ashkanplastic.com/product/6560010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3500a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6510010",
+      "product_name": "تفاله گیر لوکس سیب",
+      "product_url": "https://ashkanplastic.com/product/6510010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/690-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7800010",
+      "product_name": "توالت شوی دلسا مدل 303 گرد",
+      "product_url": "https://ashkanplastic.com/product/7800010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/t1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7800520",
+      "product_name": "توالت شوی دلسا مدل 403 مربع",
+      "product_url": "https://ashkanplastic.com/product/7800520/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/t3.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 7800020"
+    },
+    {
+      "product_id": "2488010",
+      "product_name": "جا ادویه تکی هما",
+      "product_url": "https://ashkanplastic.com/product/2488010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4470.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2480010",
+      "product_name": "جا ادویه گلدار هما",
+      "product_url": "https://ashkanplastic.com/product/2480010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2410.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3608010",
+      "product_name": "جااسکاجی تکی آویز اشکان",
+      "product_url": "https://ashkanplastic.com/product/3608010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4360-1-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3697010",
+      "product_name": "جا اسکاجی دو قلو حصیری الوان",
+      "product_url": "https://ashkanplastic.com/product/3697010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/9841-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3617010",
+      "product_name": "جااسکاجی دو قلوی سیب",
+      "product_url": "https://ashkanplastic.com/product/3617010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4430.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4190010",
+      "product_name": "جا تخم مرغی 15 خانه",
+      "product_url": "https://ashkanplastic.com/product/4190010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4c65e2fb02dd235cf2c85441543fb59ca718d2aa_1762437742.webp",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3790010",
+      "product_name": "جا صابونی آنالیا",
+      "product_url": "https://ashkanplastic.com/product/3790010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1190-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3710910",
+      "product_name": "جا صابونی سیب (شفاف)",
+      "product_url": "https://ashkanplastic.com/product/3710910/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3330-10.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3790014",
+      "product_name": "جا صابونی نگین دار",
+      "product_url": "https://ashkanplastic.com/product/3790014/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1180.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4090010",
+      "product_name": "جا قاشقی آویز گشنیز",
+      "product_url": "https://ashkanplastic.com/product/4090010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4090010-03.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4010010",
+      "product_name": "جا قاشقی آویزنیکا",
+      "product_url": "https://ashkanplastic.com/product/4010010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2700a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4087010",
+      "product_name": "جا قاشقی دو پارچه هما",
+      "product_url": "https://ashkanplastic.com/product/4087010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/28505000.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4017010",
+      "product_name": "جا قاشقی دو جداره سیب طوسی",
+      "product_url": "https://ashkanplastic.com/product/4017010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2690-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4010012",
+      "product_name": "جا قاشقی سه خانه سیب",
+      "product_url": "https://ashkanplastic.com/product/4010012/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2580-10.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6740010",
+      "product_name": "جا کاغذی دایانا",
+      "product_url": "https://ashkanplastic.com/product/6740010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3710.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4290040",
+      "product_name": "جا کره ای چوبی دلسا",
+      "product_url": "https://ashkanplastic.com/product/4290040/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/db9f5ef6f8efaf5850d14b1858fc1c2ab608684b_1722027066.webp",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4290010",
+      "product_name": "جا کره ای هما",
+      "product_url": "https://ashkanplastic.com/product/4290010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2500.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 4290009"
+    },
+    {
+      "product_id": "3910010",
+      "product_name": "جا لوازم التحریر سیب",
+      "product_url": "https://ashkanplastic.com/product/3910010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2550.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3590010",
+      "product_name": "جامایع دلسا",
+      "product_url": "https://ashkanplastic.com/product/3590010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3590010223m.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3620010",
+      "product_name": "جااسکاجی دو قلوی اشکان",
+      "product_url": "https://ashkanplastic.com/product/3620010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4330.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3290011",
+      "product_name": "جابرنجی 10 کیلوئی نیکا",
+      "product_url": "https://ashkanplastic.com/product/3290011/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/62d1756ba8082ff20c54698928f1c8dc63daa8e2_1765112266.webp",
+      "status": "verified-family",
+      "evidence": "live page 3290010 offers 5kg & 10kg variants (verified live)"
+    },
+    {
+      "product_id": "3290010",
+      "product_name": "جابرنجی 5 کیلوئی نیکا",
+      "product_url": "https://ashkanplastic.com/product/3290010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/62d1756ba8082ff20c54698928f1c8dc63daa8e2_1765112266.webp",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3830910",
+      "product_name": "جاپودری اپل تاپ (شفاف)",
+      "product_url": "https://ashkanplastic.com/product/3830910/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3480.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3820910",
+      "product_name": "جاپودری اشکان (شفاف)",
+      "product_url": "https://ashkanplastic.com/product/3820910/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1720-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2693011",
+      "product_name": "جا حبوبات پارمیس 1",
+      "product_url": "https://ashkanplastic.com/product/2693011/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2693011.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2694011",
+      "product_name": "جا حبوبات پارمیس 2",
+      "product_url": "https://ashkanplastic.com/product/2694011/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "2695011",
+      "product_name": "جا حبوبات پارمیس 3",
+      "product_url": "https://ashkanplastic.com/product/2695011/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "2695010",
+      "product_name": "جاحبوباتی بزرگ نیکا",
+      "product_url": "https://ashkanplastic.com/product/2695010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3cfb595bfb53cdcdef0a9a8aeafa64c334d47db6_1762595879.webp",
+      "status": "verified-family",
+      "evidence": "family page 2693010-2694010-2695010"
+    },
+    {
+      "product_id": "2693010",
+      "product_name": "جاحبوباتی کوچک نیکا",
+      "product_url": "https://ashkanplastic.com/product/2693010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3cfb595bfb53cdcdef0a9a8aeafa64c334d47db6_1762595879.webp",
+      "status": "verified-family",
+      "evidence": "family page 2693010-2694010-2695010"
+    },
+    {
+      "product_id": "2630110",
+      "product_name": "جاحبوباتی گرد اپل تاپ 2(2عددی)",
+      "product_url": "https://ashkanplastic.com/product/2630110/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3420.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2694010",
+      "product_name": "جاحبوباتی متوسط نیکا",
+      "product_url": "https://ashkanplastic.com/product/2694010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3cfb595bfb53cdcdef0a9a8aeafa64c334d47db6_1762595879.webp",
+      "status": "verified-family",
+      "evidence": "family page 2693010-2694010-2695010"
+    },
+    {
+      "product_id": "2695540",
+      "product_name": "جاحبوباتی مربع درب چوبی دلسا بزرگ",
+      "product_url": "https://ashkanplastic.com/product/2695540/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "4998010",
+      "product_name": "جارو دستی تک برس",
+      "product_url": "https://ashkanplastic.com/product/4998010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4810.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4998019",
+      "product_name": "جارو دستی تکی نپتون طوسی",
+      "product_url": "https://ashkanplastic.com/product/4998019/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "4997010",
+      "product_name": "جارو دستی دو قلو نپتون صورتی",
+      "product_url": "https://ashkanplastic.com/product/4997010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4810.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4997011",
+      "product_name": "جارو دستی دو برس",
+      "product_url": "https://ashkanplastic.com/product/4997011/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4810.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 4997010"
+    },
+    {
+      "product_id": "4030010",
+      "product_name": "جاقاشقی اپل تاپ",
+      "product_url": "https://ashkanplastic.com/product/4030010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/394040.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4090030",
+      "product_name": "جاقاشقی چند منظوره نیکا",
+      "product_url": "https://ashkanplastic.com/product/4090030/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/Untitled-1-24.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4090810",
+      "product_name": "جاقاشقی دورنگ حصیرباف",
+      "product_url": "https://ashkanplastic.com/product/4090810/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/Untitled-211.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4090020",
+      "product_name": "جاقاشقی کابینتی پارمیس",
+      "product_url": "https://ashkanplastic.com/product/4090020/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/a86120fc-a34a-40ce-93f2-0ea0fa8fc58d.png",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4020010",
+      "product_name": "جاقاشقی مدرن اشکان الوان",
+      "product_url": "https://ashkanplastic.com/product/4020010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3950.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4398910",
+      "product_name": "جانانی آس سایز 1",
+      "product_url": "https://ashkanplastic.com/product/4398910/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1111999.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4398911",
+      "product_name": "جانانی آس سایز 2",
+      "product_url": "https://ashkanplastic.com/product/4398911/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/11112.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4398912",
+      "product_name": "جانانی آس سایز 3",
+      "product_url": "https://ashkanplastic.com/product/4398912/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/11113.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2120010",
+      "product_name": "جایخی اشکان",
+      "product_url": "https://ashkanplastic.com/product/2120010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/yakh-min-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2190010",
+      "product_name": "جایخی برفک دو عددی",
+      "product_url": "https://ashkanplastic.com/product/2190010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2190010.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4420010",
+      "product_name": "جعبه ابزار همه کاره اشکان",
+      "product_url": "https://ashkanplastic.com/product/4420010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2560.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4540030",
+      "product_name": "جعبه نظم دهنده سه پارچه دایانا",
+      "product_url": "https://ashkanplastic.com/product/4540030/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1-4.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4540010",
+      "product_name": "جعبه همه کاره دایانا بدون درب 1",
+      "product_url": "https://ashkanplastic.com/product/4540010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3720.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4540012",
+      "product_name": "جعبه همه کاره دایانا بدون درب 2",
+      "product_url": "https://ashkanplastic.com/product/4540012/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3850.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4540014",
+      "product_name": "جعبه همه کاره دایانا بدون درب 3",
+      "product_url": "https://ashkanplastic.com/product/4540014/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3850.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 4540012"
+    },
+    {
+      "product_id": "4540016",
+      "product_name": "جعبه همه کاره دایانا بدون درب 4",
+      "product_url": "https://ashkanplastic.com/product/4540016/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "4440010",
+      "product_name": "جعبه همه کاره دایانا دربدار 1",
+      "product_url": "https://ashkanplastic.com/product/4440010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4540.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4440012",
+      "product_name": "جعبه همه کاره دایانا دربدار 2",
+      "product_url": "https://ashkanplastic.com/product/4440012/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/j3.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4440014",
+      "product_name": "جعبه همه کاره دایانا دربدار 3",
+      "product_url": "https://ashkanplastic.com/product/4440014/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/j1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4440018",
+      "product_name": "جعبه همه کاره دایانا دربدار 4",
+      "product_url": "https://ashkanplastic.com/product/4440018/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "4542016",
+      "product_name": "جعبه همه کاره دایانا مینی بدون درب",
+      "product_url": "https://ashkanplastic.com/product/4542016/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4510.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 4440016"
+    },
+    {
+      "product_id": "4442010",
+      "product_name": "جعبه همه کاره دایانا مینی درب دار",
+      "product_url": "https://ashkanplastic.com/product/4442010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4540.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 44420100"
+    },
+    {
+      "product_id": "4541010",
+      "product_name": "جعبه همه کاره دایانا نقلی بدون درب",
+      "product_url": "https://ashkanplastic.com/product/4541010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4530.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4441010",
+      "product_name": "جعبه همه کاره دایانا نقلی درب دار",
+      "product_url": "https://ashkanplastic.com/product/4441010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4790.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3910011",
+      "product_name": "چند منظوره دیواری سیب",
+      "product_url": "https://ashkanplastic.com/product/3910011/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3360.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4800010",
+      "product_name": "چهار پایه 25 سانتی",
+      "product_url": "https://ashkanplastic.com/product/4800010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1830a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4800012",
+      "product_name": "چهار پایه 36 سانتی",
+      "product_url": "https://ashkanplastic.com/product/4800012/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1840a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4800014",
+      "product_name": "چهار پایه 50 سانتی",
+      "product_url": "https://ashkanplastic.com/product/4800014/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1860a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4800016",
+      "product_name": "چهار پایه 70 سانتی",
+      "product_url": "https://ashkanplastic.com/product/4800016/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1870a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5025010",
+      "product_name": "خاک انداز بزرگ اشکان",
+      "product_url": "https://ashkanplastic.com/product/5025010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1200.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5095010",
+      "product_name": "خاک انداز بزرگ راگا",
+      "product_url": "https://ashkanplastic.com/product/5095010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1200.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 5095009"
+    },
+    {
+      "product_id": "5026010",
+      "product_name": "خاک انداز سوپر اشکان",
+      "product_url": "https://ashkanplastic.com/product/5026010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/978855.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5010011",
+      "product_name": "خاک انداز سیب",
+      "product_url": "https://ashkanplastic.com/product/5010011/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3190.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 5010010"
+    },
+    {
+      "product_id": "5023010",
+      "product_name": "خاک انداز کوچک اشکان",
+      "product_url": "https://ashkanplastic.com/product/5023010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1210.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7430011",
+      "product_name": "درب سطل زباله 25 لیتری صورتی",
+      "product_url": "https://ashkanplastic.com/product/7430011/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "7430013",
+      "product_name": "درب سطل زباله 45 لیتری صورتی",
+      "product_url": "https://ashkanplastic.com/product/7430013/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "7025011",
+      "product_name": "درب سطل نخل",
+      "product_url": "https://ashkanplastic.com/product/7025011/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "7095011",
+      "product_name": "درب سطل نخل شفاف",
+      "product_url": "https://ashkanplastic.com/product/7095011/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "5194010",
+      "product_name": "زنبیل G63",
+      "product_url": "https://ashkanplastic.com/product/5194010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/Untitled-3.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5210010",
+      "product_name": "زنبیل سیب S300",
+      "product_url": "https://ashkanplastic.com/product/5210010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2460-9.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5210012",
+      "product_name": "زنبیل سیب S400",
+      "product_url": "https://ashkanplastic.com/product/5210012/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/545454.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5210014",
+      "product_name": "زنبیل سیب S500",
+      "product_url": "https://ashkanplastic.com/product/5210014/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2470-b1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5210016",
+      "product_name": "زنبیل سیب S600",
+      "product_url": "https://ashkanplastic.com/product/5210016/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2480-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5210018",
+      "product_name": "زنبیل سیب S700",
+      "product_url": "https://ashkanplastic.com/product/5210018/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2860.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5210020",
+      "product_name": "زنبیل سیب و ستاره",
+      "product_url": "https://ashkanplastic.com/product/5210020/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3270.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5210022",
+      "product_name": "زنبیل سیب و ستاره کودک",
+      "product_url": "https://ashkanplastic.com/product/5210022/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2720.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5193010",
+      "product_name": "زنبیل G62",
+      "product_url": "https://ashkanplastic.com/product/5193010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/Untitled-4.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5310110",
+      "product_name": "زنبیل گرد سیب E 200",
+      "product_url": "https://ashkanplastic.com/product/5310110/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3080.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5310112",
+      "product_name": "زنبیل گرد سیب E 250",
+      "product_url": "https://ashkanplastic.com/product/5310112/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3090.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5310114",
+      "product_name": "زنبیل گرد سیب E 300",
+      "product_url": "https://ashkanplastic.com/product/5310114/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3100.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5310116",
+      "product_name": "زنبیل گرد سیب E 350",
+      "product_url": "https://ashkanplastic.com/product/5310116/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3110.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5490010",
+      "product_name": "زیر گلدان 1",
+      "product_url": "https://ashkanplastic.com/product/5490010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1090a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5490014",
+      "product_name": "زیر گلدان 2",
+      "product_url": "https://ashkanplastic.com/product/5490014/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1100a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5490018",
+      "product_name": "زیر گلدان 3",
+      "product_url": "https://ashkanplastic.com/product/5490018/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1110a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5490020",
+      "product_name": "زیر گلدان 4",
+      "product_url": "https://ashkanplastic.com/product/5490020/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1120a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5490022",
+      "product_name": "زیر گلدان 5",
+      "product_url": "https://ashkanplastic.com/product/5490022/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1130a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5470028",
+      "product_name": "زیر گلدان 10 گلرو",
+      "product_url": "https://ashkanplastic.com/product/5470028/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "5470022",
+      "product_name": "زیر گلدان 7 گلرو",
+      "product_url": "https://ashkanplastic.com/product/5470022/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "5470024",
+      "product_name": "زیر گلدان 8 گلرو",
+      "product_url": "https://ashkanplastic.com/product/5470024/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "5470026",
+      "product_name": "زیر گلدان 9 گلرو",
+      "product_url": "https://ashkanplastic.com/product/5470026/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "5470020",
+      "product_name": "زیر گلدان 6 گلرو",
+      "product_url": "https://ashkanplastic.com/product/5470020/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "6740020",
+      "product_name": "سبد استوانه ای همه کاره دایانا سایز 1",
+      "product_url": "https://ashkanplastic.com/product/6740020/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/6740022-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6740021",
+      "product_name": "سبد استوانه ای همه کاره دایانا شماره 2",
+      "product_url": "https://ashkanplastic.com/product/6740021/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/6740021.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6740022",
+      "product_name": "سبد استوانه ای همه کاره دایانا شماره 3",
+      "product_url": "https://ashkanplastic.com/product/6740022/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/6740022-3.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6405210",
+      "product_name": "سبد بیضی 2رنگ بزرگ",
+      "product_url": "https://ashkanplastic.com/product/6405210/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/580.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6403210",
+      "product_name": "سبد بیضی 2رنگ کوچک",
+      "product_url": "https://ashkanplastic.com/product/6403210/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/570.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6405212",
+      "product_name": "سبد بیضی تک رنگ بزرگ",
+      "product_url": "https://ashkanplastic.com/product/6405212/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4570a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6615010",
+      "product_name": "سبد پیک نیک بزرگ سیب",
+      "product_url": "https://ashkanplastic.com/product/6615010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/120.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6616010",
+      "product_name": "سبد پیک نیک سوپر سیب",
+      "product_url": "https://ashkanplastic.com/product/6616010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/787775.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6613010",
+      "product_name": "سبد پیک نیک کوچک سیب",
+      "product_url": "https://ashkanplastic.com/product/6613010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/130-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6015010",
+      "product_name": "سبد خرید بزرگ سیب",
+      "product_url": "https://ashkanplastic.com/product/6015010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/140.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6091010",
+      "product_name": "سبد خرید زیبا نقلی",
+      "product_url": "https://ashkanplastic.com/product/6091010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/295150fb8fe1b912c4ca61a7773fde86888afe65_1749370217.webp",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6016010",
+      "product_name": "سبد خرید سوپر سیب",
+      "product_url": "https://ashkanplastic.com/product/6016010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/150.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6013010",
+      "product_name": "سبد خرید کوچک سیب",
+      "product_url": "https://ashkanplastic.com/product/6013010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/170-1-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; image fetched live from product page"
+    },
+    {
+      "product_id": "6000010",
+      "product_name": "سبد خرید لوکس 2000",
+      "product_url": "https://ashkanplastic.com/product/6000010/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "6000012",
+      "product_name": "سبد خرید لوکس 6000",
+      "product_url": "https://ashkanplastic.com/product/6000012/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "6014010",
+      "product_name": "سبد خرید متوسط سیب",
+      "product_url": "https://ashkanplastic.com/product/6014010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/160-1-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; image fetched live from product page"
+    },
+    {
+      "product_id": "6012010",
+      "product_name": "سبد خرید مینی سیب",
+      "product_url": "https://ashkanplastic.com/product/6012010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/5559.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6010030",
+      "product_name": "سبد خرید نی نی سیب",
+      "product_url": "https://ashkanplastic.com/product/6010030/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2310-2.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6190016",
+      "product_name": "سبدرخت 10000 بامبو",
+      "product_url": "https://ashkanplastic.com/product/6190016/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/12344.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6115010",
+      "product_name": "سبد رخت 4گوش سیب",
+      "product_url": "https://ashkanplastic.com/product/6115010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2640a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6190010",
+      "product_name": "سبد رخت اوکیا",
+      "product_url": "https://ashkanplastic.com/product/6190010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3300.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6195010",
+      "product_name": "سبد رخت آنالیا بزرگ",
+      "product_url": "https://ashkanplastic.com/product/6195010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/619601010.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6196010",
+      "product_name": "سبد رخت آنالیا سوپر",
+      "product_url": "https://ashkanplastic.com/product/6196010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/250a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6193010",
+      "product_name": "سبد رخت آنالیا کوچک",
+      "product_url": "https://ashkanplastic.com/product/6193010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/280a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6194010",
+      "product_name": "سبد رخت آنالیا متوسط",
+      "product_url": "https://ashkanplastic.com/product/6194010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/270a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6110010",
+      "product_name": "سبد رخت سیب 2000",
+      "product_url": "https://ashkanplastic.com/product/6110010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/300-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6110012",
+      "product_name": "سبد رخت سیب 4000",
+      "product_url": "https://ashkanplastic.com/product/6110012/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/290.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6110014",
+      "product_name": "سبد رخت سیب 6000",
+      "product_url": "https://ashkanplastic.com/product/6110014/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2650.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6110016",
+      "product_name": "سبد رخت سیب 8000",
+      "product_url": "https://ashkanplastic.com/product/6110016/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2660.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6310810",
+      "product_name": "سبد سبزی 2رنگ سیب",
+      "product_url": "https://ashkanplastic.com/product/6310810/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2670.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6310510",
+      "product_name": "سبد سبزی 4گوش سیب",
+      "product_url": "https://ashkanplastic.com/product/6310510/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/640.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6390011",
+      "product_name": "سبد سبزی آوا",
+      "product_url": "https://ashkanplastic.com/product/6390011/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "6330510",
+      "product_name": "سبد سبزی چهارگوش اپل تاپ",
+      "product_url": "https://ashkanplastic.com/product/6330510/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3700.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6310010",
+      "product_name": "سبد سبزی سیب",
+      "product_url": "https://ashkanplastic.com/product/6310010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/620.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6800610",
+      "product_name": "سبد سینک دو دسته",
+      "product_url": "https://ashkanplastic.com/product/6800610/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/360a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6800110",
+      "product_name": "سبد سینک گرد",
+      "product_url": "https://ashkanplastic.com/product/6800110/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/9da88fce83e973c913b3c98bd880cf0778d54da5_1644676091.webp",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6235510",
+      "product_name": "سبد میوه چهارگوش اپل تاپ بزرگ",
+      "product_url": "https://ashkanplastic.com/product/6235510/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3860.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6233510",
+      "product_name": "سبد میوه چهارگوش اپل تاپ کوچک",
+      "product_url": "https://ashkanplastic.com/product/6233510/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3470.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6200610",
+      "product_name": "سبد میوه دو دسته 1",
+      "product_url": "https://ashkanplastic.com/product/6200610/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/490-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6200612",
+      "product_name": "سبد میوه دو دسته 2",
+      "product_url": "https://ashkanplastic.com/product/6200612/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/500-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6200614",
+      "product_name": "سبد میوه دو دسته 3",
+      "product_url": "https://ashkanplastic.com/product/6200614/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/510-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6210112",
+      "product_name": "سبد میوه گرد 2رنگ سیب 2 الوان",
+      "product_url": "https://ashkanplastic.com/product/6210112/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/560.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6214110",
+      "product_name": "سبد میوه گرد متوسط سیب صورتی",
+      "product_url": "https://ashkanplastic.com/product/6214110/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/470.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6290020",
+      "product_name": "سبد میوه یخچالی",
+      "product_url": "https://ashkanplastic.com/product/6290020/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/520.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6490011",
+      "product_name": "سبد نان آوا",
+      "product_url": "https://ashkanplastic.com/product/6490011/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/b31d3b13-d4d4-4797-88db-1214651b1383.png",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6410050",
+      "product_name": "سبد نان باگت الوان",
+      "product_url": "https://ashkanplastic.com/product/6410050/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/%D8%A8%D8%A7%DA%AF%D8%AA%DB%8C.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6495011",
+      "product_name": "سبد نظم دهنده آوا بزرگ",
+      "product_url": "https://ashkanplastic.com/product/6495011/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "6493010",
+      "product_name": "سبد نظم دهنده آوا کوچک",
+      "product_url": "https://ashkanplastic.com/product/6493010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/f0b5fc9bb053a9d0aa2b4cf41bea13845869bffd_1762454362.webp",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6495010",
+      "product_name": "سبد نظم دهنده طبقاتی پارمیس 3",
+      "product_url": "https://ashkanplastic.com/product/6495010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/s2.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 6498010"
+    },
+    {
+      "product_id": "2899012",
+      "product_name": "ست 2 عددی ظروف کریستال دلسا باسبد",
+      "product_url": "https://ashkanplastic.com/product/2899012/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/Untitled-65541.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2899010",
+      "product_name": "ست ظروف کریستال دلسا 3 عددی",
+      "product_url": "https://ashkanplastic.com/product/2899010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/up-cmyk.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2499140",
+      "product_name": "ست جا ادویه چوبی گرد دلسا",
+      "product_url": "https://ashkanplastic.com/product/2499140/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/31323255.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 24991240"
+    },
+    {
+      "product_id": "2499540",
+      "product_name": "ست جا ادویه چوبی مربع دلسا",
+      "product_url": "https://ashkanplastic.com/product/2499540/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "2440010",
+      "product_name": "ست جا ادویه دایانا",
+      "product_url": "https://ashkanplastic.com/product/2440010/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "live; featured image is unrelated lifestyle/stock photo -> excluded"
+    },
+    {
+      "product_id": "2279010",
+      "product_name": "سرویس پارچ و لیوان گلرو",
+      "product_url": "https://ashkanplastic.com/product/2279010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4440.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2439111",
+      "product_name": "سرویس جا ادویه گرد اپل تاپ 3 عددی",
+      "product_url": "https://ashkanplastic.com/product/2439111/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/asasad.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2439510",
+      "product_name": "سرویس جا ادویه مربع اپل تاپ (3عددی)",
+      "product_url": "https://ashkanplastic.com/product/2439510/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4350-2.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2639110",
+      "product_name": "سرویس جاحبوباتی گرد اپل تاپ(4عددی)",
+      "product_url": "https://ashkanplastic.com/product/2639110/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4340.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2639520",
+      "product_name": "سرویس جاحبوباتی مربع اپل تاپ(4عددی)",
+      "product_url": "https://ashkanplastic.com/product/2639520/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3900.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "1209710",
+      "product_name": "سرویس چلو (4عددی) تک رنگ",
+      "product_url": "https://ashkanplastic.com/product/1209710/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3050.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6469010",
+      "product_name": "سرویس سبد میوه روشا  3 عددی صورتی",
+      "product_url": "https://ashkanplastic.com/product/6469010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3570.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3199510",
+      "product_name": "سرویس فریزری 4 پارچه سانا مدل 802",
+      "product_url": "https://ashkanplastic.com/product/3199510/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/twerw1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3169810",
+      "product_name": "سرویس فریزری دورنگ روشا (4عددی)",
+      "product_url": "https://ashkanplastic.com/product/3169810/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3990.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 3160810"
+    },
+    {
+      "product_id": "3169812",
+      "product_name": "سرویس فریزری دورنگ روشا (5عددی)",
+      "product_url": "https://ashkanplastic.com/product/3169812/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4090.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 3160811"
+    },
+    {
+      "product_id": "3160812",
+      "product_name": "سرویس فریزری دورنگ روشا 5 عددی کرپ",
+      "product_url": "https://ashkanplastic.com/product/3160812/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "3167810",
+      "product_name": "فریزری دو رنگ روشا 1(2عددی)",
+      "product_url": "https://ashkanplastic.com/product/3167810/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3810.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3150010",
+      "product_name": "سرویس فریزری شاندیز 1و2",
+      "product_url": "https://ashkanplastic.com/product/3150010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/zh187.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3159010",
+      "product_name": "سرویس فریزری شاندیز 4 عددی",
+      "product_url": "https://ashkanplastic.com/product/3159010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/shanzipsc4-2-min.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3199410",
+      "product_name": "سرویس فریزری قفلی 3 پارچه سفری مدل 902",
+      "product_url": "https://ashkanplastic.com/product/3199410/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2bf9dd7309f8e099d4c0eefbc910636df6cc145e_1710193935.webp",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3179412",
+      "product_name": "سرویس فریزری مستطیل گلرو(4عددی)",
+      "product_url": "https://ashkanplastic.com/product/3179412/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4290.png",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 3170412"
+    },
+    {
+      "product_id": "3179410",
+      "product_name": "سرویس فریزری مستطیل گلرو(3عددی)",
+      "product_url": "https://ashkanplastic.com/product/3179410/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2960.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3469715",
+      "product_name": "سرویس کاسه روشا 2 و 3",
+      "product_url": "https://ashkanplastic.com/product/3469715/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "8039010",
+      "product_name": "سرویس لگن اپل تاپ (4عددی)",
+      "product_url": "https://ashkanplastic.com/product/8039010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4030.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7238010",
+      "product_name": "سطل پدالی تک جداره اپل تاپ",
+      "product_url": "https://ashkanplastic.com/product/7238010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3980a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7237010",
+      "product_name": "سطل پدالی دوجداره اپل تاپ",
+      "product_url": "https://ashkanplastic.com/product/7237010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3980a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7300010",
+      "product_name": "سطل شیر 12 لیتری دسته فلزی",
+      "product_url": "https://ashkanplastic.com/product/7300010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3740.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7300012",
+      "product_name": "سطل شیر16 لیتری دسته فلزی",
+      "product_url": "https://ashkanplastic.com/product/7300012/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3750.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7020012",
+      "product_name": "سطل کابینتی اشکان",
+      "product_url": "https://ashkanplastic.com/product/7020012/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/7020011222.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7100911",
+      "product_name": "سطل مدرج همه کاره 1.5 لیتری شفاف",
+      "product_url": "https://ashkanplastic.com/product/7100911/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4070.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 7100908"
+    },
+    {
+      "product_id": "7100918",
+      "product_name": "سطل مدرج همه کاره (12 لیتری) شفاف",
+      "product_url": "https://ashkanplastic.com/product/7100918/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3640.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7100920",
+      "product_name": "سطل مدرج همه کاره (16 لیتری) شفاف",
+      "product_url": "https://ashkanplastic.com/product/7100920/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3650.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7100010",
+      "product_name": "سطل مدرج همه کاره 2 لیتری تزریقی سفید",
+      "product_url": "https://ashkanplastic.com/product/7100010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4250-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7100910",
+      "product_name": "سطل مدرج همه کاره (2 لیتری) شفاف",
+      "product_url": "https://ashkanplastic.com/product/7100910/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4070.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7100922",
+      "product_name": "سطل مدرج همه کاره (20 لیتری) شفاف",
+      "product_url": "https://ashkanplastic.com/product/7100922/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3660.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7100924",
+      "product_name": "سطل مدرج همه کاره (25 لیتری) شفاف",
+      "product_url": "https://ashkanplastic.com/product/7100924/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3670.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7100912",
+      "product_name": "سطل مدرج همه کاره (3 لیتری) شفاف",
+      "product_url": "https://ashkanplastic.com/product/7100912/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4100.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7100914",
+      "product_name": "سطل مدرج همه کاره (5 لیتری) شفاف",
+      "product_url": "https://ashkanplastic.com/product/7100914/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3630.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7100916",
+      "product_name": "سطل مدرج همه کاره (7 لیتری) شفاف",
+      "product_url": "https://ashkanplastic.com/product/7100916/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4080.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7100535",
+      "product_name": "سطل مربع پنج لیتری پلمپ",
+      "product_url": "https://ashkanplastic.com/product/7100535/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "7100530",
+      "product_name": "سطل مربع سه لیتری پلمپ",
+      "product_url": "https://ashkanplastic.com/product/7100530/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "7100540",
+      "product_name": "سطل مربع هشت لیتری پلمپ",
+      "product_url": "https://ashkanplastic.com/product/7100540/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "7025010",
+      "product_name": "سطل نخل بزرگ اشکان",
+      "product_url": "https://ashkanplastic.com/product/7025010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/22212.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7660010",
+      "product_name": "سینی روشا 2000",
+      "product_url": "https://ashkanplastic.com/product/7660010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3590a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7660012",
+      "product_name": "سینی روشا 4000",
+      "product_url": "https://ashkanplastic.com/product/7660012/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3600a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7660014",
+      "product_name": "سینی روشا 6000",
+      "product_url": "https://ashkanplastic.com/product/7660014/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3610a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "7660016",
+      "product_name": "سینی روشا 8000",
+      "product_url": "https://ashkanplastic.com/product/7660016/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3620a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8590010",
+      "product_name": "شکرپاش سانا مدل 1102",
+      "product_url": "https://ashkanplastic.com/product/8590010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/dfc2c3b3cb4004a95bfa4ec5258da8fe4dda0cf1_1603888284.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8520010",
+      "product_name": "شکرپاش اشکان",
+      "product_url": "https://ashkanplastic.com/product/8520010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1740.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8585010",
+      "product_name": "شکرپاش بزرگ هما",
+      "product_url": "https://ashkanplastic.com/product/8585010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1750.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8583010",
+      "product_name": "شکرپاش کوچک هما",
+      "product_url": "https://ashkanplastic.com/product/8583010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3070.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8591110",
+      "product_name": "جاشکری نقلی دلسا",
+      "product_url": "https://ashkanplastic.com/product/8591110/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/a1.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 8501010"
+    },
+    {
+      "product_id": "6510050",
+      "product_name": "صافی سینک سیب 1",
+      "product_url": "https://ashkanplastic.com/product/6510050/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2870.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6510052",
+      "product_name": "صافی سینک سیب 2",
+      "product_url": "https://ashkanplastic.com/product/6510052/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2880.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "6510054",
+      "product_name": "صافی سینک سیب 3",
+      "product_url": "https://ashkanplastic.com/product/6510054/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2890.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4810010",
+      "product_name": "صندلی حمام سیب",
+      "product_url": "https://ashkanplastic.com/product/4810010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1910-10.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3158310",
+      "product_name": "ظرف فریزری شاندیز تخت",
+      "product_url": "https://ashkanplastic.com/product/3158310/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "3158311",
+      "product_name": "ظرف فریزری تخت شاندیز درب شفاف( 28 عددی )",
+      "product_url": "https://ashkanplastic.com/product/3158311/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "3197310",
+      "product_name": "ظرف فریزری تخت ماهان (2عددی)",
+      "product_url": "https://ashkanplastic.com/product/3197310/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/f8be9dcd37449e4da6190053d66e8d2920c1a2bc_1755264743.webp",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3197910",
+      "product_name": "ظرف فریزری سایز 1 ماهان (2عددی)",
+      "product_url": "https://ashkanplastic.com/product/3197910/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/f02bd5f7aab2eccbcf386c1575b072785e6d6d4e_1755093290.webp",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3197920",
+      "product_name": "ظرف فریزری سایز 2 ماهان (2عددی)",
+      "product_url": "https://ashkanplastic.com/product/3197920/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/63eee891a87105d34c291484ee8d4aeafd59586c_1755098393.webp",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3197930",
+      "product_name": "ظرف فریزری سایز 3 ماهان (2عددی)",
+      "product_url": "https://ashkanplastic.com/product/3197930/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/160df98a3c32359fe6eb5db4dccad928bbba4dd1_1755193514.webp",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 13197930"
+    },
+    {
+      "product_id": "3197940",
+      "product_name": "ظرف فریزری سایز 4 ماهان (2عددی)",
+      "product_url": "https://ashkanplastic.com/product/3197940/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/e30e30133654de02aaa1690530ead546e48cf31d_1755115292.webp",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3150011",
+      "product_name": "ظرف فریزری شاندیز 3",
+      "product_url": "https://ashkanplastic.com/product/3150011/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4450.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 3150009"
+    },
+    {
+      "product_id": "4649010",
+      "product_name": "فایل کوچک دلسا 503",
+      "product_url": "https://ashkanplastic.com/product/4649010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4649010.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3100430",
+      "product_name": "فریزری دلسا با سبد 1/5 لیتری",
+      "product_url": "https://ashkanplastic.com/product/3100430/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/8eb7c65d5929a8655345ea4fda26d63543e45549_1755292714.webp",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3100420",
+      "product_name": "فریزری همه کاره دلسا مدل 203 1.5 لیتری درب دار",
+      "product_url": "https://ashkanplastic.com/product/3100420/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/zx1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3170411",
+      "product_name": "فریزری مستطیل گلرو 1(2عددی)",
+      "product_url": "https://ashkanplastic.com/product/3170411/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3060.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 3170410"
+    },
+    {
+      "product_id": "3170414",
+      "product_name": "فریزری مستطیل گلرو 3",
+      "product_url": "https://ashkanplastic.com/product/3170414/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2990.png",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3172410",
+      "product_name": "سرویس فریزری گلرو مینی (2 عددی)",
+      "product_url": "https://ashkanplastic.com/product/3172410/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4560.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3171410",
+      "product_name": "سرویس فریزری گلرو نقلی (3 عددی)",
+      "product_url": "https://ashkanplastic.com/product/3171410/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4550.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8480010",
+      "product_name": "قندان هما",
+      "product_url": "https://ashkanplastic.com/product/8480010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1930.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8810011",
+      "product_name": "قیف سیب 10",
+      "product_url": "https://ashkanplastic.com/product/8810011/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3200.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 8810010"
+    },
+    {
+      "product_id": "8810010",
+      "product_name": "قیف سیب 10 کرپ",
+      "product_url": "https://ashkanplastic.com/product/8810010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3200.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8810013",
+      "product_name": "قیف سیب 12",
+      "product_url": "https://ashkanplastic.com/product/8810013/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3210.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 8810012"
+    },
+    {
+      "product_id": "8810015",
+      "product_name": "قیف سیب 18",
+      "product_url": "https://ashkanplastic.com/product/8810015/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3220.jpg",
+      "status": "verified-name-match",
+      "evidence": "exact normalized name -> live slug 8810014"
+    },
+    {
+      "product_id": "8810014",
+      "product_name": "قیف سیب 18 صورتی",
+      "product_url": "https://ashkanplastic.com/product/8810014/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3220.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8810016",
+      "product_name": "قیف سیب 20",
+      "product_url": "https://ashkanplastic.com/product/8810016/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3230.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8810018",
+      "product_name": "قیف سیب 24",
+      "product_url": "https://ashkanplastic.com/product/8810018/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3240.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3460711",
+      "product_name": "کاسه تک رنگ روشا 1",
+      "product_url": "https://ashkanplastic.com/product/3460711/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/ka1-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3460914",
+      "product_name": "کاسه دو رنگ روشا 3 (شفاف)",
+      "product_url": "https://ashkanplastic.com/product/3460914/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3560.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "3410010",
+      "product_name": "کاسه سیب کریستال",
+      "product_url": "https://ashkanplastic.com/product/3410010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/https___kalaplasticvar.ir_wp-content_uploads_2024_06_6829119b3fec5ff628547abba6aa9bd926dd8033_1717417921.webp",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5570010",
+      "product_name": "گلدان گلرو 1 (14*15) با زیرگلدانی",
+      "product_url": "https://ashkanplastic.com/product/5570010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4120.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5570028",
+      "product_name": "گلدان گلرو 10 با زیرگلدانی",
+      "product_url": "https://ashkanplastic.com/product/5570028/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4200.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5570012",
+      "product_name": "گلدان گلرو 2 (16*18) با زیرگلدانی",
+      "product_url": "https://ashkanplastic.com/product/5570012/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4130.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5570014",
+      "product_name": "گلدان گلرو 3 (19*21) با زیرگلدانی",
+      "product_url": "https://ashkanplastic.com/product/5570014/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4140.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5570016",
+      "product_name": "گلدان گلرو 4 (23*25) با زیرگلدانی",
+      "product_url": "https://ashkanplastic.com/product/5570016/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4150.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5570018",
+      "product_name": "گلدان گلرو 5 (26*30) با زیرگلدانی",
+      "product_url": "https://ashkanplastic.com/product/5570018/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4160.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5570020",
+      "product_name": "گلدان گلرو 6 (31*35) با زیرگلدانی",
+      "product_url": "https://ashkanplastic.com/product/5570020/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4170.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5570022",
+      "product_name": "گلدان گلرو 7 (36*41) با زیرگلدانی",
+      "product_url": "https://ashkanplastic.com/product/5570022/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4180.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5570024",
+      "product_name": "گلدان گلرو 8 (41*49) با زیرگلدانی",
+      "product_url": "https://ashkanplastic.com/product/5570024/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4190.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5570026",
+      "product_name": "گلدان گلرو 9 (47*59) با زیرگلدانی",
+      "product_url": "https://ashkanplastic.com/product/5570026/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4200.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "5570013",
+      "product_name": "گلدان گلرو مینی با زیرگلدانی",
+      "product_url": "https://ashkanplastic.com/product/5570013/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "5570006",
+      "product_name": "گلدان گلرو نقلی الوان",
+      "product_url": "https://ashkanplastic.com/product/5570006/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "5570011",
+      "product_name": "گلدان گلرو نقلی با زیرگلدانی",
+      "product_url": "https://ashkanplastic.com/product/5570011/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "8990010",
+      "product_name": "گیره آویز صدف",
+      "product_url": "https://ashkanplastic.com/product/8990010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/tJKMRwfkamv3gryLQ6wBo-EObyQ-7RVN_M_mTCePA6s39shlNw.png",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8020012",
+      "product_name": "لگن 15*10 اصل اشکان کرم",
+      "product_url": "https://ashkanplastic.com/product/8020012/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "8030016",
+      "product_name": "لگن اپل تاپ 6000",
+      "product_url": "https://ashkanplastic.com/product/8030016/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3400.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8030018",
+      "product_name": "لگن اپل تاپ 8000",
+      "product_url": "https://ashkanplastic.com/product/8030018/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3410.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8090024",
+      "product_name": "لگن 10000 زیبا",
+      "product_url": "https://ashkanplastic.com/product/8090024/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/10.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8090022",
+      "product_name": "لگن 12000 زیبا",
+      "product_url": "https://ashkanplastic.com/product/8090022/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/IMG_20260128_183636_54560.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8090032",
+      "product_name": "لگن 2000 زیبا",
+      "product_url": "https://ashkanplastic.com/product/8090032/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/20.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8090030",
+      "product_name": "لگن 4000 زیبا",
+      "product_url": "https://ashkanplastic.com/product/8090030/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/40.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8090028",
+      "product_name": "لگن 6000 زیبا",
+      "product_url": "https://ashkanplastic.com/product/8090028/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/60.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8090026",
+      "product_name": "لگن 8000 زیبا",
+      "product_url": "https://ashkanplastic.com/product/8090026/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/80.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8090010",
+      "product_name": "لگن نیما 1",
+      "product_url": "https://ashkanplastic.com/product/8090010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1440-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8090012",
+      "product_name": "لگن نیما 2",
+      "product_url": "https://ashkanplastic.com/product/8090012/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1450-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8090014",
+      "product_name": "لگن نیما 3",
+      "product_url": "https://ashkanplastic.com/product/8090014/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1460-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8090016",
+      "product_name": "لگن نیما 4",
+      "product_url": "https://ashkanplastic.com/product/8090016/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1470-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8090018",
+      "product_name": "لگن نیما 5",
+      "product_url": "https://ashkanplastic.com/product/8090018/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1480-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8090020",
+      "product_name": "لگن نیما 6",
+      "product_url": "https://ashkanplastic.com/product/8090020/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1490-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8092010",
+      "product_name": "لگن نیما مینی",
+      "product_url": "https://ashkanplastic.com/product/8092010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2220-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2360810",
+      "product_name": "لیوان دورنگ روشا",
+      "product_url": "https://ashkanplastic.com/product/2360810/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3730-2.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2310810",
+      "product_name": "لیوان 2رنگ سیب",
+      "product_url": "https://ashkanplastic.com/product/2310810/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2620.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2390812",
+      "product_name": "لیوان 2رنگ گلبرگ اشکان",
+      "product_url": "https://ashkanplastic.com/product/2390812/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/8c1536ea-a1bc-497b-99a0-3b6db4139b8b-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2390010",
+      "product_name": "لیوان الماس",
+      "product_url": "https://ashkanplastic.com/product/2390010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/n85.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2395010",
+      "product_name": "لیوان بهنوش عکس دار بزرگ",
+      "product_url": "https://ashkanplastic.com/product/2395010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4a27b489-4ca9-4289-b4ac-62b42bbd0320.png",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2393010",
+      "product_name": "لیوان بهنوش عکس دار کوچک",
+      "product_url": "https://ashkanplastic.com/product/2393010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4a27b489-4ca9-4289-b4ac-62b42bbd0320.png",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2390610",
+      "product_name": "لیوان دسته دار گلبرگ",
+      "product_url": "https://ashkanplastic.com/product/2390610/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/8c1536ea-a1bc-497b-99a0-3b6db4139b8b.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2390810",
+      "product_name": "لیوان 2رنگ توپی",
+      "product_url": "https://ashkanplastic.com/product/2390810/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3180.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2387610",
+      "product_name": "لیوان کودک هما",
+      "product_url": "https://ashkanplastic.com/product/2387610/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/l1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2390020",
+      "product_name": "لیوان موج مدل 103 شفاف",
+      "product_url": "https://ashkanplastic.com/product/2390020/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/010185.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2395050",
+      "product_name": "لیوان نی دار بزرگ بهنوش الوان",
+      "product_url": "https://ashkanplastic.com/product/2395050/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "2390050",
+      "product_name": "لیوان نی دار بهنوش بزرگ",
+      "product_url": "https://ashkanplastic.com/product/2390050/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/4740.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "2394050",
+      "product_name": "لیوان نی دار بهنوش متوسط",
+      "product_url": "https://ashkanplastic.com/product/2394050/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/141514.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4710010",
+      "product_name": "مگس کش سیب",
+      "product_url": "https://ashkanplastic.com/product/4710010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/471001025.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "4540020",
+      "product_name": "نظم دهنده دایانا",
+      "product_url": "https://ashkanplastic.com/product/4540020/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/az1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8620010",
+      "product_name": "نمکپاش چند منظوره اشکان",
+      "product_url": "https://ashkanplastic.com/product/8620010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3320.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8690010",
+      "product_name": "نمکدان الماس",
+      "product_url": "https://ashkanplastic.com/product/8690010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2530.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8680010",
+      "product_name": "نمکدان هما",
+      "product_url": "https://ashkanplastic.com/product/8680010/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1920.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8290010",
+      "product_name": "وان بچه نیما وانیلی",
+      "product_url": "https://ashkanplastic.com/product/8290010/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "8210210",
+      "product_name": "وان بیضی 55 سیب",
+      "product_url": "https://ashkanplastic.com/product/8210210/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1330.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8210212",
+      "product_name": "وان بیضی 65 سیب",
+      "product_url": "https://ashkanplastic.com/product/8210212/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1340.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8210214",
+      "product_name": "وان بیضی 85 سیب",
+      "product_url": "https://ashkanplastic.com/product/8210214/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1350.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8210116",
+      "product_name": "وان بیضی 90 سیب",
+      "product_url": "https://ashkanplastic.com/product/8210116/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/2210.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8210218",
+      "product_name": "وان بیضی 95 سیب",
+      "product_url": "https://ashkanplastic.com/product/8210218/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1360.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8290210",
+      "product_name": "وان بیضی کلاسیک 501 صورتی",
+      "product_url": "https://ashkanplastic.com/product/8290210/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "8090212",
+      "product_name": "وان بیضی کلاسیک 503 طوسی",
+      "product_url": "https://ashkanplastic.com/product/8090212/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    },
+    {
+      "product_id": "8230110",
+      "product_name": "وان گرد 2 دسته اپل تاپ 1",
+      "product_url": "https://ashkanplastic.com/product/8230110/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3760-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8230112",
+      "product_name": "وان گرد 2 دسته اپل تاپ 2",
+      "product_url": "https://ashkanplastic.com/product/8230112/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3770-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8230114",
+      "product_name": "وان گرد 2 دسته اپل تاپ 3",
+      "product_url": "https://ashkanplastic.com/product/8230114/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3780-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8295110",
+      "product_name": "وان گرد 2 دسته بزرگ",
+      "product_url": "https://ashkanplastic.com/product/8295110/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1400a.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8230120",
+      "product_name": "وان گرد 4 دسته اپل تاپ 4",
+      "product_url": "https://ashkanplastic.com/product/8230120/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3790-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8230122",
+      "product_name": "وان گرد 4 دسته اپل تاپ 5",
+      "product_url": "https://ashkanplastic.com/product/8230122/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/3800-1.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8290110",
+      "product_name": "وان گرد 4 دسته",
+      "product_url": "https://ashkanplastic.com/product/8290110/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1410.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8296110",
+      "product_name": "وان گرد 4 دسته سوپر",
+      "product_url": "https://ashkanplastic.com/product/8296110/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1430.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8293110",
+      "product_name": "وان گرد 4 دسته مینی سوپر",
+      "product_url": "https://ashkanplastic.com/product/8293110/",
+      "product_image_url": "https://ashkanplastic.com/wp-content/uploads/1420.jpg",
+      "status": "verified",
+      "evidence": "id-match; live page + sitemap featured image"
+    },
+    {
+      "product_id": "8230410",
+      "product_name": "وان مستطیل اپل تاپ 1",
+      "product_url": "https://ashkanplastic.com/product/8230410/",
+      "product_image_url": null,
+      "status": "missing",
+      "evidence": "not in live catalog (discontinued; page 404)"
+    }
+  ]
+}

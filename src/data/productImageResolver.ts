@@ -158,6 +158,41 @@ export function clearImageCache(): void {
  * - Client fetches from proxy, not directly from external site
  * - Cache in localStorage + memory to avoid repeated requests
  */
+/**
+ * Resilient image-loading relay (production pattern):
+ * Some browsers/networks cannot load ashkanplastic.com images directly
+ * (hotlink protection, geo-blocking, flaky routes). This returns a URL that
+ * serves the SAME real origin file through a public image CDN. The source
+ * stays the original ashkanplastic.com asset — nothing is downloaded or
+ * stored inside this project, and productImages.json keeps the real URLs.
+ */
+/**
+ * Relay candidates: the SAME real origin file served through public image CDNs
+ * (resized/re-encoded for speed — still the real ashkanplastic.com asset,
+ * fetched live by the CDN; nothing is stored in this project).
+ * `width` matches the display size so the browser downloads ~10x fewer bytes.
+ */
+export function imageRelayCandidates(realImageUrl: string, width = 640): string[] {
+  const encoded = encodeURIComponent(realImageUrl);
+  const transform = `&w=${width}&output=webp&q=80&we`;
+  return [
+    `https://images.weserv.nl/?url=${encoded}${transform}`,
+    `https://wsrv.nl/?url=${encoded}${transform}`,
+  ];
+}
+
+/**
+ * Full loading chain used by the UI (fast-first):
+ *   1. relay CDN (typically < 1s, cached globally)
+ *   2. the real site URL directly (no-referrer) — for networks where origin is fastest
+ *   3. second independent relay CDN
+ * Only if all three fail does the UI show the "تصویر موجود نیست" placeholder.
+ */
+export function fullImageChain(realImageUrl: string, width = 640): string[] {
+  const [relay1, relay2] = imageRelayCandidates(realImageUrl, width);
+  return [relay1, realImageUrl, relay2];
+}
+
 export async function resolveProductImageViaProxy(productUrl: string, proxyEndpoint = "/api/product-image"): Promise<string | undefined> {
   if (!productUrl) return undefined;
   const cached = imageCache.get(productUrl);

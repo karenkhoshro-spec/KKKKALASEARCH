@@ -71,6 +71,7 @@ export const translations: Record<Lang, Dict> = {
     category: {
       back: "بازگشت",
       productsCount: "محصول",
+      selectSubcategory: "برای مشاهده محصولات، یکی از دسته‌بندی‌های بالا را انتخاب کنید",
     },
     product: {
       addToCart: "افزودن به سبد خرید",
@@ -170,7 +171,7 @@ export const translations: Record<Lang, Dict> = {
       empty: "هنوز محصولی به علاقه‌مندی‌ها اضافه نکرده‌اید.",
     },
     footer: {
-      about: "کالا سرچ، درگاه هوشمند جستجو و خرید محصولات پلاستیکی خانگی، با افتخار همراه اشکان پلاستیک.",
+      about: "کالا سرچ، درگاه هوشمند جستجو و انتخاب محصولات پلاستیکی خانگی؛ تجربه‌ای سریع، ساده و مطمئن برای یافتن محصول مورد نظر شما.",
       quickLinks: "دسترسی سریع",
       contact: "اطلاعات تماس",
       rights: "تمامی حقوق محفوظ است.",
@@ -252,6 +253,7 @@ export const translations: Record<Lang, Dict> = {
     category: {
       back: "Back",
       productsCount: "products",
+      selectSubcategory: "Pick a subcategory above to browse its products",
     },
     product: {
       addToCart: "Add to Cart",
@@ -351,7 +353,7 @@ export const translations: Record<Lang, Dict> = {
       empty: "You haven't added any products to your wishlist yet.",
     },
     footer: {
-      about: "Kala Search is a smart search & shopping gateway for household plastic products, proudly powered by Ashkan Plastic.",
+      about: "Kala Search is a smart gateway for discovering household plastic products — a fast, simple, and reliable search experience.",
       quickLinks: "Quick Links",
       contact: "Contact Info",
       rights: "All rights reserved.",
@@ -433,6 +435,7 @@ export const translations: Record<Lang, Dict> = {
     category: {
       back: "رجوع",
       productsCount: "منتج",
+      selectSubcategory: "اختر تصنيفًا فرعيًا من الأعلى لعرض منتجاته",
     },
     product: {
       addToCart: "أضف إلى السلة",
@@ -532,7 +535,7 @@ export const translations: Record<Lang, Dict> = {
       empty: "لم تقم بإضافة أي منتج إلى المفضلة بعد.",
     },
     footer: {
-      about: "كالا سيرش هي بوابة ذكية للبحث والتسوق عن المنتجات البلاستيكية المنزلية، بالتعاون الفخور مع أشكان بلاستيك.",
+      about: "كالا سيرش بوابة ذكية لاكتشاف المنتجات البلاستيكية المنزلية — تجربة بحث سريعة وبسيطة وموثوقة.",
       quickLinks: "روابط سريعة",
       contact: "معلومات الاتصال",
       rights: "جميع الحقوق محفوظة.",

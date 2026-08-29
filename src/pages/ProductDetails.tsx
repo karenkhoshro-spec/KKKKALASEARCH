@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ExternalLink, Minus, Plus, ShoppingCart, CheckCircle2, XCircle, Heart } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -8,6 +8,7 @@ import { useWishlist } from "../context/WishlistContext";
 import { useListContext, listContextToPath } from "../context/ListContext";
 import { getProductById } from "../data/products";
 import { isValidProductUrl } from "../data/csvSource";
+import { fullImageChain } from "../data/productImageResolver";
 import BackButton from "../components/BackButton";
 import "../components/ProductCard.css";
 
@@ -42,8 +43,18 @@ export default function ProductDetails() {
 
   // Product image: priority productImageUrl (from product_url page) > variation image > legacy image
   const rawActiveImage = selectedVariation?.image || (product as any).productImageUrl || product.image;
-  const [imgError, setImgError] = useState(false);
-  const activeImage = !imgError && rawActiveImage ? rawActiveImage : undefined;
+  // Fast-first chain (relay webp -> real site URL -> 2nd relay -> placeholder)
+  const imageChain = rawActiveImage ? fullImageChain(rawActiveImage, 900) : [];
+  const [imgAttempt, setImgAttempt] = useState(0);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const activeImage = imageChain[imgAttempt];
+  useEffect(() => { setImgAttempt(0); setImgLoaded(false); }, [rawActiveImage]);
+  // If an attempt stalls (neither load nor error), move on instead of leaving an empty box
+  useEffect(() => {
+    if (!rawActiveImage || imgLoaded || imgAttempt >= imageChain.length) return;
+    const timer = setTimeout(() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }, 6000);
+    return () => clearTimeout(timer);
+  }, [rawActiveImage, activeImage, imgLoaded]);
 
   // Bulk mapping: productUrl via data layer, with validation
   const rawActiveUrl = selectedVariation?.url || product.productUrl || product.ashkanProductUrl;
@@ -80,12 +91,16 @@ export default function ProductDetails() {
           <div className="glass product-media h-[min(38vh,320px)] rounded-3xl p-5 sm:h-[360px] sm:p-6 md:h-[420px]">
             {activeImage ? (
               <img
+                key={activeImage}
                 src={activeImage}
                 alt={product.name[lang]}
                 className="h-full w-full object-contain"
-                loading="lazy"
+                loading="eager"
+                fetchPriority="high"
                 decoding="async"
-                onError={() => setImgError(true)}
+                referrerPolicy="no-referrer"
+                onLoad={() => setImgLoaded(true)}
+                onError={() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }}
               />
             ) : (
               <span className="text-sm" style={{ color: "var(--text-muted)" }}>{t("product.imageUnavailable")}</span>

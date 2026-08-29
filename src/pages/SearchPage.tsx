@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useDeferredValue, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useListContext } from "../context/ListContext";
@@ -11,7 +11,9 @@ export default function SearchPage() {
   const query = params.get("q") ?? "";
   const { t, lang } = useLanguage();
   const { setListContext } = useListContext();
-  const results = searchProducts(query, lang);
+  // Perf: keep typing responsive — the full-catalog scan runs at deferred priority
+  const deferredQuery = useDeferredValue(query);
+  const results = searchProducts(deferredQuery, lang);
 
   useEffect(() => {
     setListContext({ type: "search", query });

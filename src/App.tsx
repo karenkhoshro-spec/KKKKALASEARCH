@@ -20,6 +20,7 @@ import CheckoutPage from "./pages/CheckoutPage";
 import AccountPage from "./pages/AccountPage";
 import WishlistPage from "./pages/WishlistPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import ImageTestPage from "./pages/ImageTestPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 function AppShell() {
@@ -69,6 +70,7 @@ function AppShell() {
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/account" element={<AccountPage />} />
+              <Route path="/image-test" element={<ImageTestPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </div>
