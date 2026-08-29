@@ -20,6 +20,7 @@ import CheckoutPage from "./pages/CheckoutPage";
 import AccountPage from "./pages/AccountPage";
 import WishlistPage from "./pages/WishlistPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 function AppShell() {
   const { hasChosenLanguage } = useLanguage();
@@ -88,7 +89,9 @@ export default function App() {
               <CartProvider>
                 <ListContextProvider>
                   <BrowserRouter>
+                    <ErrorBoundary>
                     <AppShell />
+                  </ErrorBoundary>
                   </BrowserRouter>
                 </ListContextProvider>
               </CartProvider>

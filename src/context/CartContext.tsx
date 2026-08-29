@@ -14,6 +14,7 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 const STORAGE_KEY = "kala-search-cart";
+export const resolveCartPrice = (product: Product, variation?: CartVariation) => variation?.price ?? product.price;
 
 function loadCart(): CartItem[] {
   try {
@@ -51,7 +52,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             productId: product.id,
             name,
             image: product.image,
-            price: variation?.price ?? product.price,
+            price: resolveCartPrice(product, variation),
             quantity,
             variation,
           },

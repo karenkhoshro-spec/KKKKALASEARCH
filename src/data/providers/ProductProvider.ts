@@ -28,6 +28,17 @@ export interface ProductProvider {
   getInventory(productId: string, variantId?: string): ProductInventory;
 }
 
+/** Async contract for a future API/database provider. The current local provider remains synchronous for backward compatibility. */
+export interface AsyncProductProvider {
+  getProducts(): Promise<Product[]>;
+  getProductById(id: string): Promise<Product | undefined>;
+  searchProducts(query: string, lang?: "fa" | "en" | "ar"): Promise<Product[]>;
+  getCategories(): Promise<Category[]>;
+  getVariants(productId: string): Promise<ProductVariation[]>;
+  getPrice(productId: string, variantId?: string): Promise<ProductPrice>;
+  getInventory(productId: string, variantId?: string): Promise<ProductInventory>;
+}
+
 export class LocalCsvProductProvider implements ProductProvider {
   constructor(
     private readonly source: {
