@@ -78,7 +78,7 @@ export default function CategoryPage() {
             ) : (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
                 {list.map((p) => (
-                  <div key={p.id} className="glass overflow-hidden rounded-2xl">
+                  <div key={p.id} className="ks-subcategory-frame">
                     <ProductCard product={p} minimal />
                   </div>
                 ))}
