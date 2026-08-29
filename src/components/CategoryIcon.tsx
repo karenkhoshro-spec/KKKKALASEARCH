@@ -339,6 +339,7 @@ export default function CategoryIcon({
         </svg>
       );
 
+    case "zanbil":
     case "shopping-basket-other":
       return (
         <svg {...svgProps}>

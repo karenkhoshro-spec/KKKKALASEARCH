@@ -422,7 +422,7 @@ const mergedRows: ProductSourceRow[] = productsRows.map((source) => {
 
 const primaryNames = [
   "سبد خرید", "سبد پیکنیک", "چهار پایه", "جا پودری/اسکاجی",
-  "سبد میوه و سبزی", "آبکش و سبد و کاسه", "فریزری", "جاصابونی", "سایر"
+  "سبد میوه و سبزی", "زنبیل", "فریزری", "جاصابونی", "سایر"
 ];
 const primaryMatchers: [string, string[]][] = [
   ["shopping-basket", ["سبد خرید"]],
@@ -430,11 +430,12 @@ const primaryMatchers: [string, string[]][] = [
   ["stool", ["چهار پایه", "چهارپایه"]],
   ["powder-sponge-holder", ["پودری", "اسکاج", "اسکاچ"]],
   ["fruit-vegetable-basket", ["میوه", "سبزی"]],
-  ["colander-bowl", ["آبکش", "کاسه", "سبد سینک"]],
+  ["zanbil", ["زنبیل"]],
   ["freezer", ["فریزری"]],
   ["soap-dish", ["صابونی"]],
 ];
 const otherRules: [string, string, string[]][] = [
+  ["colander-bowl", "آبکش و کاسه", ["آبکش", "کاسه", "سبد سینک"]],
   ["spice", "جا ادویه", ["ادویه"]],
   ["pitcher-glass", "پارچ و لیوان", ["پارچ", "لیوان"]],
   ["juicer", "آبمیوه گیری", ["آبمیوه گیری", "آبمیوه"]],
@@ -445,7 +446,6 @@ const otherRules: [string, string, string[]][] = [
   ["basin-bathtub", "لگن و وان", ["لگن", "وان"]],
   ["flower-pot", "گلدان", ["گلدان"]],
   ["plant-saucer", "زیر گلدان", ["زیر گلدان"]],
-  ["shopping-basket-other", "زنبیل", ["زنبیل"]],
   ["oval-basket", "سبد بیضی", ["سبد بیضی"]],
   ["janani", "جانانی", ["جانانی"]],
   ["organizer", "سبد و نظم‌دهنده", ["نظم دهنده", "نظم‌دهنده", "باکس", "جعبه نظم", "جعبه همه کاره", "فایل", "لوازم التحریر"]],

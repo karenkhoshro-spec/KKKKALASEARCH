@@ -10,7 +10,7 @@ import Logo from "../src/components/Logo";
 import { LanguageProvider } from "../src/i18n/LanguageContext";
 
 describe("KalaSearch Crystal Design System — Category Navigation", () => {
-  it("has exactly 9 primary categories (8 main + 1 other)", () => {
+  it("has exactly 9 primary categories (8 main + 1 other) with zanbil replacing colander", () => {
     expect(categories).toHaveLength(9);
     const categoryIds = categories.map((c) => c.id);
     expect(categoryIds).toEqual([
@@ -19,7 +19,7 @@ describe("KalaSearch Crystal Design System — Category Navigation", () => {
       "stool",
       "powder-sponge-holder",
       "fruit-vegetable-basket",
-      "colander-bowl",
+      "zanbil",
       "freezer",
       "soap-dish",
       "other",
@@ -31,9 +31,10 @@ describe("KalaSearch Crystal Design System — Category Navigation", () => {
     expect(categories[8].name.fa).toBe("سایر");
   });
 
-  it("preserves all existing subcategories inside 'other'", () => {
+  it("preserves all subcategories inside 'other' including colander-bowl (آبکش و کاسه)", () => {
     const otherSubIds = importedOtherSubcategories.map((s) => s.id);
     const requiredSubs = [
+      "colander-bowl",
       "spice",
       "pitcher-glass",
       "juicer",
@@ -44,7 +45,6 @@ describe("KalaSearch Crystal Design System — Category Navigation", () => {
       "basin-bathtub",
       "flower-pot",
       "plant-saucer",
-      "shopping-basket-other",
       "oval-basket",
       "janani",
       "organizer",
@@ -91,11 +91,12 @@ describe("KalaSearch Crystal Design System — Category Navigation", () => {
     expect(getProductsByCategory("stool").length).toBeGreaterThan(0);
     expect(getProductsByCategory("powder-sponge-holder").length).toBeGreaterThan(0);
     expect(getProductsByCategory("fruit-vegetable-basket").length).toBeGreaterThan(0);
-    expect(getProductsByCategory("colander-bowl").length).toBeGreaterThan(0);
+    expect(getProductsByCategory("zanbil").length).toBeGreaterThan(0);
     expect(getProductsByCategory("freezer").length).toBeGreaterThan(0);
     expect(getProductsByCategory("soap-dish").length).toBeGreaterThan(0);
 
-    // Subcategories in "other"
+    // Subcategories in "other" including colander-bowl (آبکش و کاسه)
+    expect(getProductsByCategory("other", "colander-bowl").length).toBeGreaterThan(0);
     expect(getProductsByCategory("other", "bucket").length).toBeGreaterThan(0);
     expect(getProductsByCategory("other", "basin-bathtub").length).toBeGreaterThan(0);
     expect(getProductsByCategory("other", "spice").length).toBeGreaterThan(0);
@@ -116,6 +117,7 @@ describe("KalaSearch Crystal Design System — Category Navigation", () => {
     const linkMatches = html.match(/href="\/category\/[^"]+"/g);
     expect(linkMatches).toHaveLength(9);
     expect(linkMatches?.[0]).toBe('href="/category/shopping-basket"');
+    expect(linkMatches?.[5]).toBe('href="/category/zanbil"');
     expect(linkMatches?.[8]).toBe('href="/category/other"');
   });
 
