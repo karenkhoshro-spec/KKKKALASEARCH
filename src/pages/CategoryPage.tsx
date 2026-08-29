@@ -6,13 +6,7 @@ import { categories } from "../data/categories";
 import { getOtherSubcategoryCounts, getProductsByCategory } from "../data/products";
 import ProductCard from "../components/ProductCard";
 import BackButton from "../components/BackButton";
-
-const subcategoryIcons: Record<string, string> = {
-  spice: "🧂", "pitcher-glass": "🥤", juicer: "🍹", "ice-holder": "🧊", "butter-holder": "🧈", "spoon-holder": "🥄",
-  bucket: "🪣", "basin-bathtub": "🛁", "plant-saucer": "🪴", "flower-pot": "🌷", "shopping-basket-other": "🧺", "oval-basket": "🧺",
-  janani: "🗃️", organizer: "📦", "laundry-basket": "👕", "kitchen-tools": "🍴", "cleaning-tools": "🧹", storage: "🫙",
-  tray: "🍽️", chair: "🪑", hanger: "🧷", "paper-holder": "🧻", toolbox: "🧰", "straw-basket": "🥖",
-};
+import CategoryIcon from "../components/CategoryIcon";
 
 export default function CategoryPage() {
   const { categoryId = "" } = useParams();
@@ -27,7 +21,15 @@ export default function CategoryPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-      <div className="mb-5 flex items-center justify-between"><BackButton to="/" label={t("category.back")} /><h1 className="flex items-center gap-2 text-2xl font-bold sm:text-3xl" style={{ color: "var(--text-primary)" }}><span>{category?.icon}</span>{category ? category.name[lang] : ""}</h1><span /></div>
+      <div className="mb-5 flex items-center justify-between">
+        <BackButton to="/" label={t("category.back")} />
+        <h1 className="flex items-center gap-2.5 text-2xl font-bold sm:text-3xl" style={{ color: "var(--text-primary)" }}>
+          <CategoryIcon id={categoryId} size={30} />
+          <span>{category ? category.name[lang] : ""}</span>
+        </h1>
+        <span />
+      </div>
+
       {subcategories.length > 0 && (
         <div className="mb-5 grid grid-cols-3 gap-2 rounded-2xl p-2 sm:grid-cols-4 md:grid-cols-6">
           {[...subcategories].sort((a, b) => b.count - a.count || a.name.fa.localeCompare(b.name.fa, "fa")).map((sub) => {
@@ -38,12 +40,18 @@ export default function CategoryPage() {
                 key={sub.id}
                 onClick={() => setSubcategoryId(selected ? undefined : sub.id)}
                 aria-pressed={selected}
-                className="glass subcategory-tile inline-flex h-full flex-col items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs font-semibold transition-colors"
-                style={{ borderColor: selected ? "var(--accent-1)" : "var(--border-soft)", color: "var(--text-primary)", ...(selected ? { boxShadow: "0 0 0 2px var(--accent-1)" } : {}) }}
+                className="glass subcategory-tile inline-flex h-full flex-col items-center justify-center gap-2 rounded-xl px-2 py-3 text-xs font-semibold transition-all duration-200"
+                style={{
+                  borderColor: selected ? "var(--accent-1)" : "var(--border-soft)",
+                  color: "var(--text-primary)",
+                  ...(selected ? { boxShadow: "0 0 0 2px var(--accent-1), 0 0 16px var(--accent-glow)" } : {})
+                }}
               >
-                <span aria-hidden="true" className="text-xl leading-none">{subcategoryIcons[sub.id] ?? "📁"}</span>
+                <div className="flex h-8 w-8 items-center justify-center">
+                  <CategoryIcon id={sub.id} size={28} />
+                </div>
                 <span className="text-center leading-5">{sub.name[lang]}</span>
-                <span className="rounded-full px-1.5 text-[10px] font-medium" style={{ background: "var(--input-bg)", color: "var(--text-muted)" }}>
+                <span className="rounded-full px-1.5 py-0.5 text-[10px] font-medium" style={{ background: "var(--input-bg)", color: "var(--text-muted)" }}>
                   {sub.count} {t("category.productsCount")}
                 </span>
               </button>
@@ -51,15 +59,18 @@ export default function CategoryPage() {
           })}
         </div>
       )}
+
       {subcategories.length === 0 && (
         <>
           <p className="mb-5 text-sm" style={{ color: "var(--text-muted)" }}>{list.length} {t("category.productsCount")}</p>
           {list.length === 0 ? <p className="py-16 text-center text-sm" style={{ color: "var(--text-muted)" }}>{t("search.noResults")}</p> : <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">{list.map((p) => <ProductCard key={p.id} product={p} minimal />)}</div>}
         </>
       )}
+
       {subcategories.length > 0 && !subcategoryId && (
         <p className="py-16 text-center text-sm" style={{ color: "var(--text-muted)" }}>{t("category.selectSubcategory")}</p>
       )}
+
       {subcategories.length > 0 && subcategoryId && (() => {
         const selectedSub = subcategories.find((s) => s.id === subcategoryId);
         return (
@@ -69,7 +80,7 @@ export default function CategoryPage() {
                 className="inline-flex w-fit items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-bold"
                 style={{ color: "var(--accent-1)", border: "1.5px solid var(--accent-1)", background: "rgba(127,127,127,0.10)" }}
               >
-                <span aria-hidden="true">{subcategoryIcons[subcategoryId] ?? "📁"}</span>
+                <CategoryIcon id={subcategoryId} size={20} />
                 {selectedSub?.name[lang]}
               </span>
             </div>

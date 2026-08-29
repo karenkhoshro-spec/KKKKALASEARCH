@@ -423,21 +423,46 @@ const mergedRows: ProductSourceRow[] = productsRows.map((source) => {
 });
 
 const categoryNames = categoryRows.sort((a, b) => Number(a.sort_order) - Number(b.sort_order)).map((row) => row.category_name).filter(Boolean);
-const primaryNames = categoryNames.length >= 8 ? categoryNames.slice(0, 8).concat("سایر") : ["سبد خرید", "سبد پیکنیک", "چهار پایه", "جا پودری/اسکاجی", "سبد میوه و سبزی", "آبکش و سبد و کاسه", "فریزری", "جاصابونی", "سایر"];
+const primaryNames = categoryNames.length >= 15 ? categoryNames : [
+  "سبد خرید", "سبد پیکنیک", "چهار پایه", "جا پودری/اسکاجی", "سبد میوه و سبزی",
+  "آبکش و سبد و کاسه", "فریزری", "جاصابونی", "جا ادویه", "پارچ و لیوان",
+  "آبمیوه گیری", "جا یخی", "سطل", "لگن و وان", "سایر"
+];
 const primaryMatchers: [string, string[]][] = [
-  ["shopping-basket", ["سبد خرید"]], ["picnic-basket", ["پیک نیک", "پیکنیک"]], ["stool", ["چهار پایه", "چهارپایه"]],
-  ["powder-sponge-holder", ["پودری", "اسکاج", "اسکاچ"]], ["fruit-vegetable-basket", ["میوه", "سبزی"]],
-  ["colander-bowl", ["آبکش", "کاسه", "سبد سینک"]], ["freezer", ["فریزری", "فریزری"]], ["soap-dish", ["صابونی"]],
+  ["shopping-basket", ["سبد خرید"]],
+  ["picnic-basket", ["پیک نیک", "پیکنیک"]],
+  ["stool", ["چهار پایه", "چهارپایه"]],
+  ["powder-sponge-holder", ["پودری", "اسکاج", "اسکاچ"]],
+  ["fruit-vegetable-basket", ["میوه", "سبزی"]],
+  ["colander-bowl", ["آبکش", "کاسه", "سبد سینک"]],
+  ["freezer", ["فریزری"]],
+  ["soap-dish", ["صابونی"]],
+  ["spice", ["ادویه"]],
+  ["pitcher-glass", ["پارچ", "لیوان"]],
+  ["juicer", ["آبمیوه گیری", "آبمیوه"]],
+  ["ice-holder", ["جایخی", "جا یخی"]],
+  ["bucket", ["سطل", "درب سطل"]],
+  ["basin-bathtub", ["لگن", "وان"]],
 ];
 const otherRules: [string, string, string[]][] = [
-  ["spice", "جا ادویه", ["ادویه"]], ["pitcher-glass", "پارچ و لیوان", ["پارچ", "لیوان"]], ["juicer", "آبمیوه گیری", ["آبمیوه گیری", "آبمیوه"]],
-  ["ice-holder", "جا یخی", ["جایخی", "جا یخی"]], ["butter-holder", "جا کره‌ای", ["جا کره ای", "جا کره‌ای"]], ["spoon-holder", "جا قاشقی", ["جا قاشقی", "جاقاشقی"]],
-  ["bucket", "سطل", ["سطل", "درب سطل"]], ["basin-bathtub", "لگن و وان", ["لگن", "وان"]], ["plant-saucer", "زیر گلدان", ["زیر گلدان"]], ["flower-pot", "گلدان", ["گلدان"]],
-  ["shopping-basket-other", "زنبیل", ["زنبیل"]], ["oval-basket", "سبد بیضی", ["سبد بیضی"]], ["janani", "جانانی", ["جانانی"]], ["organizer", "سبد و نظم‌دهنده", ["نظم دهنده", "نظم‌دهنده", "باکس", "جعبه نظم", "جعبه همه کاره", "فایل", "لوازم التحریر"]],
-  ["laundry-basket", "سبد رخت و لباس", ["سبد رخت", "سبدرخت"]], ["kitchen-tools", "لوازم آشپزخانه", ["تخته گوشت", "پیمانه", "قندان", "شکرپاش", "جاشکری", "نمکدان", "نمکپاش", "قیف", "صافی سینک", "سبد سینک", "تفاله گیر", "جا تخم مرغی", "سرویس چلو"]],
-  ["cleaning-tools", "لوازم نظافت", ["جارو دستی", "خاک انداز", "بادبزن", "مگس کش", "توالت شوی", "پادری"]], ["storage", "ظروف و نگهدارنده", ["حبوبات", "جابرنجی", "ظرف", "کریستال", "جامایع", "چند منظوره"]],
-  ["tray", "سینی", ["سینی"]], ["chair", "صندلی حمام", ["صندلی حمام"]], ["hanger", "لوازم آویز", ["گیره آویز"]], ["paper-holder", "جاحوله و کاغذی", ["کاغذی"]],
-  ["toolbox", "جعبه ابزار", ["جعبه ابزار"]], ["straw-basket", "سبد نان", ["سبد نان", "سبد باگت"]],
+  ["butter-holder", "جا کره‌ای", ["جا کره ای", "جا کره‌ای"]],
+  ["spoon-holder", "جا قاشقی", ["جا قاشقی", "جاقاشقی"]],
+  ["flower-pot", "گلدان", ["گلدان"]],
+  ["plant-saucer", "زیر گلدان", ["زیر گلدان"]],
+  ["shopping-basket-other", "زنبیل", ["زنبیل"]],
+  ["oval-basket", "سبد بیضی", ["سبد بیضی"]],
+  ["janani", "جانانی", ["جانانی"]],
+  ["organizer", "سبد و نظم‌دهنده", ["نظم دهنده", "نظم‌دهنده", "باکس", "جعبه نظم", "جعبه همه کاره", "فایل", "لوازم التحریر"]],
+  ["laundry-basket", "سبد رخت و لباس", ["سبد رخت", "سبدرخت"]],
+  ["kitchen-tools", "لوازم آشپزخانه", ["تخته گوشت", "پیمانه", "قندان", "شکرپاش", "جاشکری", "نمکدان", "نمکپاش", "قیف", "صافی سینک", "تفاله گیر", "جا تخم مرغی", "سرویس چلو"]],
+  ["cleaning-tools", "لوازم نظافت", ["جارو دستی", "خاک انداز", "بادبزن", "مگس کش", "توالت شوی", "پادری"]],
+  ["storage", "ظروف و نگهدارنده", ["حبوبات", "جابرنجی", "ظرف", "کریستال", "جامایع", "چند منظوره"]],
+  ["tray", "سینی", ["سینی"]],
+  ["chair", "صندلی حمام", ["صندلی حمام"]],
+  ["hanger", "لوازم آویز", ["گیره آویز"]],
+  ["paper-holder", "جاحوله و کاغذی", ["کاغذی"]],
+  ["toolbox", "جعبه ابزار", ["جعبه ابزار"]],
+  ["straw-basket", "سبد نان", ["سبد نان", "سبد باگت"]],
 ];
 function primaryCategory(name: string) { return primaryMatchers.find(([, words]) => words.some((word) => name.includes(word)))?.[0]; }
 function otherSubcategory(name: string) {
@@ -447,9 +472,17 @@ function otherSubcategory(name: string) {
 }
 function categoryIdFor(name: string) { return primaryCategory(name) ?? "other"; }
 
-const icons = ["🛒", "🧺", "🪑", "🧽", "🍎", "🥣", "❄️", "🧼", "📦"];
-export const importedCategories: Category[] = primaryNames.map((name, index) => ({ id: index === 8 ? "other" : primaryMatchers[index]?.[0] ?? `category-${index + 1}`, name: localized(name), icon: icons[index], sortOrder: index + 1 }));
-export const importedOtherSubcategories = otherRules.map(([id, label]) => ({ id, name: localized(label) }));
+export const importedCategories: Category[] = primaryNames.map((name, index) => {
+  const isLast = index === primaryNames.length - 1;
+  const id = isLast ? "other" : primaryMatchers[index]?.[0] ?? `category-${index + 1}`;
+  return {
+    id,
+    name: localized(name),
+    icon: id,
+    sortOrder: index + 1,
+  };
+});
+export const importedOtherSubcategories = otherRules.map(([id, label]) => ({ id, name: localized(label), icon: id }));
 
 const colorTokens: Record<string, string> = {
   "آبی روشن": "#60a5fa", "آبی تیره": "#1d4ed8", "سبز روشن": "#86efac", "سبز تیره": "#15803d", "قرمز روشن": "#f87171", "قرمز تیره": "#b91c1c", "قهوه‌ای": "#8b5e3c", "قهوه ای": "#8b5e3c", "سرمه‌ای": "#1e3a8a", "سرمه ای": "#1e3a8a", "نقره‌ای": "#cbd5e1", "نقره ای": "#cbd5e1", "بی‌رنگ": "#f8fafc", "بی رنگ": "#f8fafc", "صورتی": "#f9a8d4", "طوسی": "#94a3b8", "خاکستری": "#6b7280", "کرم": "#d6c7a1", "موکا": "#8b6f5a", "وانیلی": "#f3e5ab", "عسلی": "#d69e2e", "کرپ": "#d8c3a5", "سفید": "#f8fafc", "قرمز": "#ef4444", "سبز": "#22c55e", "آبی": "#3b82f6", "مشکی": "#111827", "سیاه": "#111827", "زرد": "#eab308", "نارنجی": "#f97316", "بنفش": "#a855f7", "شفاف": "#e2e8f0", "بژ": "#d6c7a1", "طلایی": "#d4a72c", "مسی": "#b87333"
