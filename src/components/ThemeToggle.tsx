@@ -6,10 +6,30 @@ export default function ThemeToggle({ showLabel = false }: { showLabel?: boolean
   const { theme, toggleTheme } = useTheme();
   const { t } = useLanguage();
   const isDark = theme === "dark";
+
   return (
-    <button onClick={toggleTheme} title={isDark ? t("theme.light") : t("theme.dark")} aria-label={isDark ? t("theme.light") : t("theme.dark")} aria-pressed={isDark} className={`flex items-center justify-center rounded-full transition-all duration-300 hover:scale-105 hover:bg-white/10 ${showLabel ? "h-10 gap-2 px-3 text-xs font-bold" : "h-9 w-9 text-base"}`} style={{ color: "var(--text-primary)" }}>
-      {isDark ? <Moon size={showLabel ? 18 : 20} /> : <Sun size={showLabel ? 18 : 20} />}
-      {showLabel && <span>{isDark ? t("theme.dark") : t("theme.light")}</span>}
+    <button
+      onClick={toggleTheme}
+      type="button"
+      title={isDark ? t("theme.light") : t("theme.dark")}
+      aria-label={isDark ? t("theme.light") : t("theme.dark")}
+      aria-pressed={isDark}
+      className={`ks-crystal-theme-switch flex items-center justify-center transition-all duration-300 ${
+        showLabel
+          ? "h-10 gap-2 rounded-2xl px-3.5 text-xs font-bold"
+          : "h-9 w-9 rounded-full"
+      }`}
+    >
+      <span className="relative z-10 flex items-center justify-center">
+        {isDark ? (
+          <Moon size={showLabel ? 16 : 18} className="text-violet-300 transition-transform duration-300 hover:-rotate-12" />
+        ) : (
+          <Sun size={showLabel ? 16 : 18} className="text-amber-500 transition-transform duration-300 hover:rotate-45" />
+        )}
+      </span>
+      {showLabel && (
+        <span className="relative z-10">{isDark ? t("theme.dark") : t("theme.light")}</span>
+      )}
     </button>
   );
 }

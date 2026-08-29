@@ -107,10 +107,20 @@ export default function ProductDetails() {
             )}
           </div>
           {activeUrl && (
-            <div className="flex flex-col gap-2">
-              <a href={activeUrl} target="_blank" rel="noopener noreferrer" className="glass inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all hover:scale-[1.02]" style={{ color: "var(--accent-1)" }}><ExternalLink size={15} />{t("product.viewOnAshkan")}</a>
-              <a href={activeUrl} target="_blank" rel="noopener noreferrer" className="ks-product-details-url-cta" aria-label={`مشاهده صفحه کامل محصول ${product.name[lang]}`}>مشاهده صفحه کامل محصول ↗</a>
-            </div>
+            <a
+              href={activeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="glass inline-flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold transition-all duration-300 hover:scale-[1.01] active:scale-95"
+              style={{
+                color: "var(--accent-1)",
+                border: "1px solid var(--border-soft)",
+                boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.12), 0 2px 10px rgba(0, 0, 0, 0.08)",
+              }}
+            >
+              <ExternalLink size={16} />
+              <span>{t("product.viewOnAshkan") || "مشاهده در سایت اشکان پلاستیک"}</span>
+            </a>
           )}
         </div>
 
@@ -149,21 +159,35 @@ export default function ProductDetails() {
           </p>
 
           {allSpecifications.length > 0 && (
-            <div className="glass mt-5 rounded-2xl p-4">
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{t("product.specTitle")}</h3>
-                {allSpecifications.length > 1 && <button type="button" onClick={() => setShowSpecs((open) => !open)} className="rounded-xl px-3 py-1.5 text-xs font-bold transition-colors hover:bg-white/10" style={{ color: "var(--accent-1)" }}>
-                  {showSpecs ? t("product.less") : t("product.more")}
-                </button>}
-              </div>
-              <p className="mt-2 text-sm leading-6" style={{ color: "var(--text-secondary)" }}>{allSpecifications[0]}</p>
-              {allSpecifications.length > 1 && <div className={`grid transition-[grid-template-rows] duration-300 ${showSpecs ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
-                <div className="overflow-hidden">
-                  <ul className="mt-3 flex flex-col gap-1.5 border-t pt-3" style={{ borderColor: "var(--border-soft)" }}>
-                    {allSpecifications.slice(1).map((specification, i) => <li key={i} className="flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}><span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: "var(--accent-1)" }} />{specification}</li>)}
+            <div className="glass mt-5 rounded-2xl p-4" style={{ border: "1px solid var(--border-soft)" }}>
+              <button
+                type="button"
+                onClick={() => setShowSpecs((open) => !open)}
+                className="flex w-full items-center justify-between gap-3 text-start transition-opacity hover:opacity-85"
+                aria-expanded={showSpecs}
+              >
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{t("product.specTitle")}</h3>
+                  <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: "var(--chip-bg)", color: "var(--accent-1)" }}>
+                    {allSpecifications.length}
+                  </span>
+                </div>
+                <span className="text-xs font-bold transition-transform duration-300" style={{ color: "var(--accent-1)", transform: showSpecs ? "rotate(180deg)" : "rotate(0deg)" }}>
+                  ▼
+                </span>
+              </button>
+              {showSpecs && (
+                <div className="mt-3 max-h-60 overflow-y-auto border-t pt-3" style={{ borderColor: "var(--border-soft)" }}>
+                  <ul className="flex flex-col gap-2">
+                    {allSpecifications.map((specification, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm leading-6" style={{ color: "var(--text-secondary)" }}>
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: "var(--accent-1)" }} />
+                        <span>{specification}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
-              </div>}
+              )}
             </div>
           )}
 
