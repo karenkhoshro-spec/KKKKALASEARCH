@@ -1,40 +1,82 @@
 /* ==========================================================================
-   KalaSearch - Category Navigation (Strict 2 Rows × 7 Columns = 14 Tiles)
-   Scoped styling for Neon Fantasy icons, compact tiles, zero overflow.
+   KalaSearch - Category Navigation (8 Main Categories + 1 Other = 9 Tiles)
+   Strict 2-Row Balanced Layout with ZERO Horizontal Scroll.
    ========================================================================== */
 
 .ks-category-container {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem; /* gap between row 1 and row 2 */
 }
 
-/* Strict 7 columns × 2 rows grid — NO 3rd row, NO horizontal scroll */
-.ks-category-grid-14 {
+@media (min-width: 640px) {
+  .ks-category-container {
+    gap: 0.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ks-category-container {
+    gap: 0.75rem;
+  }
+}
+
+/* Row 1: Strict 8 Columns in 1 Row — NO 2nd row for these 8 items */
+.ks-category-grid-8 {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: 0.25rem; /* ~4px on ultra-small mobile */
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 0.25rem; /* 4px on ultra-small mobile */
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
 }
 
 @media (min-width: 360px) {
-  .ks-category-grid-14 {
-    gap: 0.35rem; /* ~5.6px */
+  .ks-category-grid-8 {
+    gap: 0.35rem;
   }
 }
 
 @media (min-width: 640px) {
-  .ks-category-grid-14 {
-    gap: 0.5rem; /* 8px */
+  .ks-category-grid-8 {
+    gap: 0.5rem;
   }
 }
 
 @media (min-width: 1024px) {
-  .ks-category-grid-14 {
-    gap: 0.75rem; /* 12px */
+  .ks-category-grid-8 {
+    gap: 0.75rem;
+  }
+}
+
+/* Row 2: "Other" Tile Centered */
+.ks-category-row-other {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.ks-category-tile-other {
+  width: 25%;
+  min-width: 72px;
+  max-width: 130px;
+}
+
+@media (min-width: 640px) {
+  .ks-category-tile-other {
+    width: 20%;
+    max-width: 150px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ks-category-tile-other {
+    width: 15%;
+    max-width: 160px;
   }
 }
 
@@ -102,7 +144,7 @@ html[data-theme="light"] .ks-category-tile:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.15rem;
   flex-shrink: 0;
 }
 
@@ -146,7 +188,7 @@ html[data-theme="light"] .subcategory-tile[aria-pressed="true"] .ks-category-ico
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 8.5px;
+  font-size: 8px;
   font-weight: 700;
   line-height: 1.2;
   color: var(--text-primary);
@@ -155,13 +197,13 @@ html[data-theme="light"] .subcategory-tile[aria-pressed="true"] .ks-category-ico
 
 @media (min-width: 360px) {
   .ks-category-label {
-    font-size: 9.5px;
+    font-size: 9px;
   }
 }
 
 @media (min-width: 480px) {
   .ks-category-label {
-    font-size: 11px;
+    font-size: 10.5px;
   }
 }
 
