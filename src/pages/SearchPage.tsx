@@ -1,10 +1,10 @@
 import { useDeferredValue, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
+import { X, Sparkles, Search } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useListContext } from "../context/ListContext";
 import { searchProducts } from "../data/products";
 import ProductCard from "../components/ProductCard";
-import BackButton from "../components/BackButton";
 
 export default function SearchPage() {
   const [params] = useSearchParams();
@@ -20,25 +20,47 @@ export default function SearchPage() {
   }, [query, setListContext]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-      <div className="mb-5 flex items-center justify-between">
-        <BackButton to="/" label={t("search.back")} />
-        <span />
+    <div className="mx-auto max-w-4xl px-4 py-5 sm:px-6">
+      {/* Search overlay header with elegant crystal close button */}
+      <div className="mb-4 flex items-center justify-between border-b pb-3" style={{ borderColor: "var(--border-soft)" }}>
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl" style={{ background: "var(--chip-bg)", color: "var(--accent-1)" }}>
+            <Search size={17} />
+          </div>
+          <div>
+            <h1 className="text-lg font-extrabold sm:text-xl" style={{ color: "var(--text-primary)" }}>
+              {t("search.resultsFor")} «{query}»
+            </h1>
+            <p className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+              {results.length} {t("search.resultsCount")}
+            </p>
+          </div>
+        </div>
+
+        {/* Elegant small crystal close X button */}
+        <Link
+          to="/"
+          aria-label="بستن"
+          className="ks-crystal-close-btn flex h-9 w-9 items-center justify-center rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
+          style={{
+            background: "var(--surface-strong)",
+            border: "1px solid var(--border-soft)",
+            color: "var(--text-primary)",
+          }}
+        >
+          <X size={18} />
+        </Link>
       </div>
 
-      <h1 className="mb-1 text-2xl font-bold sm:text-3xl" style={{ color: "var(--text-primary)" }}>
-        {t("search.resultsFor")} «{query}»
-      </h1>
-      <p className="mb-6 text-sm" style={{ color: "var(--text-muted)" }}>
-        {results.length} {t("search.resultsCount")}
-      </p>
-
       {results.length === 0 ? (
-        <p className="py-16 text-center text-sm" style={{ color: "var(--text-muted)" }}>
-          {t("search.noResults")}
-        </p>
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <Sparkles size={28} className="mb-2 text-violet-400 opacity-60" />
+          <p className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>
+            {t("search.noResults")}
+          </p>
+        </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 md:grid-cols-4">
           {results.map((p) => (
             <ProductCard key={p.id} product={p} minimal />
           ))}

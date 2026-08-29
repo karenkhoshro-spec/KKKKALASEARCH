@@ -17,11 +17,11 @@ describe("KalaSearch Crystal Design System — Category Navigation", () => {
       "shopping-basket",
       "picnic-basket",
       "stool",
-      "powder-sponge-holder",
+      "zanbil",
       "fruit-vegetable-basket",
-      "colander-bowl",
+      "basin-bathtub",
+      "pitcher-glass",
       "freezer",
-      "soap-dish",
       "other",
     ]);
   });
@@ -31,20 +31,20 @@ describe("KalaSearch Crystal Design System — Category Navigation", () => {
     expect(categories[8].name.fa).toBe("سایر");
   });
 
-  it("preserves all subcategories inside 'other'", () => {
+  it("preserves removed primary categories under 'other' subcategories", () => {
     const otherSubIds = importedOtherSubcategories.map((s) => s.id);
     const requiredSubs = [
+      "powder-sponge-holder",
+      "colander-bowl",
+      "soap-dish",
       "spice",
-      "pitcher-glass",
       "juicer",
       "ice-holder",
       "butter-holder",
       "spoon-holder",
       "bucket",
-      "basin-bathtub",
       "flower-pot",
       "plant-saucer",
-      "shopping-basket-other",
       "oval-basket",
       "janani",
       "organizer",
@@ -89,18 +89,18 @@ describe("KalaSearch Crystal Design System — Category Navigation", () => {
     expect(getProductsByCategory("shopping-basket").length).toBeGreaterThan(0);
     expect(getProductsByCategory("picnic-basket").length).toBeGreaterThan(0);
     expect(getProductsByCategory("stool").length).toBeGreaterThan(0);
-    expect(getProductsByCategory("powder-sponge-holder").length).toBeGreaterThan(0);
+    expect(getProductsByCategory("zanbil").length).toBeGreaterThan(0);
     expect(getProductsByCategory("fruit-vegetable-basket").length).toBeGreaterThan(0);
-    expect(getProductsByCategory("colander-bowl").length).toBeGreaterThan(0);
+    expect(getProductsByCategory("basin-bathtub").length).toBeGreaterThan(0);
+    expect(getProductsByCategory("pitcher-glass").length).toBeGreaterThan(0);
     expect(getProductsByCategory("freezer").length).toBeGreaterThan(0);
-    expect(getProductsByCategory("soap-dish").length).toBeGreaterThan(0);
 
     // Subcategories in "other"
-    expect(getProductsByCategory("other", "shopping-basket-other").length).toBeGreaterThan(0);
+    expect(getProductsByCategory("other", "powder-sponge-holder").length).toBeGreaterThan(0);
+    expect(getProductsByCategory("other", "colander-bowl").length).toBeGreaterThan(0);
+    expect(getProductsByCategory("other", "soap-dish").length).toBeGreaterThan(0);
     expect(getProductsByCategory("other", "bucket").length).toBeGreaterThan(0);
-    expect(getProductsByCategory("other", "basin-bathtub").length).toBeGreaterThan(0);
     expect(getProductsByCategory("other", "spice").length).toBeGreaterThan(0);
-    expect(getProductsByCategory("other", "ice-holder").length).toBeGreaterThan(0);
     expect(getProductsByCategory("other", "cleaning-tools").length).toBeGreaterThan(0);
   });
 
@@ -117,7 +117,9 @@ describe("KalaSearch Crystal Design System — Category Navigation", () => {
     const linkMatches = html.match(/href="\/category\/[^"]+"/g);
     expect(linkMatches).toHaveLength(9);
     expect(linkMatches?.[0]).toBe('href="/category/shopping-basket"');
-    expect(linkMatches?.[5]).toBe('href="/category/colander-bowl"');
+    expect(linkMatches?.[3]).toBe('href="/category/zanbil"');
+    expect(linkMatches?.[5]).toBe('href="/category/basin-bathtub"');
+    expect(linkMatches?.[6]).toBe('href="/category/pitcher-glass"');
     expect(linkMatches?.[8]).toBe('href="/category/other"');
   });
 
