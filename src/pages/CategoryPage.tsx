@@ -5,7 +5,7 @@ import { useListContext } from "../context/ListContext";
 import { categories } from "../data/categories";
 import { getOtherSubcategoryCounts, getProductsByCategory } from "../data/products";
 import ProductCard from "../components/ProductCard";
-import BackButton from "../components/BackButton";
+import CategoryOverlayHeader from "../components/CategoryOverlayHeader";
 import CategoryIcon from "../components/CategoryIcon";
 
 export default function CategoryPage() {
@@ -20,15 +20,12 @@ export default function CategoryPage() {
   useEffect(() => { setListContext({ type: "category", categoryId }); setSubcategoryId(undefined); }, [categoryId, setListContext]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-      <div className="mb-5 flex items-center justify-between">
-        <BackButton to="/" label={t("category.back")} />
-        <h1 className="flex items-center gap-2.5 text-2xl font-bold sm:text-3xl" style={{ color: "var(--text-primary)" }}>
-          <CategoryIcon id={categoryId} size={30} />
-          <span>{category ? category.name[lang] : ""}</span>
-        </h1>
-        <span />
-      </div>
+    <div className="mx-auto max-w-5xl px-3.5 py-5 sm:px-6">
+      <CategoryOverlayHeader
+        categoryId={categoryId}
+        title={category ? category.name[lang] : ""}
+        to="/"
+      />
 
       {subcategories.length > 0 && (
         <div className="mb-5 grid grid-cols-3 gap-2 rounded-2xl p-2 sm:grid-cols-4 md:grid-cols-6">

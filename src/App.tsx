@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { LanguageProvider, useLanguage } from "./i18n/LanguageContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ToastProvider } from "./context/ToastContext";
 import { CartProvider } from "./context/CartContext";
 import { AccountProvider } from "./context/AccountContext";
 import { WishlistProvider } from "./context/WishlistContext";
-import { ListContextProvider } from "./context/ListContext";
+import { ListContextProvider, useListContext, listContextToPath } from "./context/ListContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import LanguageWelcomeModal from "./components/LanguageWelcomeModal";
@@ -26,14 +26,45 @@ import ErrorBoundary from "./components/ErrorBoundary";
 function AppShell() {
   const { hasChosenLanguage } = useLanguage();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { listContext } = useListContext();
   const isHome = location.pathname === "/";
   const [showWelcome, setShowWelcome] = useState(!hasChosenLanguage);
+
+  const backPath = listContext.type === "home" ? "/" : listContextToPath(listContext);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     if (!isHome) document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = previousOverflow; };
   }, [isHome]);
+
+  // Close overlay on ESC key (desktop)
+  useEffect(() => {
+    if (isHome) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (location.pathname.startsWith("/product/")) {
+          navigate(backPath);
+        } else {
+          navigate("/");
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isHome, location.pathname, backPath, navigate]);
+
+  // Handle backdrop touch / click outside content panel
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      if (location.pathname.startsWith("/product/")) {
+        navigate(backPath);
+      } else {
+        navigate("/");
+      }
+    }
+  };
 
   return (
     <div className="relative min-h-screen">
@@ -58,8 +89,23 @@ function AppShell() {
       <Header />
       <main>
         {!isHome && <div className="min-h-screen" aria-hidden="true"><Home /></div>}
-        <div className={isHome ? "" : "fixed inset-0 z-[100] overflow-y-auto bg-black/45 px-2 py-6 backdrop-blur-sm sm:px-6"}>
-          <div className={isHome ? "" : "glass-strong mx-auto my-4 max-h-[88vh] w-[92vw] max-w-6xl overflow-y-auto rounded-3xl"}>
+        <div
+          className={
+            isHome
+              ? ""
+              : "fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/55 px-2.5 py-6 backdrop-blur-md sm:px-6"
+          }
+          onClick={isHome ? undefined : handleBackdropClick}
+        >
+          <div
+            className={
+              isHome
+                ? ""
+                : "glass-strong mx-auto my-auto max-h-[88vh] w-[94vw] max-w-5xl overflow-y-auto rounded-[28px] border shadow-2xl"
+            }
+            style={isHome ? undefined : { borderColor: "var(--border-strong)" }}
+            onClick={isHome ? undefined : (e) => e.stopPropagation()}
+          >
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/products" element={<ProductsPage />} />
@@ -92,8 +138,8 @@ export default function App() {
                 <ListContextProvider>
                   <BrowserRouter>
                     <ErrorBoundary>
-                    <AppShell />
-                  </ErrorBoundary>
+                      <AppShell />
+                    </ErrorBoundary>
                   </BrowserRouter>
                 </ListContextProvider>
               </CartProvider>
