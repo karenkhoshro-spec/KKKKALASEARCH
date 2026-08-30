@@ -29,6 +29,14 @@ export default function ProductDetails() {
 
   const backPath = listContext.type === "home" ? "/" : listContextToPath(listContext);
 
+  const handleBack = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate(backPath);
+    }
+  };
+
   if (!product) {
     return (
       <div className="mx-auto flex max-w-lg flex-col items-center gap-4 px-4 py-24 text-center">
@@ -107,7 +115,7 @@ export default function ProductDetails() {
       >
         <button
           type="button"
-          onClick={() => navigate(backPath)}
+          onClick={handleBack}
           aria-label={t("category.back") || "بازگشت"}
           className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 sm:text-sm"
           style={{
@@ -152,7 +160,7 @@ export default function ProductDetails() {
                 onError={() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }}
               />
             ) : (
-              <span className="text-sm" style={{ color: "var(--text-muted)" }}>{t("product.imageUnavailable")}</span>
+              <span className="text-xs" style={{ color: "var(--text-muted)" }}>{t("product.imageUnavailable")}</span>
             )}
           </div>
           {activeUrl && (
@@ -175,7 +183,7 @@ export default function ProductDetails() {
 
         {/* Product Details Information */}
         <div className="flex flex-col">
-          <h1 className="text-lg font-extrabold leading-7 sm:text-2xl sm:leading-8" style={{ color: "var(--text-primary)" }}>
+          <h1 className="text-xl font-black leading-8 sm:text-2xl sm:leading-9" style={{ color: "var(--text-primary)" }}>
             {product.name[lang]}
           </h1>
 
@@ -193,7 +201,7 @@ export default function ProductDetails() {
             )}
           </div>
 
-          <div className="mt-3 grid grid-cols-2 gap-2 text-xs" style={{ color: "var(--text-secondary)" }}>
+          <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
             <span>{t("product.productCode")}: {product.productCode ?? "-"}</span>
             <span>{t("product.sku")}: {selectedVariation?.sku ?? product.sku ?? "-"}</span>
             <span>{t("product.stockQuantity")}: {selectedVariation?.stockCount ?? product.stockCount ?? "-"}</span>
@@ -202,7 +210,7 @@ export default function ProductDetails() {
 
           <div className="mt-3 flex items-baseline gap-3">
             {available && activePrice !== undefined ? (
-              <span className="text-xl font-extrabold sm:text-2xl" style={{ color: "var(--accent-1)" }}>
+              <span className="text-xl font-black sm:text-2xl" style={{ color: "var(--accent-1)" }}>
                 {activePrice.toLocaleString()} {t("product.toman")}
               </span>
             ) : available ? (

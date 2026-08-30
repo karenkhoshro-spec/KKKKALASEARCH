@@ -30,6 +30,14 @@ export default function SearchPage() {
       (query.trim().length >= 3 && c.name.fa.toLowerCase().includes(query.trim().toLowerCase()))
   );
 
+  const handleBack = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate("/");
+    }
+  };
+
   return (
     <div className="mx-auto max-w-5xl px-3.5 py-4 sm:px-6">
       {/* 1. Standardized Overlay Header with Back button on the LEFT */}
@@ -39,7 +47,7 @@ export default function SearchPage() {
       >
         <button
           type="button"
-          onClick={() => navigate("/")}
+          onClick={handleBack}
           aria-label={t("category.back") || "بازگشت"}
           className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 sm:text-sm"
           style={{

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { FileDown, PackageCheck, AlertCircle, Send, CheckCircle2, ArrowRight, ArrowLeft } from "lucide-react";
+import { FileDown, PackageCheck, Send, CheckCircle2, ArrowRight, ArrowLeft } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useCart } from "../context/CartContext";
 import { useAccount } from "../context/AccountContext";
@@ -27,7 +27,7 @@ export default function CheckoutPage() {
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [notes, setNotes] = useState("");
-  const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string; phone?: string; address?: string }>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{
     orderNumber: string;
@@ -42,8 +42,18 @@ export default function CheckoutPage() {
 
   const validate = () => {
     const nextErrors: typeof errors = {};
-    if (!fullName.trim()) nextErrors.name = t("checkout.required") || "این فیلد الزامی است";
-    if (!isValidIranLocal(normalizeIranLocal(phoneLocal))) nextErrors.phone = t("checkout.invalidPhone") || "شماره موبایل نامعتبر است";
+    if (!fullName.trim()) {
+      nextErrors.name = t("checkout.required") || "این فیلد الزامی است";
+      showToast("لطفاً نام و نام خانوادگی را وارد کنید.", "error");
+    }
+    if (!isValidIranLocal(normalizeIranLocal(phoneLocal))) {
+      nextErrors.phone = t("checkout.invalidPhone") || "شماره موبایل معتبر نیست";
+      showToast("لطفاً شماره موبایل معتبر وارد کنید.", "error");
+    }
+    if (!address.trim()) {
+      nextErrors.address = "لطفاً آدرس را وارد کنید.";
+      showToast("لطفاً آدرس را وارد کنید.", "error");
+    }
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -64,7 +74,7 @@ export default function CheckoutPage() {
         customerName: fullName.trim(),
         phone: fullPhone,
         email: email.trim() || undefined,
-        address: address.trim() || undefined,
+        address: address.trim(),
         notes: notes.trim() || undefined,
         items: items.map((it) => ({
           name: it.name,
@@ -115,6 +125,14 @@ export default function CheckoutPage() {
     }
   };
 
+  const handleBack = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate("/cart");
+    }
+  };
+
   if (result) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center sm:px-6">
@@ -150,8 +168,8 @@ export default function CheckoutPage() {
             className="flex w-full items-start gap-2 rounded-2xl p-3.5 text-start text-xs leading-5"
             style={{ background: "var(--chip-bg)", color: "var(--text-secondary)" }}
           >
-            {result.sent ? <Send size={15} className="mt-0.5 shrink-0 text-green-400" /> : <AlertCircle size={15} className="mt-0.5 shrink-0" style={{ color: "var(--accent-1)" }} />}
-            <span>{result.sent ? t("notifications.orderConfirmed") : t("checkout.sendNotConfigured")}</span>
+            <Send size={15} className="mt-0.5 shrink-0 text-green-400" />
+            <span>فایل PDF سفارش شما با موفقیت تولید شد و آماده دانلود است.</span>
           </div>
 
           <Link to="/" className="text-sm font-semibold" style={{ color: "var(--accent-1)" }}>
@@ -171,7 +189,7 @@ export default function CheckoutPage() {
       >
         <button
           type="button"
-          onClick={() => navigate("/cart")}
+          onClick={handleBack}
           aria-label={t("checkout.backToCart") || "بازگشت به سبد"}
           className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95"
           style={{
@@ -201,7 +219,7 @@ export default function CheckoutPage() {
 
         <div>
           <label className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
-            {t("checkout.fullName")}
+            {t("checkout.fullName")} <span style={{ color: "var(--danger)" }}>*</span>
           </label>
           <input
             value={fullName}
@@ -215,7 +233,7 @@ export default function CheckoutPage() {
 
         <div>
           <label className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
-            {t("checkout.phone")}
+            {t("checkout.phone")} <span style={{ color: "var(--danger)" }}>*</span>
           </label>
           <div className="flex items-center gap-2">
             <span className="shrink-0 rounded-xl px-3 py-2.5 text-sm font-bold" style={{ background: "var(--chip-bg)", color: "var(--accent-1)", border: "1px solid var(--border-soft)" }}>
@@ -235,6 +253,20 @@ export default function CheckoutPage() {
 
         <div>
           <label className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+            آدرس تحویل <span style={{ color: "var(--danger)" }}>*</span>
+          </label>
+          <input
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="شهر، خیابان، پلاک، کد پستی..."
+            className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-violet-500"
+            style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
+          />
+          {errors.address && <p className="mt-1 text-xs" style={{ color: "var(--danger)" }}>{errors.address}</p>}
+        </div>
+
+        <div>
+          <label className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
             ایمیل (اختیاری)
           </label>
           <input
@@ -249,20 +281,7 @@ export default function CheckoutPage() {
 
         <div>
           <label className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
-            آدرس (اختیاری)
-          </label>
-          <input
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="شهر، خیابان، پلاک..."
-            className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-violet-500"
-            style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
-          />
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
-            {t("checkout.notes")}
+            {t("checkout.notes")} (اختیاری)
           </label>
           <textarea
             value={notes}

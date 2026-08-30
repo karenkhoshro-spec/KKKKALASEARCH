@@ -8,6 +8,8 @@ import ProductCard from "../components/ProductCard";
 import CategoryOverlayHeader from "../components/CategoryOverlayHeader";
 import CategoryIcon from "../components/CategoryIcon";
 
+const PROMINENT_SUB_IDS = ["powder-sponge-holder", "colander-bowl", "soap-dish"] as const;
+
 export default function CategoryPage() {
   const { categoryId = "" } = useParams();
   const { t, lang } = useLanguage();
@@ -18,8 +20,15 @@ export default function CategoryPage() {
   const list = useMemo(() => getProductsByCategory(categoryId, subcategoryId), [categoryId, subcategoryId]);
   const subcategories = useMemo(() => (categoryId === "other" ? getOtherSubcategoryCounts() : []), [categoryId]);
 
-  const top3Subcategories = useMemo(() => subcategories.slice(0, 3), [subcategories]);
-  const remainingSubcategories = useMemo(() => subcategories.slice(3), [subcategories]);
+  const top3Subcategories = useMemo(() => {
+    return PROMINENT_SUB_IDS
+      .map((id) => subcategories.find((s) => s.id === id))
+      .filter((s): s is NonNullable<typeof s> => Boolean(s));
+  }, [subcategories]);
+
+  const remainingSubcategories = useMemo(() => {
+    return subcategories.filter((s) => !PROMINENT_SUB_IDS.includes(s.id as any));
+  }, [subcategories]);
 
   useEffect(() => {
     setListContext({ type: "category", categoryId });
@@ -46,75 +55,89 @@ export default function CategoryPage() {
 
       {/* 2. Subcategories list for "Other" when no subcategory is selected */}
       {isOther && !subcategoryId && (
-        <div className="flex flex-col gap-5">
-          {/* Top 3 Prominent Diamond Crystal Category Cards */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="flex flex-col gap-6">
+          {/* Vertical Container for the 3 Prominent Diamond Crystal Category Cards */}
+          <div
+            className="glass-strong flex flex-col gap-2.5 rounded-3xl p-3 sm:p-4"
+            style={{
+              background: "var(--surface-strong)",
+              border: "1.5px solid var(--accent-1)",
+              boxShadow: "0 6px 24px var(--accent-glow)",
+            }}
+          >
             {top3Subcategories.map((sub) => (
               <button
                 type="button"
                 key={sub.id}
                 onClick={() => setSubcategoryId(sub.id)}
-                className="glass-strong ks-other-sub-card group relative flex items-center gap-3.5 overflow-hidden rounded-2xl p-4 text-start transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_var(--accent-glow)] active:scale-95"
+                className="glass ks-other-sub-card group flex items-center justify-between rounded-2xl p-3.5 transition-all duration-300 hover:scale-[1.01] hover:border-violet-500/50 active:scale-95"
                 style={{
-                  background: "var(--surface-strong)",
-                  borderColor: "var(--accent-1)",
-                  borderWidth: "1.5px",
-                  boxShadow: "0 4px 16px rgba(124, 58, 237, 0.12)",
+                  background: "var(--surface)",
+                  borderColor: "var(--border-soft)",
+                  boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.1)",
                 }}
               >
-                <div
-                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl shadow-[var(--shadow-glow)] transition-transform duration-300 group-hover:scale-110"
-                  style={{
-                    background: "var(--chip-bg)",
-                    color: "var(--accent-1)",
-                  }}
-                >
-                  <CategoryIcon id={sub.id} size={26} />
-                </div>
-                <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-3.5">
+                  <div
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl shadow-[var(--shadow-glow)] transition-transform duration-300 group-hover:scale-110"
+                    style={{
+                      background: "var(--chip-bg)",
+                      color: "var(--accent-1)",
+                    }}
+                  >
+                    <CategoryIcon id={sub.id} size={24} />
+                  </div>
                   <span
-                    className="truncate text-sm font-extrabold sm:text-base"
+                    className="text-sm font-extrabold sm:text-base"
                     style={{ color: "var(--text-primary)" }}
                   >
                     {sub.name[lang]}
                   </span>
                 </div>
+                <span className="text-xs font-bold" style={{ color: "var(--accent-1)" }}>
+                  مشاهده ↗
+                </span>
               </button>
             ))}
           </div>
 
           {/* Remaining Subcategories Grid */}
-          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-5">
-            {remainingSubcategories.map((sub) => (
-              <button
-                type="button"
-                key={sub.id}
-                onClick={() => setSubcategoryId(sub.id)}
-                className="glass ks-other-sub-card group flex flex-col items-center justify-center gap-2.5 rounded-2xl p-3.5 text-center transition-all duration-200 hover:-translate-y-1 hover:border-violet-500/50 hover:shadow-[0_0_14px_var(--accent-glow)] active:scale-95"
-                style={{
-                  background: "var(--surface)",
-                  borderColor: "var(--border-soft)",
-                  boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.08)",
-                }}
-              >
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110"
+          <div className="flex flex-col gap-2.5">
+            <h3 className="px-1 text-xs font-bold sm:text-sm" style={{ color: "var(--text-muted)" }}>
+              سایر زیردسته‌ها
+            </h3>
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-5">
+              {remainingSubcategories.map((sub) => (
+                <button
+                  type="button"
+                  key={sub.id}
+                  onClick={() => setSubcategoryId(sub.id)}
+                  className="glass ks-other-sub-card group flex flex-col items-center justify-center gap-2.5 rounded-2xl p-3.5 text-center transition-all duration-200 hover:-translate-y-1 hover:border-violet-500/50 hover:shadow-[0_0_14px_var(--accent-glow)] active:scale-95"
                   style={{
-                    background: "var(--chip-bg)",
-                    color: "var(--accent-1)",
+                    background: "var(--surface)",
+                    borderColor: "var(--border-soft)",
+                    boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.08)",
                   }}
                 >
-                  <CategoryIcon id={sub.id} size={22} />
-                </div>
-                {/* Product name only per requirement - NO product count under the card */}
-                <span
-                  className="line-clamp-2 text-xs font-bold leading-5 sm:text-sm"
-                  style={{ color: "var(--text-primary)" }}
-                >
-                  {sub.name[lang]}
-                </span>
-              </button>
-            ))}
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110"
+                    style={{
+                      background: "var(--chip-bg)",
+                      color: "var(--accent-1)",
+                    }}
+                  >
+                    <CategoryIcon id={sub.id} size={22} />
+                  </div>
+                  {/* Product name only per requirement - NO product count under the card */}
+                  <span
+                    className="line-clamp-2 text-xs font-bold leading-5 sm:text-sm"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    {sub.name[lang]}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}

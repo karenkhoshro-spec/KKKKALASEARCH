@@ -88,6 +88,14 @@ export default function AccountPage() {
     showToast(t("account.saveName") || "نام با موفقیت ذخیره شد", "success");
   };
 
+  const handleBack = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate("/");
+    }
+  };
+
   return (
     <div className="mx-auto max-w-lg px-4 py-5 sm:px-6">
       {/* Overlay header with back button on the left */}
@@ -97,7 +105,7 @@ export default function AccountPage() {
       >
         <button
           type="button"
-          onClick={() => navigate("/")}
+          onClick={handleBack}
           aria-label={t("category.back") || "بازگشت"}
           className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95"
           style={{

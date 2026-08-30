@@ -21,10 +21,7 @@ function getProductImageUrl(product: Product): string | undefined {
   const trimmed = String(raw).trim();
   if (!trimmed) return undefined;
   if (!isValidImageUrl(trimmed)) {
-    // Fallback to check if it's at least http/https (for legacy image field which may be empty)
     if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-      // still allow if it looks like image URL, even if isValidImageUrl filtered logo etc.
-      // For product.image field which is currently empty in CSV, we keep strict check
       return undefined;
     }
     return undefined;
@@ -67,7 +64,7 @@ function ProductCard({ product, minimal = false }: { product: Product; minimal?:
               className="ks-product-image-link"
               aria-label={`مشاهده کامل محصول ${product.name[lang]}`}
             >
-              <div className="product-media aspect-square w-full p-4">
+              <div className="product-media aspect-square w-full p-3.5 sm:p-4">
                 {showImage ? (
                   <img
                     key={imgSrc}
@@ -102,7 +99,7 @@ function ProductCard({ product, minimal = false }: { product: Product; minimal?:
               className="ks-product-image-link"
               aria-label={product.name[lang]}
             >
-              <div className="product-media aspect-square w-full p-4">
+              <div className="product-media aspect-square w-full p-3.5 sm:p-4">
                 {showImage ? (
                   <img
                     key={imgSrc}
@@ -128,16 +125,16 @@ function ProductCard({ product, minimal = false }: { product: Product; minimal?:
       )}
 
       <Link to={`/product/${product.id}`} className={`ks-product-content-link ${minimal ? "text-center" : "px-3.5 pb-4 pt-1 text-center"}`}>
-        <h3 className="line-clamp-2 text-base font-bold leading-7" style={{ color: "var(--text-primary)" }}>
+        <h3 className={`line-clamp-2 ${minimal ? "text-sm font-extrabold leading-6 sm:text-base" : "text-base font-extrabold leading-7 sm:text-lg"}`} style={{ color: "var(--text-primary)" }}>
           {product.name[lang]}
         </h3>
         {!minimal && (
-          <div className="mt-1.5 text-sm font-bold" style={{ color: product.price !== undefined ? "var(--accent-1)" : "var(--text-muted)" }}>
+          <div className="mt-1.5 text-sm font-bold sm:text-base" style={{ color: product.price !== undefined ? "var(--accent-1)" : "var(--text-muted)" }}>
             {product.price !== undefined ? `${product.price.toLocaleString()} ${t("product.toman")}` : t("product.priceUnknown")}
           </div>
         )}
         {!minimal && !product.inStock && (
-          <span className="mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-[11px] font-medium" style={{ background: "var(--chip-bg)", color: "var(--danger)" }}>
+          <span className="mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold" style={{ background: "var(--chip-bg)", color: "var(--danger)" }}>
             {t("product.outOfStock")}
           </span>
         )}
