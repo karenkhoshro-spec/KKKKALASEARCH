@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ExternalLink, Minus, Plus, ShoppingCart, CheckCircle2, XCircle, Heart, X, ArrowRight, ArrowLeft } from "lucide-react";
+import { ExternalLink, Minus, Plus, ShoppingCart, CheckCircle2, XCircle, Heart, ArrowRight, ArrowLeft } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
@@ -72,49 +72,72 @@ export default function ProductDetails() {
   const uniqueColors = Array.from(new Map(colorVariations.map((v) => [v.colorName, v])).values());
 
   const handleAddToCart = () => {
-    const finalQty = quantity > 0 ? quantity : 1;
+    const hasColorVariants = uniqueColors.length > 0;
+    const isColorSelected = !!selectedVariation && !!selectedVariation.colorName;
+    const isQtySelected = quantity > 0;
+
+    if (!isQtySelected && hasColorVariants && !isColorSelected) {
+      showToast("لطفاً ابتدا تعداد موردنظر و رنگ محصول را انتخاب کنید.", "error");
+      return;
+    }
+    if (!isQtySelected) {
+      showToast("لطفاً ابتدا تعداد موردنظر را وارد کنید.", "error");
+      return;
+    }
+    if (hasColorVariants && !isColorSelected) {
+      showToast("لطفاً ابتدا یک رنگ را انتخاب کنید.", "error");
+      return;
+    }
+
     addItem(
       product,
       product.name[lang],
-      finalQty,
+      quantity,
       selectedVariation ? { id: selectedVariation.id, name: selectedVariation.name[lang], sku: selectedVariation.sku, price: selectedVariation.price } : undefined
     );
-    showToast(t("notifications.addedToCart"), "success");
+    showToast(t("notifications.addedToCart") || "به سبد خرید اضافه شد", "success");
   };
 
   return (
     <div className="mx-auto max-w-5xl px-3.5 py-4 sm:px-6">
-      {/* Overlay header with back & close buttons */}
-      <div className="mb-4 flex items-center justify-between border-b pb-3" style={{ borderColor: "var(--border-soft)" }}>
+      {/* Overlay header with back button on the left */}
+      <div
+        className="mb-5 flex w-full items-center justify-between border-b pb-3.5"
+        style={{ borderColor: "var(--border-soft)", direction: "ltr" }}
+      >
         <button
           type="button"
           onClick={() => navigate(backPath)}
-          aria-label="بازگشت"
-          className="glass flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200 hover:scale-105 active:scale-95"
-          style={{ color: "var(--text-primary)" }}
+          aria-label={t("category.back") || "بازگشت"}
+          className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 sm:text-sm"
+          style={{
+            color: "var(--text-primary)",
+            borderColor: "var(--border-strong)",
+            background: "var(--surface-strong)",
+          }}
         >
-          <ArrowIcon size={18} style={{ color: "var(--accent-1)" }} />
+          <ArrowIcon size={16} style={{ color: "var(--accent-1)" }} />
+          <span dir={dir}>{t("category.back") || "بازگشت"}</span>
         </button>
 
-        <span className="truncate px-3 text-sm font-bold sm:text-base" style={{ color: "var(--text-secondary)" }}>
-          {product.name[lang]}
-        </span>
-
-        <button
-          type="button"
-          onClick={() => navigate(backPath)}
-          aria-label="بستن"
-          className="glass flex h-9 w-9 items-center justify-center rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          <X size={18} />
-        </button>
+        <div className="flex max-w-[70%] items-center gap-2" dir={dir}>
+          <span
+            className="truncate rounded-2xl px-3 py-1 text-xs font-extrabold sm:text-sm"
+            style={{
+              background: "var(--chip-bg)",
+              color: "var(--text-primary)",
+              border: "1px solid var(--border-soft)",
+            }}
+          >
+            {product.name[lang]}
+          </span>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 md:gap-8">
         {/* Compact Product Media + Ashkan Button Directly Below */}
         <div className="flex flex-col gap-3">
-          <div className="glass product-media h-[min(30vh,240px)] rounded-3xl p-4 sm:h-[280px] sm:p-5 md:h-[320px]">
+          <div className="glass product-media h-[min(24vh,190px)] rounded-3xl p-4 sm:h-[220px] sm:p-5 md:h-[250px]">
             {activeImage ? (
               <img
                 key={activeImage}
@@ -178,15 +201,15 @@ export default function ProductDetails() {
           </div>
 
           <div className="mt-3 flex items-baseline gap-3">
-            {activePrice !== undefined ? (
+            {available && activePrice !== undefined ? (
               <span className="text-xl font-extrabold sm:text-2xl" style={{ color: "var(--accent-1)" }}>
                 {activePrice.toLocaleString()} {t("product.toman")}
               </span>
-            ) : (
+            ) : available ? (
               <span className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>
                 {t("product.priceUnknown")}
               </span>
-            )}
+            ) : null}
           </div>
 
           {activeSpec && activeSpec !== "-" && (

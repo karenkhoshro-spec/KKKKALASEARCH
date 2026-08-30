@@ -4,7 +4,10 @@ import html2canvas from "html2canvas";
 export interface OrderPdfItem {
   name: string;
   variation?: string;
+  sku?: string;
   quantity: number;
+  packQuantity?: number;
+  spec?: string;
   price?: number;
 }
 
@@ -13,6 +16,8 @@ export interface OrderPdfData {
   date: string;
   customerName: string;
   phone: string;
+  email?: string;
+  address?: string;
   notes?: string;
   items: OrderPdfItem[];
   total: number;
@@ -24,18 +29,24 @@ export interface OrderPdfData {
     date: string;
     customer: string;
     phone: string;
+    email?: string;
+    address?: string;
     notes: string;
     product: string;
     variation: string;
+    sku?: string;
     quantity: string;
+    packQuantity?: string;
     price: string;
     lineTotal: string;
     total: string;
+    spec?: string;
   };
 }
 
-function formatNumber(n: number | undefined) {
-  return n === undefined ? "-" : n.toLocaleString("en-US");
+function formatPrice(p: number | undefined, currency: string) {
+  if (p === undefined) return "استعلام / نامشخص";
+  return `${p.toLocaleString("en-US")} ${currency}`;
 }
 
 /**
@@ -59,61 +70,75 @@ export async function generateOrderPdf(data: OrderPdfData): Promise<Blob> {
   const rows = data.items
     .map(
       (item, idx) => `
-      <tr style="background:${idx % 2 === 0 ? "#f7f4ff" : "#ffffff"};">
-        <td style="padding:10px 12px;border:1px solid #e4defa;">${idx + 1}</td>
-        <td style="padding:10px 12px;border:1px solid #e4defa;">${item.name}</td>
-        <td style="padding:10px 12px;border:1px solid #e4defa;">${item.variation ?? "-"}</td>
-        <td style="padding:10px 12px;border:1px solid #e4defa;text-align:center;">${item.quantity}</td>
-        <td style="padding:10px 12px;border:1px solid #e4defa;text-align:center;">${formatNumber(item.price)}</td>
-        <td style="padding:10px 12px;border:1px solid #e4defa;text-align:center;">${formatNumber(item.price === undefined ? undefined : item.price * item.quantity)}</td>
+      <tr style="background:${idx % 2 === 0 ? "#f9f6ff" : "#ffffff"};">
+        <td style="padding:10px 12px;border:1px solid #e4defa;text-align:center;font-weight:bold;">${idx + 1}</td>
+        <td style="padding:10px 12px;border:1px solid #e4defa;">
+          <div style="font-weight:bold;color:#1e1b4b;">${item.name}</div>
+          ${item.spec ? `<div style="font-size:11px;color:#64748b;margin-top:2px;">${item.spec}</div>` : ""}
+        </td>
+        <td style="padding:10px 12px;border:1px solid #e4defa;text-align:center;">
+          <div>${item.variation ?? "-"}</div>
+          ${item.sku ? `<div style="font-size:11px;color:#7c3aed;font-family:monospace;margin-top:2px;">${item.sku}</div>` : ""}
+        </td>
+        <td style="padding:10px 12px;border:1px solid #e4defa;text-align:center;font-weight:bold;">
+          ${item.quantity}
+          ${item.packQuantity ? `<div style="font-size:10px;color:#64748b;">(بسته: ${item.packQuantity})</div>` : ""}
+        </td>
+        <td style="padding:10px 12px;border:1px solid #e4defa;text-align:center;">${formatPrice(item.price, data.currencyLabel)}</td>
+        <td style="padding:10px 12px;border:1px solid #e4defa;text-align:center;font-weight:bold;color:#7c3aed;">
+          ${formatPrice(item.price === undefined ? undefined : item.price * item.quantity, data.currencyLabel)}
+        </td>
       </tr>`
     )
     .join("");
 
   container.innerHTML = `
-    <div style="border-bottom:3px solid #8b5cf6;padding-bottom:16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
+    <div style="border-bottom:3px solid #7c3aed;padding-bottom:16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
       <div>
-        <div style="font-size:24px;font-weight:800;color:#6d28d9;">KALA SEARCH</div>
-        <div style="font-size:13px;color:#6b6180;">${data.labels.title}</div>
+        <div style="font-size:24px;font-weight:900;letter-spacing:1px;color:#6d28d9;">KALASEARCH</div>
+        <div style="font-size:13px;color:#6b6180;font-weight:600;margin-top:3px;">${data.labels.title}</div>
       </div>
       <div style="text-align:${data.dir === "rtl" ? "left" : "right"};font-size:13px;color:#40364f;">
-        <div><b>${data.labels.orderNumber}:</b> ${data.orderNumber}</div>
-        <div><b>${data.labels.date}:</b> ${data.date}</div>
+        <div><b>${data.labels.orderNumber}:</b> <span style="font-family:monospace;font-weight:bold;color:#7c3aed;">${data.orderNumber}</span></div>
+        <div style="margin-top:4px;"><b>${data.labels.date}:</b> ${data.date}</div>
       </div>
     </div>
-    <div style="display:flex;gap:24px;margin-bottom:20px;font-size:14px;">
-      <div style="flex:1;background:#f7f4ff;border-radius:12px;padding:14px 16px;">
+    <div style="display:flex;gap:18px;margin-bottom:20px;font-size:13px;">
+      <div style="flex:1;background:#f7f4ff;border:1px solid #e4defa;border-radius:12px;padding:14px 16px;">
         <div><b>${data.labels.customer}:</b> ${data.customerName}</div>
-        <div style="margin-top:6px;"><b>${data.labels.phone}:</b> ${data.phone}</div>
+        <div style="margin-top:6px;"><b>${data.labels.phone}:</b> <span dir="ltr">${data.phone}</span></div>
+        ${data.email ? `<div style="margin-top:6px;"><b>ایمیل:</b> <span dir="ltr">${data.email}</span></div>` : ""}
       </div>
       ${
-        data.notes
-          ? `<div style="flex:1;background:#f7f4ff;border-radius:12px;padding:14px 16px;">
-              <div><b>${data.labels.notes}:</b></div>
-              <div style="margin-top:6px;">${data.notes}</div>
+        data.address || data.notes
+          ? `<div style="flex:1;background:#f7f4ff;border:1px solid #e4defa;border-radius:12px;padding:14px 16px;">
+              ${data.address ? `<div><b>آدرس:</b> ${data.address}</div>` : ""}
+              ${data.notes ? `<div style="margin-top:${data.address ? "6px" : "0"};"><b>${data.labels.notes}:</b> ${data.notes}</div>` : ""}
             </div>`
           : ""
       }
     </div>
-    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
       <thead>
-        <tr style="background:#8b5cf6;color:#fff;">
-          <th style="padding:10px 12px;border:1px solid #8b5cf6;">#</th>
-          <th style="padding:10px 12px;border:1px solid #8b5cf6;">${data.labels.product}</th>
-          <th style="padding:10px 12px;border:1px solid #8b5cf6;">${data.labels.variation}</th>
-          <th style="padding:10px 12px;border:1px solid #8b5cf6;">${data.labels.quantity}</th>
-          <th style="padding:10px 12px;border:1px solid #8b5cf6;">${data.labels.price}</th>
-          <th style="padding:10px 12px;border:1px solid #8b5cf6;">${data.labels.lineTotal}</th>
+        <tr style="background:#7c3aed;color:#fff;">
+          <th style="padding:10px 8px;border:1px solid #7c3aed;width:35px;">#</th>
+          <th style="padding:10px 12px;border:1px solid #7c3aed;">${data.labels.product}</th>
+          <th style="padding:10px 12px;border:1px solid #7c3aed;">${data.labels.variation} / شناسه</th>
+          <th style="padding:10px 8px;border:1px solid #7c3aed;width:70px;">${data.labels.quantity}</th>
+          <th style="padding:10px 12px;border:1px solid #7c3aed;">${data.labels.price}</th>
+          <th style="padding:10px 12px;border:1px solid #7c3aed;">${data.labels.lineTotal}</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
     </table>
     <div style="display:flex;justify-content:flex-end;margin-top:18px;">
-      <div style="background:#6d28d9;color:#fff;border-radius:12px;padding:14px 24px;font-size:16px;font-weight:700;">
-        ${data.labels.total}: ${formatNumber(data.total)} ${data.currencyLabel}
+      <div style="background:linear-gradient(90deg, #ea580c, #7c3aed);color:#fff;border-radius:12px;padding:14px 24px;font-size:15px;font-weight:800;box-shadow:0 4px 12px rgba(124,58,237,0.25);">
+        ${data.labels.total}: ${data.total.toLocaleString("en-US")} ${data.currencyLabel}
       </div>
     </div>
-    <div style="margin-top:28px;font-size:11px;color:#928aab;text-align:center;">Kala Search · ${data.date}</div>
+    <div style="margin-top:28px;font-size:11px;color:#928aab;text-align:center;">
+      کالاسرچ · درگاه هوشمند جستجو و انتخاب کالا · ${data.date}
+    </div>
   `;
 
   document.body.appendChild(container);
