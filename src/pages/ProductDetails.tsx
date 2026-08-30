@@ -108,6 +108,9 @@ export default function ProductDetails() {
 
   return (
     <div className="mx-auto max-w-5xl px-3.5 py-4 sm:px-6">
+      {activeImage && (
+        <link rel="preload" as="image" href={activeImage} fetchPriority="high" referrerPolicy="no-referrer" />
+      )}
       {/* Overlay header with back button on the left */}
       <div
         className="mb-5 flex w-full items-center justify-between border-b pb-3.5"
