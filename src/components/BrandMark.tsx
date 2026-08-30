@@ -12,68 +12,57 @@ function useSafeTheme(): "light" | "dark" {
   }
 }
 
-/** Isolated shopping-bag mark (no photo frame / background). */
+/** Isolated 3D shopping-bag mark — no photo frame, no cream/navy backdrop. */
 export default function BrandMark({ size = 56 }: { size?: number }) {
   const theme = useSafeTheme();
   const dark = theme === "dark";
-  const id = dark ? "dark" : "light";
+  const id = dark ? "d" : "l";
 
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 64 64"
+      viewBox="0 0 72 72"
       fill="none"
       aria-hidden="true"
       className="ks-brand-mark shrink-0"
     >
       <defs>
-        <linearGradient id={`bagA-${id}`} x1="8" y1="10" x2="56" y2="56">
-          {dark ? (
-            <>
-              <stop offset="0%" stopColor="#c4b5fd" />
-              <stop offset="55%" stopColor="#7c3aed" />
-              <stop offset="100%" stopColor="#4c1d95" />
-            </>
-          ) : (
-            <>
-              <stop offset="0%" stopColor="#fdba74" />
-              <stop offset="45%" stopColor="#fb923c" />
-              <stop offset="100%" stopColor="#ea580c" />
-            </>
-          )}
+        <linearGradient id={`h-${id}`} x1="18" y1="6" x2="42" y2="28">
+          <stop offset="0%" stopColor={dark ? "#ddd6fe" : "#fdba74"} />
+          <stop offset="100%" stopColor={dark ? "#7c3aed" : "#ea580c"} />
         </linearGradient>
-        <linearGradient id={`bagB-${id}`} x1="20" y1="24" x2="58" y2="60">
-          {dark ? (
-            <>
-              <stop offset="0%" stopColor="#a78bfa" />
-              <stop offset="100%" stopColor="#6d28d9" />
-            </>
-          ) : (
-            <>
-              <stop offset="0%" stopColor="#86efac" />
-              <stop offset="100%" stopColor="#16a34a" />
-            </>
-          )}
+        <linearGradient id={`a-${id}`} x1="8" y1="20" x2="40" y2="68">
+          <stop offset="0%" stopColor={dark ? "#e9d5ff" : "#fed7aa"} />
+          <stop offset="45%" stopColor={dark ? "#a78bfa" : "#fb923c"} />
+          <stop offset="100%" stopColor={dark ? "#5b21b6" : "#c2410c"} />
         </linearGradient>
+        <linearGradient id={`b-${id}`} x1="28" y1="22" x2="66" y2="68">
+          <stop offset="0%" stopColor={dark ? "#c4b5fd" : "#bbf7d0"} />
+          <stop offset="55%" stopColor={dark ? "#7c3aed" : "#22c55e"} />
+          <stop offset="100%" stopColor={dark ? "#4c1d95" : "#15803d"} />
+        </linearGradient>
+        <filter id={`g-${id}`} x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation={dark ? 1.6 : 0.8} result="b" />
+          <feMerge>
+            <feMergeNode in="b" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
       </defs>
       <path
-        d="M20 22c0-8 5.2-14 12-14s12 6 12 14"
-        stroke={dark ? "#e9d5ff" : "#fb923c"}
-        strokeWidth="4.5"
+        d="M22 26c0-10 6-18 14-18s14 8 14 18"
+        stroke={`url(#h-${id})`}
+        strokeWidth="7"
         strokeLinecap="round"
+        filter={`url(#g-${id})`}
       />
-      <path
-        d="M10 24h28l-4 32H18c-4 0-7.2-3.2-8-7L10 24z"
-        fill={`url(#bagA-${id})`}
-      />
-      <path
-        d="M26 24h28l-3.2 28.5c-.6 4.2-4 7.5-8.3 7.5H28"
-        fill={`url(#bagB-${id})`}
-      />
-      <circle cx="40" cy="40" r="7.5" fill={dark ? "#1e1b4b" : "#fff"} opacity="0.92" />
-      <circle cx="40" cy="40" r="5" stroke={dark ? "#f5d0fe" : "#166534"} strokeWidth="2.2" />
-      <path d="M45 45l5 5" stroke={dark ? "#f5d0fe" : "#166534"} strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M10 26h32l-5 38H18c-5 0-8-4-9-8L10 26z" fill={`url(#a-${id})`} />
+      <path d="M28 26h34l-4 34c-1 5.5-5 10-11 10H30" fill={`url(#b-${id})`} />
+      <path d="M14 30c8-4 16-2 24 1" stroke="#fff" strokeOpacity="0.45" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="46" cy="44" r="10" fill={dark ? "#1e1b4b" : "#ecfdf5"} />
+      <circle cx="46" cy="44" r="6.2" stroke={dark ? "#f5d0fe" : "#166534"} strokeWidth="3" />
+      <path d="M51.5 50.5 59 58" stroke={dark ? "#f5d0fe" : "#166534"} strokeWidth="3.4" strokeLinecap="round" />
     </svg>
   );
 }

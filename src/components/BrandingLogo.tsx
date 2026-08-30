@@ -1,18 +1,33 @@
 import { useLanguage } from "../i18n/LanguageContext";
 import BrandMark from "./BrandMark";
+import "./BrandingLogo.css";
 
-function brandName(lang: string) {
-  if (lang === "fa") return "کالا سرچ";
-  if (lang === "ar") return "كالا سيرش";
-  return "KalaSearch";
+function BrandWord() {
+  const { lang } = useLanguage();
+  if (lang === "en") {
+    return (
+      <span className="ks-brand-word ks-brand-en">
+        <span className="ks-brand-kala">Kala</span>
+        <span className="ks-brand-search">Search</span>
+      </span>
+    );
+  }
+  if (lang === "ar") {
+    return <span className="ks-brand-word ks-brand-ar">كالا سيرش</span>;
+  }
+  return (
+    <span className="ks-brand-word ks-brand-fa">
+      <span className="ks-brand-kala">کالا</span>
+      <span className="ks-brand-search">سرچ</span>
+    </span>
+  );
 }
 
 export function VerticalBrandingLogo({ className = "" }: { className?: string }) {
-  const { lang } = useLanguage();
   return (
     <div className={`flex flex-col items-center justify-center gap-1.5 text-center select-none ${className}`}>
-      <BrandMark size={72} />
-      <span className="ks-brand-title text-lg font-black tracking-tight sm:text-xl">{brandName(lang)}</span>
+      <BrandMark size={76} />
+      <BrandWord />
     </div>
   );
 }
@@ -24,12 +39,12 @@ export function HorizontalBrandingLogo({
   className?: string;
   showTagline?: boolean;
 }) {
-  const { lang, t } = useLanguage();
+  const { t } = useLanguage();
   return (
     <div className={`flex flex-col items-center justify-center gap-1.5 select-none ${className}`}>
       <div className="ks-brand-logo flex items-center gap-3">
-        <BrandMark size={52} />
-        <span className="ks-brand-title text-xl font-black sm:text-2xl tracking-tight">{brandName(lang)}</span>
+        <BrandMark size={58} />
+        <BrandWord />
       </div>
       {showTagline && (
         <p className="mt-0.5 text-center text-xs font-semibold sm:text-sm" style={{ color: "var(--text-secondary)" }}>

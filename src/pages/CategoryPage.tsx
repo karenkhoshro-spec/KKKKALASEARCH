@@ -6,7 +6,7 @@ import { categories } from "../data/categories";
 import { getOtherSubcategoryCounts, getProductsByCategory } from "../data/products";
 import ProductCard from "../components/ProductCard";
 import CategoryOverlayHeader from "../components/CategoryOverlayHeader";
-import CategoryIcon from "../components/CategoryIcon";
+import CategoryIconFrame from "../components/CategoryIconFrame";
 import "../components/CategoryNav.css";
 
 export default function CategoryPage() {
@@ -53,9 +53,7 @@ export default function CategoryPage() {
               className="glass ks-other-sub-card ks-category-tile group flex h-full min-h-[90px] flex-col items-center justify-center gap-2 rounded-2xl p-3 text-center cursor-pointer sm:min-h-[105px] sm:p-3.5"
               aria-label={sub.name[lang]}
             >
-              <div className="ks-icon-3d ks-category-icon-wrapper h-11 w-11 sm:h-12 sm:w-12">
-                <CategoryIcon id={sub.id} size={26} className="h-full w-full object-contain" />
-              </div>
+              <CategoryIconFrame id={sub.id} size={26} className="h-12 w-12 sm:h-14 sm:w-14" />
               <span
                 className="line-clamp-2 text-xs font-bold leading-5 sm:text-sm"
                 style={{ color: "var(--text-primary)" }}

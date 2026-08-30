@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext";
 import { categories } from "../data/categories";
-import CategoryIcon from "./CategoryIcon";
+import CategoryIconFrame from "./CategoryIconFrame";
 import "./CategoryNav.css";
 
 export default function CategoryNav() {
@@ -14,7 +14,6 @@ export default function CategoryNav() {
 
   return (
     <nav className="ks-category-container" aria-label="دسته‌بندی‌های کالا سرچ">
-      {/* Row 1: 4 Primary Categories */}
       <div className="ks-category-grid-4">
         {row1.map((cat, index) => (
           <Link
@@ -24,15 +23,12 @@ export default function CategoryNav() {
             style={{ animationDelay: `${Math.min(index * 0.03, 0.2)}s` }}
             aria-label={cat.name[lang]}
           >
-            <div className="ks-icon-3d ks-category-icon-wrapper h-9 w-9 sm:h-11 sm:w-11 lg:h-12 lg:w-12">
-              <CategoryIcon id={cat.id} size={28} className="h-full w-full object-contain" />
-            </div>
+            <CategoryIconFrame id={cat.id} size={28} className="h-11 w-11 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
             <span className="ks-category-label">{cat.name[lang]}</span>
           </Link>
         ))}
       </div>
 
-      {/* Row 2: 4 Primary Categories */}
       <div className="ks-category-grid-4">
         {row2.map((cat, index) => (
           <Link
@@ -42,15 +38,12 @@ export default function CategoryNav() {
             style={{ animationDelay: `${Math.min((index + 4) * 0.03, 0.25)}s` }}
             aria-label={cat.name[lang]}
           >
-            <div className="ks-icon-3d ks-category-icon-wrapper h-9 w-9 sm:h-11 sm:w-11 lg:h-12 lg:w-12">
-              <CategoryIcon id={cat.id} size={28} className="h-full w-full object-contain" />
-            </div>
+            <CategoryIconFrame id={cat.id} size={28} className="h-11 w-11 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
             <span className="ks-category-label">{cat.name[lang]}</span>
           </Link>
         ))}
       </div>
 
-      {/* Final Category: "سایر" Centered */}
       {otherCategory && (
         <div className="ks-category-row-other">
           <Link
@@ -59,9 +52,7 @@ export default function CategoryNav() {
             style={{ animationDelay: "0.28s" }}
             aria-label={otherCategory.name[lang]}
           >
-            <div className="ks-icon-3d ks-category-icon-wrapper h-9 w-9 sm:h-11 sm:w-11 lg:h-12 lg:w-12">
-              <CategoryIcon id={otherCategory.id} size={28} className="h-full w-full object-contain" />
-            </div>
+            <CategoryIconFrame id={otherCategory.id} size={28} className="h-11 w-11 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
             <span className="ks-category-label">{otherCategory.name[lang]}</span>
           </Link>
         </div>

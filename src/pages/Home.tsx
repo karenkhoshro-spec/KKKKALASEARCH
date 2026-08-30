@@ -18,17 +18,12 @@ export default function Home() {
       {/* 1. Main Homepage Hero: Horizontal Logo + Tagline + Search Box */}
       <section className="mb-10 flex flex-col items-center text-center">
         {/* Horizontal KalaSearch Logo */}
-        <div className="mb-3">
+        <div className="mb-4">
           <HorizontalBrandingLogo showTagline={false} />
         </div>
 
-        {/* Tagline (not a second brand name) */}
-        <p className="animate-fade-up mx-auto max-w-xl text-base font-extrabold sm:text-lg" style={{ color: "var(--text-secondary)", animationDelay: "0.05s" }}>
-          {t("home.heroTitle")}
-        </p>
-
         <h2
-          className="mt-5 text-lg font-black tracking-tight sm:text-xl"
+          className="mt-2 text-lg font-black tracking-tight sm:text-xl"
           style={{ color: "var(--text-primary)" }}
         >
           {t("home.smartSearch")}
