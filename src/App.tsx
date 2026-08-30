@@ -77,14 +77,14 @@ function AppShell() {
 
       {showWelcome && <LanguageWelcomeModal onDone={() => setShowWelcome(false)} />}
 
-      <Header />
+      {isHome && <Header />}
       <main>
         {!isHome && <div className="min-h-screen" aria-hidden="true" />}
         <div
           className={
             isHome
               ? ""
-              : "fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/55 px-2.5 py-6 backdrop-blur-md sm:px-6"
+              : "fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto bg-black/55 px-2.5 py-6 backdrop-blur-md sm:px-6"
           }
           onClick={isHome ? undefined : handleBackdropClick}
         >
@@ -115,7 +115,7 @@ function AppShell() {
           </div>
         </div>
       </main>
-      <Footer />
+      {isHome && <Footer />}
     </div>
   );
 }

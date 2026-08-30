@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext";
-import { HorizontalBrandingLogo } from "./BrandingLogo";
+import Logo from "./Logo";
 import "./Footer.css";
 
 export default function Footer() {
@@ -10,8 +10,8 @@ export default function Footer() {
     <footer className="ks-footer mt-16 border-t" style={{ borderColor: "var(--border-soft)" }}>
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <div className="mb-8 flex flex-col items-center overflow-visible text-center">
-          <Link to="/" aria-label="بازگشت به صفحه اصلی کالا سرچ" className="ks-footer-brand inline-block overflow-visible">
-            <HorizontalBrandingLogo showTagline={false} />
+          <Link to="/" aria-label="بازگشت به صفحه اصلی کالا سرچ" className="ks-footer-brand inline-flex justify-center overflow-visible">
+            <Logo />
           </Link>
           <p className="mt-2.5 max-w-md text-xs sm:text-sm leading-6" style={{ color: "var(--text-secondary)" }}>
             {t("footer.about")}
