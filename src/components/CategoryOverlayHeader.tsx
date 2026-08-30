@@ -36,62 +36,72 @@ export default function CategoryOverlayHeader({
 
   return (
     <div
-      className="mb-5 flex w-full items-center justify-between border-b pb-3.5"
+      className="mb-5 grid w-full grid-cols-[auto_1fr_auto] items-center gap-2 border-b pb-3.5 pt-1 sm:gap-4"
       style={{
         borderColor: "var(--border-soft)",
-        direction: "ltr", // Enforces strict Back Button = LEFT, Logo/Title = RIGHT
       }}
+      dir={dir}
     >
-      {/* Left Side: Back Button (ALWAYS on LEFT side in both desktop and mobile) */}
-      <button
-        type="button"
-        onClick={handleBack}
-        aria-label={t("category.back") || "بازگشت"}
-        className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 sm:text-sm"
-        style={{
-          color: "var(--text-primary)",
-          borderColor: "var(--border-strong)",
-          background: "var(--surface-strong)",
-          boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08)",
-        }}
-      >
-        <ArrowIcon size={16} style={{ color: "var(--accent-1)" }} />
-        <span dir={dir}>{t("category.back") || "بازگشت"}</span>
-      </button>
-
-      {/* Right Side: Category Icon / Mini Logo + Title + Optional Count Badge */}
-      <div
-        className="flex items-center gap-2.5"
-        dir={dir}
-        style={{ color: "var(--text-primary)" }}
-      >
-        <div
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+      {/* Right side in RTL (Left in LTR): Back Button */}
+      <div className="flex items-center justify-start">
+        <button
+          type="button"
+          onClick={handleBack}
+          aria-label={t("category.back") || "بازگشت"}
+          className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 sm:text-sm"
           style={{
-            background: "var(--chip-bg)",
-            color: "var(--accent-1)",
-            border: "1px solid var(--border-soft)",
+            color: "var(--text-primary)",
+            borderColor: "var(--border-strong)",
+            background: "var(--surface-strong)",
+            boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08)",
           }}
         >
-          <CategoryIcon id={categoryId} size={22} />
-        </div>
-        <div className="flex items-center gap-2">
-          <h1 className="text-base font-extrabold sm:text-xl">
+          <ArrowIcon size={16} style={{ color: "var(--accent-1)" }} />
+          <span>{t("category.back") || "بازگشت"}</span>
+        </button>
+      </div>
+
+      {/* Center: Category Title inside Crystal Capsule */}
+      <div className="flex items-center justify-center">
+        <div
+          className="glass-strong flex max-w-full items-center gap-2 rounded-2xl px-3 py-1.5 sm:px-4 sm:py-2"
+          style={{
+            border: "1.2px solid var(--border-strong)",
+            background: "var(--surface-strong)",
+            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.06)",
+          }}
+        >
+          <div
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg sm:h-7 sm:w-7"
+            style={{
+              background: "var(--chip-bg)",
+              color: "var(--accent-1)",
+            }}
+          >
+            <CategoryIcon id={categoryId} size={18} />
+          </div>
+          <h1 className="truncate text-xs font-black sm:text-sm md:text-base" style={{ color: "var(--text-primary)" }}>
             {title}
           </h1>
-          {productCount !== undefined && (
-            <span
-              className="rounded-full px-2.5 py-0.5 text-[11px] font-bold"
-              style={{
-                background: "var(--chip-bg)",
-                color: "var(--accent-1)",
-                border: "1px solid var(--border-soft)",
-              }}
-            >
-              {productCount} {t("category.productsCount") || "محصول"}
-            </span>
-          )}
         </div>
+      </div>
+
+      {/* Left side in RTL (Right in LTR): Product Count in small Crystal Capsule */}
+      <div className="flex items-center justify-end">
+        {productCount !== undefined ? (
+          <span
+            className="glass rounded-full px-2.5 py-1 text-[11px] font-bold sm:px-3.5 sm:text-xs"
+            style={{
+              background: "var(--chip-bg)",
+              color: "var(--accent-1)",
+              border: "1px solid var(--border-soft)",
+            }}
+          >
+            {productCount} {t("category.productsCount") || "محصول"}
+          </span>
+        ) : (
+          <div className="w-4" />
+        )}
       </div>
     </div>
   );

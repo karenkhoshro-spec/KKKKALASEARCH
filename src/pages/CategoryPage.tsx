@@ -7,6 +7,7 @@ import { getOtherSubcategoryCounts, getProductsByCategory } from "../data/produc
 import ProductCard from "../components/ProductCard";
 import CategoryOverlayHeader from "../components/CategoryOverlayHeader";
 import CategoryIcon from "../components/CategoryIcon";
+import "../components/CategoryNav.css";
 
 const PROMINENT_SUB_IDS = ["powder-sponge-holder", "colander-bowl", "soap-dish"] as const;
 
@@ -56,47 +57,21 @@ export default function CategoryPage() {
       {/* 2. Subcategories list for "Other" when no subcategory is selected */}
       {isOther && !subcategoryId && (
         <div className="flex flex-col gap-6">
-          {/* Vertical Container for the 3 Prominent Diamond Crystal Category Cards */}
-          <div
-            className="glass-strong flex flex-col gap-2.5 rounded-3xl p-3 sm:p-4"
-            style={{
-              background: "var(--surface-strong)",
-              border: "1.5px solid var(--accent-1)",
-              boxShadow: "0 6px 24px var(--accent-glow)",
-            }}
-          >
-            {top3Subcategories.map((sub) => (
+          {/* Top 3 Spotlight Subcategories: 3 equal cards in 1 row on desktop */}
+          <div className="grid grid-cols-3 gap-2 sm:gap-3.5">
+            {top3Subcategories.map((sub, index) => (
               <button
                 type="button"
                 key={sub.id}
                 onClick={() => setSubcategoryId(sub.id)}
-                className="glass ks-other-sub-card group flex items-center justify-between rounded-2xl p-3.5 transition-all duration-300 hover:scale-[1.01] hover:border-violet-500/50 active:scale-95"
-                style={{
-                  background: "var(--surface)",
-                  borderColor: "var(--border-soft)",
-                  boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.1)",
-                }}
+                className="ks-category-tile animate-fade-up group cursor-pointer"
+                style={{ animationDelay: `${index * 0.05}s` }}
+                aria-label={sub.name[lang]}
               >
-                <div className="flex items-center gap-3.5">
-                  <div
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl shadow-[var(--shadow-glow)] transition-transform duration-300 group-hover:scale-110"
-                    style={{
-                      background: "var(--chip-bg)",
-                      color: "var(--accent-1)",
-                    }}
-                  >
-                    <CategoryIcon id={sub.id} size={24} />
-                  </div>
-                  <span
-                    className="text-sm font-extrabold sm:text-base"
-                    style={{ color: "var(--text-primary)" }}
-                  >
-                    {sub.name[lang]}
-                  </span>
+                <div className="ks-category-icon-wrapper h-7 w-7 sm:h-9 sm:w-9 lg:h-10 lg:w-10">
+                  <CategoryIcon id={sub.id} size={30} className="h-full w-full object-contain" />
                 </div>
-                <span className="text-xs font-bold" style={{ color: "var(--accent-1)" }}>
-                  مشاهده ↗
-                </span>
+                <span className="ks-category-label">{sub.name[lang]}</span>
               </button>
             ))}
           </div>
@@ -104,7 +79,7 @@ export default function CategoryPage() {
           {/* Remaining Subcategories Grid */}
           <div className="flex flex-col gap-2.5">
             <h3 className="px-1 text-xs font-bold sm:text-sm" style={{ color: "var(--text-muted)" }}>
-              سایر زیردسته‌ها
+              {t("category.otherSubcategories") || "سایر زیردسته‌ها"}
             </h3>
             <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-5">
               {remainingSubcategories.map((sub) => (
@@ -112,7 +87,7 @@ export default function CategoryPage() {
                   type="button"
                   key={sub.id}
                   onClick={() => setSubcategoryId(sub.id)}
-                  className="glass ks-other-sub-card group flex flex-col items-center justify-center gap-2.5 rounded-2xl p-3.5 text-center transition-all duration-200 hover:-translate-y-1 hover:border-violet-500/50 hover:shadow-[0_0_14px_var(--accent-glow)] active:scale-95"
+                  className="glass ks-other-sub-card group flex flex-col items-center justify-center gap-2.5 rounded-2xl p-3.5 text-center transition-all duration-200 hover:-translate-y-1 hover:border-violet-500/50 hover:shadow-[0_0_14px_var(--accent-glow)] active:scale-95 cursor-pointer"
                   style={{
                     background: "var(--surface)",
                     borderColor: "var(--border-soft)",

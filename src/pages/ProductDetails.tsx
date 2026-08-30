@@ -111,44 +111,54 @@ export default function ProductDetails() {
       {activeImage && (
         <link rel="preload" as="image" href={activeImage} fetchPriority="high" referrerPolicy="no-referrer" />
       )}
-      {/* Overlay header with back button on the left */}
+      {/* Overlay header with back button on the right in RTL, title in center */}
       <div
-        className="mb-5 flex w-full items-center justify-between border-b pb-3.5"
-        style={{ borderColor: "var(--border-soft)", direction: "ltr" }}
+        className="mb-5 grid w-full grid-cols-[auto_1fr_auto] items-center gap-2 border-b pb-3.5 pt-1 sm:gap-4"
+        style={{ borderColor: "var(--border-soft)" }}
+        dir={dir}
       >
-        <button
-          type="button"
-          onClick={handleBack}
-          aria-label={t("category.back") || "بازگشت"}
-          className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 sm:text-sm"
-          style={{
-            color: "var(--text-primary)",
-            borderColor: "var(--border-strong)",
-            background: "var(--surface-strong)",
-          }}
-        >
-          <ArrowIcon size={16} style={{ color: "var(--accent-1)" }} />
-          <span dir={dir}>{t("category.back") || "بازگشت"}</span>
-        </button>
-
-        <div className="flex max-w-[70%] items-center gap-2" dir={dir}>
-          <span
-            className="truncate rounded-2xl px-3 py-1 text-xs font-extrabold sm:text-sm"
+        <div className="flex items-center justify-start">
+          <button
+            type="button"
+            onClick={handleBack}
+            aria-label={t("category.back") || "بازگشت"}
+            className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 sm:text-sm"
             style={{
-              background: "var(--chip-bg)",
               color: "var(--text-primary)",
-              border: "1px solid var(--border-soft)",
+              borderColor: "var(--border-strong)",
+              background: "var(--surface-strong)",
+              boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08)",
             }}
           >
-            {product.name[lang]}
-          </span>
+            <ArrowIcon size={16} style={{ color: "var(--accent-1)" }} />
+            <span>{t("category.back") || "بازگشت"}</span>
+          </button>
+        </div>
+
+        <div className="flex items-center justify-center">
+          <div
+            className="glass-strong flex max-w-[90%] items-center gap-2 rounded-2xl px-3 py-1.5 sm:px-4 sm:py-2"
+            style={{
+              border: "1.2px solid var(--border-strong)",
+              background: "var(--surface-strong)",
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.06)",
+            }}
+          >
+            <span className="truncate text-xs font-extrabold sm:text-sm" style={{ color: "var(--text-primary)" }}>
+              {product.name[lang]}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end">
+          <div className="w-4" />
         </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 md:gap-8">
         {/* Compact Product Media + Ashkan Button Directly Below */}
         <div className="flex flex-col gap-3">
-          <div className="glass product-media h-[min(24vh,190px)] rounded-3xl p-4 sm:h-[220px] sm:p-5 md:h-[250px]">
+          <div className="glass product-media relative flex h-[220px] w-full items-center justify-center overflow-hidden rounded-3xl p-3 sm:h-[260px] sm:p-4 md:h-[300px]">
             {activeImage ? (
               <img
                 key={activeImage}
@@ -171,12 +181,7 @@ export default function ProductDetails() {
               href={activeUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="glass inline-flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-bold transition-all duration-300 hover:scale-[1.01] active:scale-95 sm:py-3 sm:text-sm"
-              style={{
-                color: "var(--accent-1)",
-                border: "1px solid var(--border-soft)",
-                boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.12), 0 2px 10px rgba(0, 0, 0, 0.08)",
-              }}
+              className="ks-ashkan-btn inline-flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-bold transition-all duration-300 active:scale-95 sm:py-3 sm:text-sm"
             >
               <ExternalLink size={15} />
               <span>{t("product.viewOnAshkan") || "مشاهده در سایت اشکان پلاستیک"}</span>
@@ -273,7 +278,7 @@ export default function ProductDetails() {
                     type="button"
                     key={v.colorName}
                     onClick={() => setVariationId(v.id)}
-                    className="flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-medium transition-all sm:text-sm"
+                    className="flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-medium transition-all sm:text-sm cursor-pointer"
                     style={{
                       borderColor: variationId === v.id ? "var(--accent-1)" : "var(--border-soft)",
                       background: variationId === v.id ? "var(--chip-bg)" : "transparent",
@@ -302,7 +307,7 @@ export default function ProductDetails() {
                 type="button"
                 onClick={() => setQuantity((q) => Math.max(0, q - 1))}
                 aria-label="کاهش تعداد"
-                className="flex h-7 w-7 items-center justify-center rounded-lg transition-colors hover:bg-white/10 active:scale-90"
+                className="flex h-7 w-7 items-center justify-center rounded-lg transition-colors hover:bg-white/10 active:scale-90 cursor-pointer"
               >
                 <Minus size={14} style={{ color: "var(--text-primary)" }} />
               </button>
@@ -313,7 +318,7 @@ export default function ProductDetails() {
                 type="button"
                 onClick={() => setQuantity((q) => q + 1)}
                 aria-label="افزایش تعداد"
-                className="flex h-7 w-7 items-center justify-center rounded-lg transition-colors hover:bg-white/10 active:scale-90"
+                className="flex h-7 w-7 items-center justify-center rounded-lg transition-colors hover:bg-white/10 active:scale-90 cursor-pointer"
               >
                 <Plus size={14} style={{ color: "var(--text-primary)" }} />
               </button>
@@ -325,7 +330,7 @@ export default function ProductDetails() {
             {available ? (
               <button
                 onClick={handleAddToCart}
-                className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-3 text-xs font-bold text-white shadow-[var(--shadow-glow)] transition-transform duration-300 hover:scale-[1.01] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:py-3.5 sm:text-sm"
+                className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-3 text-xs font-bold text-white shadow-[var(--shadow-glow)] transition-transform duration-300 hover:scale-[1.01] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:py-3.5 sm:text-sm cursor-pointer"
                 style={{ background: "linear-gradient(90deg, var(--accent-2), var(--accent-1))" }}
               >
                 <ShoppingCart size={17} />
@@ -334,7 +339,7 @@ export default function ProductDetails() {
             ) : (
               <button
                 type="button"
-                className="flex flex-1 items-center justify-center rounded-2xl py-3 text-xs font-bold text-white sm:py-3.5 sm:text-sm"
+                className="flex flex-1 items-center justify-center rounded-2xl py-3 text-xs font-bold text-white sm:py-3.5 sm:text-sm cursor-pointer"
                 style={{ background: "linear-gradient(90deg, var(--accent-3), var(--accent-2))" }}
               >
                 {t("product.requestProduction")}
@@ -347,7 +352,7 @@ export default function ProductDetails() {
                 showToast(added ? t("notifications.addedToWishlist") : t("notifications.removedFromWishlist"), "info");
               }}
               aria-label="wishlist"
-              className="glass flex h-[48px] w-[48px] shrink-0 items-center justify-center rounded-2xl transition-transform hover:scale-105 active:scale-95 sm:h-[52px] sm:w-[52px]"
+              className="glass flex h-[48px] w-[48px] shrink-0 items-center justify-center rounded-2xl transition-transform hover:scale-105 active:scale-95 sm:h-[52px] sm:w-[52px] cursor-pointer"
             >
               <Heart size={19} fill={isSaved(product.id) ? "var(--accent-3)" : "none"} style={{ color: isSaved(product.id) ? "var(--accent-3)" : "var(--text-secondary)" }} />
             </button>
