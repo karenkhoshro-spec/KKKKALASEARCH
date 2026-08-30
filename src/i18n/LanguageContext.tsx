@@ -21,19 +21,31 @@ function getDir(lang: Lang): "rtl" | "ltr" {
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return (saved as Lang) || "fa";
+    if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return (saved as Lang) || "fa";
+    }
+    return "fa";
   });
-  const [hasChosenLanguage] = useState<boolean>(() => !!localStorage.getItem(STORAGE_KEY));
+  const [hasChosenLanguage] = useState<boolean>(() => {
+    if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
+      return !!localStorage.getItem(STORAGE_KEY);
+    }
+    return false;
+  });
 
   useEffect(() => {
-    document.documentElement.lang = lang;
-    document.documentElement.dir = getDir(lang);
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = lang;
+      document.documentElement.dir = getDir(lang);
+    }
   }, [lang]);
 
   const setLang = useCallback((l: Lang) => {
     setLangState(l);
-    localStorage.setItem(STORAGE_KEY, l);
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(STORAGE_KEY, l);
+    }
   }, []);
 
   const t = useCallback(

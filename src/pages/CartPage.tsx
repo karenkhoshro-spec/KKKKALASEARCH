@@ -13,9 +13,9 @@ export default function CartPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
-      <div className="mb-5 flex items-center justify-between">
+      <div className="mb-5 flex items-center justify-between" style={{ direction: "ltr" }}>
         <BackButton to="/" />
-        <h1 className="text-lg font-bold sm:text-xl" style={{ color: "var(--text-primary)" }}>
+        <h1 className="text-xl font-bold sm:text-2xl" style={{ color: "var(--text-primary)" }}>
           {t("cart.title")}
         </h1>
         <span />
@@ -39,19 +39,23 @@ export default function CartPage() {
             {items.map((item) => (
               <div key={`${item.productId}-${item.variation?.id ?? "base"}`} className="glass flex items-center gap-4 rounded-2xl p-3 sm:p-4">
                 <div className="product-media h-20 w-20 shrink-0 rounded-xl">
-                  <img src={item.image} alt={item.name} className="h-full w-full object-contain" />
+                  {item.image ? (
+                    <img src={item.image} alt={item.name} loading="lazy" decoding="async" className="h-full w-full object-contain" />
+                  ) : (
+                    <ShoppingBag size={22} style={{ color: "var(--text-muted)" }} aria-hidden="true" />
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="truncate text-sm font-bold" style={{ color: "var(--text-primary)" }}>
+                  <h3 className="truncate text-base font-bold" style={{ color: "var(--text-primary)" }}>
                     {item.name}
                   </h3>
                   {item.variation && (
-                    <p className="mt-0.5 text-xs" style={{ color: "var(--text-muted)" }}>
+                    <p className="mt-0.5 text-sm" style={{ color: "var(--text-muted)" }}>
                       {item.variation.name}
                     </p>
                   )}
                   {item.price !== undefined && (
-                    <p className="mt-1 text-sm font-semibold" style={{ color: "var(--accent-1)" }}>
+                    <p className="mt-1 text-base font-semibold" style={{ color: "var(--accent-1)" }}>
                       {item.price.toLocaleString()} {t("cart.toman")}
                     </p>
                   )}

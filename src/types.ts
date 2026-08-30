@@ -14,6 +14,10 @@ export interface Product {
 }
 export interface Category { id: string; name: LocalizedText; icon: string; sortOrder?: number; }
 export interface CartVariation { id: string; name: string; sku?: string; price?: number; }
-export interface CartItem { productId: string; name: string; image: string; price?: number; quantity: number; variation?: CartVariation; }
+export interface CartItem {
+  productId: string; name: string; image: string; price?: number; quantity: number; variation?: CartVariation;
+  /** Verified variant details carried from the catalog for the order PDF. */
+  colorName?: string; packQuantity?: number; technicalSpec?: string; url?: string;
+}
 export type ListContextType = { type: "home" } | { type: "search"; query: string } | { type: "category"; categoryId: string } | { type: "products" } | { type: "wishlist" };
 export interface Account { phone: string; name?: string; firstName?: string; lastName?: string; }

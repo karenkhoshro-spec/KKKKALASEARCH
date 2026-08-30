@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search } from "lucide-react";
+import { Search, Sparkles } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
+import "./SearchBar.css";
 
 export default function SearchBar({ large = false }: { large?: boolean }) {
   const { t } = useLanguage();
@@ -15,36 +16,32 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   };
 
   return (
-    <form onSubmit={submit} className="relative mx-auto w-full max-w-2xl">
-      <div
-        className={`search-shimmer rounded-[20px] p-[2px] transition-all duration-500 ${
-          focused ? "shadow-[var(--shadow-glow)]" : "opacity-90"
-        }`}
-      >
-        <div
-          className={`glass-strong flex items-center gap-3 rounded-[18px] px-4 transition-all duration-300 ${
-            large ? "py-4 sm:py-5" : "py-3"
-          }`}
-          style={{ background: "var(--input-bg)" }}
-        >
-          <Search size={large ? 22 : 18} style={{ color: "var(--accent-1)" }} className={focused ? "animate-pulse" : ""} />
+    <form onSubmit={submit} className="ks-search-form" role="search" aria-label="جستجوی هوشمند کالا سرچ">
+      <div className={`ks-search-wrapper ${focused ? "is-focused" : ""}`}>
+        <div className={`ks-search-inner ${large ? "py-2 sm:py-2.5" : "py-1.5"}`}>
+          <div className="ks-search-icon-wrapper" aria-hidden="true">
+            <Search size={large ? 22 : 18} />
+          </div>
+
           <input
+            type="search"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             placeholder={t("header.searchPlaceholder")}
-            className={`w-full flex-1 bg-transparent outline-none placeholder:opacity-60 ${large ? "text-base sm:text-lg" : "text-sm"}`}
-            style={{ color: "var(--text-primary)" }}
+            className="ks-search-input"
+            aria-label={t("header.searchPlaceholder")}
           />
+
           <button
             type="submit"
-            className={`shrink-0 rounded-xl font-bold text-white transition-transform duration-300 hover:scale-105 active:scale-95 ${
-              large ? "px-4 py-2.5 text-sm sm:px-5 sm:py-3" : "px-3 py-1.5 text-xs"
-            }`}
-            style={{ background: "linear-gradient(90deg, var(--accent-2), var(--accent-1))" }}
+            className="ks-gem-button"
+            aria-label={t("home.searchCta") || "جستجو"}
           >
-            {t("home.searchCta")}
+            <span className="ks-gem-facet-cut" aria-hidden="true" />
+            <Sparkles size={large ? 15 : 13} className="ks-gem-sparkle-icon" aria-hidden="true" />
+            <span className="ks-gem-text">{t("home.searchCta") || "جستجو"}</span>
           </button>
         </div>
       </div>

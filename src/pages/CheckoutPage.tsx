@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { FileDown, PackageCheck, AlertCircle, Send } from "lucide-react";
+import { FileDown, PackageCheck, Send } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useCart } from "../context/CartContext";
 import { useAccount } from "../context/AccountContext";
@@ -8,11 +8,22 @@ import { useToast } from "../context/ToastContext";
 import { generateOrderPdf, downloadBlob } from "../utils/pdf";
 import { deliverOrderToSeller } from "../utils/sellerDelivery";
 import { normalizeIranLocal, isValidIranLocal, toFullIranPhone } from "../utils/phone";
+import { meaningfulSpec } from "../utils/specFilter";
 import BackButton from "../components/BackButton";
 
 function generateOrderNumber() {
   const now = new Date();
   return `KS-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${Math.floor(1000 + Math.random() * 9000)}`;
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+interface CheckoutErrors {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  address?: string;
+  email?: string;
 }
 
 export default function CheckoutPage() {
@@ -22,10 +33,13 @@ export default function CheckoutPage() {
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-  const [fullName, setFullName] = useState(account?.name ?? "");
+  const [firstName, setFirstName] = useState(account?.firstName ?? account?.name?.split(" ")[0] ?? "");
+  const [lastName, setLastName] = useState(account?.lastName ?? (account?.name?.split(" ").slice(1).join(" ") ?? ""));
   const [phoneLocal, setPhoneLocal] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
   const [notes, setNotes] = useState("");
-  const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
+  const [errors, setErrors] = useState<CheckoutErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{
     orderNumber: string;
@@ -39,34 +53,55 @@ export default function CheckoutPage() {
   }
 
   const validate = () => {
-    const nextErrors: typeof errors = {};
-    if (!fullName.trim()) nextErrors.name = t("checkout.required");
+    const nextErrors: CheckoutErrors = {};
+    if (!firstName.trim()) nextErrors.firstName = t("checkout.required");
+    if (!lastName.trim()) nextErrors.lastName = t("checkout.required");
     if (!isValidIranLocal(normalizeIranLocal(phoneLocal))) nextErrors.phone = t("checkout.invalidPhone");
+    // Address is mandatory: an order can never be confirmed without it.
+    if (!address.trim()) nextErrors.address = t("checkout.addressRequired");
+    // Email is optional — but if provided, it must look like an email.
+    if (email.trim() && !EMAIL_RE.test(email.trim())) nextErrors.email = t("checkout.invalidEmail");
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate()) {
+      return;
+    }
     setSubmitting(true);
 
     const orderNumber = generateOrderNumber();
-    const date = new Date().toLocaleDateString(lang === "fa" ? "fa-IR" : lang === "ar" ? "ar-EG" : "en-US");
+    const now = new Date();
+    const date = now.toLocaleDateString(lang === "fa" ? "fa-IR" : lang === "ar" ? "ar-EG" : "en-US");
+    const time = now.toLocaleTimeString(lang === "fa" ? "fa-IR" : lang === "ar" ? "ar-EG" : "en-US", { hour: "2-digit", minute: "2-digit" });
     const fullPhone = toFullIranPhone(phoneLocal);
+    const trimmedEmail = email.trim();
 
     try {
       const pdfBlob = await generateOrderPdf({
         orderNumber,
         date,
-        customerName: fullName.trim(),
-        phone: fullPhone,
-        notes: notes.trim() || undefined,
+        time,
+        customer: {
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          phone: fullPhone,
+          email: trimmedEmail || undefined,
+          address: address.trim(),
+          notes: notes.trim() || undefined,
+        },
         items: items.map((it) => ({
           name: it.name,
           variation: it.variation?.name,
+          colorName: it.colorName,
+          sku: it.variation?.sku,
           quantity: it.quantity,
+          packQuantity: it.packQuantity,
           price: it.price,
+          technicalSpec: meaningfulSpec(it.technicalSpec) || undefined,
+          url: it.url,
         })),
         total,
         currencyLabel: t("cart.toman"),
@@ -75,23 +110,36 @@ export default function CheckoutPage() {
           title: t("checkout.title"),
           orderNumber: t("checkout.orderNumber"),
           date: t("checkout.date"),
-          customer: t("checkout.fullName"),
+          time: t("checkout.time"),
+          customer: t("checkout.customerInfo"),
+          firstName: t("checkout.firstName"),
+          lastName: t("checkout.lastName"),
           phone: t("checkout.phone"),
-          notes: t("checkout.notes"),
+          email: t("checkout.email"),
+          address: t("checkout.address"),
+          notes: t("checkout.orderNotes"),
           product: t("cart.product"),
           variation: t("product.variation"),
+          color: t("product.color"),
+          sku: t("product.sku"),
           quantity: t("cart.quantity"),
-          price: t("cart.price"),
+          packQuantity: t("product.packQuantity"),
+          price: t("product.price"),
+          spec: t("product.specTitle"),
           lineTotal: t("cart.total"),
           total: t("cart.total"),
+          priceUnknown: t("checkout.inquirePrice"),
+          footerNote: t("checkout.pdfFooterNote"),
         },
       });
 
       const delivery = await deliverOrderToSeller(pdfBlob, {
         orderNumber,
         date,
-        customerName: fullName.trim(),
+        customerName: `${firstName.trim()} ${lastName.trim()}`.trim(),
         phone: fullPhone,
+        email: trimmedEmail || undefined,
+        address: address.trim(),
         notes: notes.trim(),
         items,
         total,
@@ -141,13 +189,15 @@ export default function CheckoutPage() {
             {t("checkout.downloadPdf")}
           </button>
 
-          <div
-            className="flex w-full items-start gap-2 rounded-2xl p-3.5 text-start text-xs leading-5"
-            style={{ background: "var(--chip-bg)", color: "var(--text-secondary)" }}
-          >
-            {result.sent ? <Send size={15} className="mt-0.5 shrink-0" /> : <AlertCircle size={15} className="mt-0.5 shrink-0" style={{ color: "var(--danger)" }} />}
-            <span>{result.sent ? t("notifications.orderConfirmed") : t("checkout.sendNotConfigured")}</span>
-          </div>
+          {!result.sent && (
+            <div
+              className="flex w-full items-start gap-2 rounded-2xl p-3.5 text-start text-xs leading-5"
+              style={{ background: "var(--chip-bg)", color: "var(--text-secondary)" }}
+            >
+              <Send size={15} className="mt-0.5 shrink-0" />
+              <span>{t("checkout.deliveryPreparing")}</span>
+            </div>
+          )}
 
           <Link to="/" className="text-sm font-semibold" style={{ color: "var(--accent-1)" }}>
             {t("errors.goHome")}
@@ -157,9 +207,12 @@ export default function CheckoutPage() {
     );
   }
 
+  const errorText = (key: keyof CheckoutErrors) =>
+    errors[key] ? <p className="mt-1 text-xs font-bold" style={{ color: "var(--danger)" }}>{errors[key]}</p> : null;
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-6 sm:px-6">
-      <div className="mb-5 flex items-center justify-between">
+      <div className="mb-5 flex items-center justify-between gap-2" style={{ direction: "ltr" }}>
         <BackButton to="/cart" label={t("checkout.backToCart")} />
         <h1 className="text-lg font-bold sm:text-xl" style={{ color: "var(--text-primary)" }}>
           {t("checkout.title")}
@@ -167,26 +220,42 @@ export default function CheckoutPage() {
         <span />
       </div>
 
-      <form onSubmit={handleSubmit} className="glass flex flex-col gap-4 rounded-3xl p-5 sm:p-7">
+      <form onSubmit={handleSubmit} noValidate className="glass flex flex-col gap-4 rounded-3xl p-5 sm:p-7">
         <h2 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
           {t("checkout.customerInfo")}
         </h2>
 
-        <div>
-          <label className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
-            {t("checkout.fullName")}
-          </label>
-          <input
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none"
-            style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
-          />
-          {errors.name && <p className="mt-1 text-xs" style={{ color: "var(--danger)" }}>{errors.name}</p>}
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="checkout-first-name" className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+              {t("checkout.firstName")}
+            </label>
+            <input
+              id="checkout-first-name"
+              dir="auto"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              className="ks-field ks-field-bordered w-full rounded-xl px-3.5 py-2.5 text-base outline-none"
+            />
+            {errorText("firstName")}
+          </div>
+          <div>
+            <label htmlFor="checkout-last-name" className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+              {t("checkout.lastName")}
+            </label>
+            <input
+              id="checkout-last-name"
+              dir="auto"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              className="ks-field ks-field-bordered w-full rounded-xl px-3.5 py-2.5 text-base outline-none"
+            />
+            {errorText("lastName")}
+          </div>
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+          <label htmlFor="checkout-phone" className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
             {t("checkout.phone")}
           </label>
           <div className="flex items-center gap-2">
@@ -194,28 +263,62 @@ export default function CheckoutPage() {
               +98
             </span>
             <input
+              id="checkout-phone"
               value={phoneLocal}
               onChange={(e) => setPhoneLocal(normalizeIranLocal(e.target.value))}
               placeholder="9XX XXX XXXX"
               inputMode="numeric"
-              className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none"
-              style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
+              className="ks-field ks-field-bordered w-full rounded-xl px-3.5 py-2.5 text-base outline-none"
             />
           </div>
-          {errors.phone && <p className="mt-1 text-xs" style={{ color: "var(--danger)" }}>{errors.phone}</p>}
+          {errorText("phone")}
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
-            {t("checkout.notes")}
+          <label htmlFor="checkout-email" className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+            {t("checkout.email")}
+          </label>
+          <input
+            id="checkout-email"
+            dir="ltr"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="name@example.com"
+            className="ks-field ks-field-bordered w-full rounded-xl px-3.5 py-2.5 text-base outline-none"
+            style={{ textAlign: dir === "rtl" ? "start" : undefined }}
+          />
+          {errorText("email")}
+        </div>
+
+        <div>
+          <label htmlFor="checkout-address" className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+            {t("checkout.address")} <span style={{ color: "var(--danger)" }}>*</span>
           </label>
           <textarea
+            id="checkout-address"
+            dir="auto"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder={t("checkout.addressPlaceholder")}
+            rows={3}
+            className="ks-field ks-field-bordered w-full rounded-xl px-3.5 py-2.5 text-base outline-none"
+          />
+          {errorText("address")}
+        </div>
+
+        <div>
+          <label htmlFor="checkout-notes" className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+            {t("checkout.orderNotes")} <span className="font-normal" style={{ color: "var(--text-muted)" }}>({t("checkout.optional")})</span>
+          </label>
+          <textarea
+            id="checkout-notes"
+            dir="auto"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder={t("checkout.notesPlaceholder")}
-            rows={3}
-            className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none"
-            style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
+            rows={2}
+            className="ks-field ks-field-bordered w-full rounded-xl px-3.5 py-2.5 text-base outline-none"
           />
         </div>
 

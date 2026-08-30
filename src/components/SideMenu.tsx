@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { X, Home, Grid3x3, Package, Heart, ShoppingCart, User, Info, Phone, Sparkles } from "lucide-react";
+import { X, Home, Grid3x3, Package, Heart, ShoppingCart, User, Info, Phone } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useAccount } from "../context/AccountContext";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -14,9 +14,9 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
   const links = [
     { to: "/", label: t("menu.home"), icon: Home },
     { to: "/account", label: account?.name ? t("account.greeting", { name: account.name }) : t("account.loginTitle"), icon: User },
-    { to: "/products", label: t("menu.products"), icon: Package },
     { to: "/cart", label: t("menu.cart"), icon: ShoppingCart },
     { to: "/wishlist", label: t("menu.wishlist"), icon: Heart },
+    { to: "/about", label: t("menu.about"), icon: Info },
   ];
 
   return (
@@ -32,9 +32,9 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
         style={{ transform: open ? "translateX(0)" : closedTransform }}
       >
         <div className="flex items-center justify-between px-4 pt-4">
+          {/* Branding only — no extra rotating mark next to the logo. */}
           <div className="glass flex items-center gap-2 rounded-2xl px-3 py-2">
             <Logo compact />
-            <Sparkles size={15} className="animate-spin-slow" style={{ color: "var(--accent-3)" }} />
           </div>
           <button
             onClick={onClose}
@@ -52,6 +52,8 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
             <img
               src="/images/menu-family.jpg"
               alt={t("menu.familyCaption")}
+              loading="lazy"
+              decoding="async"
               className="h-full w-full animate-kenburns object-cover"
             />
             <div
@@ -65,32 +67,53 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
           </div>
         </div>
 
-        <nav className="mt-5 flex flex-col gap-1 px-3">
-          {links.map((link) => {
+        <nav className="mt-4 flex flex-col gap-2 px-3">
+          {links.map((link, i) => {
             const Icon = link.icon;
             return (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={onClose}
-                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:bg-white/10"
-                style={{ color: "var(--text-primary)" }}
-              >
-                <Icon size={17} style={{ color: "var(--accent-1)" }} />
-                {link.label}
-              </Link>
+              <div key={link.to}>
+                {i > 0 && <div className="ks-menu-divider" aria-hidden="true" />}
+                <Link
+                  to={link.to}
+                  onClick={onClose}
+                  className="ks-menu-item text-sm font-bold"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  <Icon size={17} style={{ color: "var(--accent-1)" }} />
+                  {link.label}
+                </Link>
+              </div>
             );
           })}
         </nav>
 
-        <div className="mt-3 flex flex-col gap-1 px-3">
-          <div className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-            <Info size={17} style={{ color: "var(--accent-1)" }} />
-            {t("menu.about")}
-          </div>
-          <div className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+        {/* Grouping: "محصولات" sits directly beside "سایر" */}
+        <div className="mt-2 grid grid-cols-2 gap-2 px-3">
+          <Link
+            to="/category/other"
+            onClick={onClose}
+            className="ks-menu-item flex-col justify-center gap-1 text-center text-sm font-bold"
+            style={{ color: "var(--text-primary)" }}
+          >
+            <Grid3x3 size={17} style={{ color: "var(--accent-3)" }} />
+            {t("menu.other")}
+          </Link>
+          <Link
+            to="/products"
+            onClick={onClose}
+            className="ks-menu-item flex-col justify-center gap-1 text-center text-sm font-bold"
+            style={{ color: "var(--text-primary)" }}
+          >
+            <Package size={17} style={{ color: "var(--accent-1)" }} />
+            {t("menu.products")}
+          </Link>
+        </div>
+
+        <div className="mx-3 mt-3">
+          <div className="ks-menu-divider" aria-hidden="true" />
+          <div className="ks-menu-item" style={{ color: "var(--text-secondary)" }}>
             <Phone size={17} style={{ color: "var(--accent-1)" }} />
-            {t("menu.contact")}
+            <span className="text-sm font-semibold">{t("menu.contact")}</span>
           </div>
         </div>
 
@@ -112,7 +135,6 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
         </div>
 
         <div className="flex items-center gap-2 px-4 pb-6 pt-1 text-xs" style={{ color: "var(--text-muted)" }}>
-          <Grid3x3 size={14} />
           <span>Kala Search © {new Date().getFullYear()}</span>
         </div>
       </aside>

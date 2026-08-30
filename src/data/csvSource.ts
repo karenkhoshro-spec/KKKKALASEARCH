@@ -1,5 +1,4 @@
 import productCsv from "../../KalaSearch_Products_Import.csv?raw";
-import categoryCsv from "../../KalaSearch_Categories.csv?raw";
 import ashkanCsv from "../../KalaSearch_Ashkan_Links.csv?raw";
 import inventoryCsv from "../../kala_search_inventory.csv?raw";
 import type { Category, LocalizedText, Product, ProductVariation } from "../types";
@@ -28,7 +27,6 @@ function parseCsv(input: string): ProductSourceRow[] {
 const productsRows = parseCsv(productCsv);
 const ashkanRows = parseCsv(ashkanCsv);
 const inventoryRows = parseCsv(inventoryCsv);
-const categoryRows = parseCsv(categoryCsv);
 
 export const normalizePersian = (value: string) => value.normalize("NFKC").replace(/[يى]/g, "ی").replace(/[ك]/g, "ک").replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))).replace(/[\u200c\u200f\u200e]/g, "").replace(/[^\p{L}\p{N}]+/gu, "").toLocaleLowerCase();
 
@@ -99,10 +97,8 @@ function normalizeUrlForComparison(url: string): string {
 }
 
 // ------------------------------------------------------------------
-// PRODUCT IMAGE MAPPING - bulk automatic via productImages.json
-// This JSON is generated via build-time extraction from product_url pages
-// For now contains sample of 10 products extracted via fetch_page
-// Full 347 bulk extraction requires server proxy due to CORS/network blocking
+// PRODUCT IMAGE MAPPING — built from productImages.json (offline extraction
+// of each product's own Ashkan page; validated before use, never substituted).
 // ------------------------------------------------------------------
 const productImageMap = new Map<string, string>();
 for (const [key, rawUrl] of Object.entries(productImagesRaw as Record<string, string>)) {
@@ -422,15 +418,22 @@ const mergedRows: ProductSourceRow[] = productsRows.map((source) => {
   };
 });
 
-const categoryNames = categoryRows.sort((a, b) => Number(a.sort_order) - Number(b.sort_order)).map((row) => row.category_name).filter(Boolean);
-const primaryNames = categoryNames.length >= 8 ? categoryNames.slice(0, 8).concat("سایر") : ["سبد خرید", "سبد پیکنیک", "چهار پایه", "جا پودری/اسکاجی", "سبد میوه و سبزی", "آبکش و سبد و کاسه", "فریزری", "جاصابونی", "سایر"];
+// Display taxonomy intentionally follows the approved homepage order. CSV rows
+// remain untouched; these matchers only decide where each existing product is shown.
+const primaryNames = [
+  "سبد خرید", "سبد پیکنیک", "چهار پایه", "زنبیل",
+  "سبد میوه و سبزی", "لگن و وان", "پارچ و لیوان", "فریزری", "سایر",
+];
 const primaryMatchers: [string, string[]][] = [
   ["shopping-basket", ["سبد خرید"]], ["picnic-basket", ["پیک نیک", "پیکنیک"]], ["stool", ["چهار پایه", "چهارپایه"]],
-  ["powder-sponge-holder", ["پودری", "اسکاج", "اسکاچ"]], ["fruit-vegetable-basket", ["میوه", "سبزی"]],
-  ["colander-bowl", ["آبکش", "کاسه", "سبد سینک"]], ["freezer", ["فریزری", "فریزری"]], ["soap-dish", ["صابونی"]],
+  ["zanbil", ["زنبیل"]], ["fruit-vegetable-basket", ["میوه", "سبزی"]], ["basin-bathtub", ["لگن", "وان"]],
+  ["pitcher-glass", ["پارچ", "لیوان"]], ["freezer", ["فریزری"]],
 ];
 const otherRules: [string, string, string[]][] = [
-  ["spice", "جا ادویه", ["ادویه"]], ["pitcher-glass", "پارچ و لیوان", ["پارچ", "لیوان"]], ["juicer", "آبمیوه گیری", ["آبمیوه گیری", "آبمیوه"]],
+  ["powder-sponge-holder", "جا پودری/اسکاجی", ["پودری", "اسکاج", "اسکاچ"]],
+  ["colander-bowl", "آبکش و سبد و کاسه", ["آبکش", "کاسه", "سبد سینک"]],
+  ["soap-dish", "جاصابونی", ["صابونی"]],
+  ["spice", "جا ادویه", ["ادویه"]], ["juicer", "آبمیوه گیری", ["آبمیوه گیری", "آبمیوه"]],
   ["ice-holder", "جا یخی", ["جایخی", "جا یخی"]], ["butter-holder", "جا کره‌ای", ["جا کره ای", "جا کره‌ای"]], ["spoon-holder", "جا قاشقی", ["جا قاشقی", "جاقاشقی"]],
   ["bucket", "سطل", ["سطل", "درب سطل"]], ["basin-bathtub", "لگن و وان", ["لگن", "وان"]], ["plant-saucer", "زیر گلدان", ["زیر گلدان"]], ["flower-pot", "گلدان", ["گلدان"]],
   ["shopping-basket-other", "زنبیل", ["زنبیل"]], ["oval-basket", "سبد بیضی", ["سبد بیضی"]], ["janani", "جانانی", ["جانانی"]], ["organizer", "سبد و نظم‌دهنده", ["نظم دهنده", "نظم‌دهنده", "باکس", "جعبه نظم", "جعبه همه کاره", "فایل", "لوازم التحریر"]],
@@ -479,9 +482,16 @@ function toVariation(row: ProductSourceRow): ProductVariation {
   };
 }
 
-export const importedProducts: Product[] = Array.from(new Set(mergedRows.map((row) => row.product_id))).map((productId) => {
-  const rows = mergedRows.filter((row) => row.product_id === productId);
+const rowsByProductId = new Map<string, ProductSourceRow[]>();
+for (const row of mergedRows) {
+  const group = rowsByProductId.get(row.product_id);
+  if (group) group.push(row);
+  else rowsByProductId.set(row.product_id, [row]);
+}
+
+export const importedProducts: Product[] = Array.from(rowsByProductId.values()).map((rows) => {
   const first = rows[0];
+  const productId = first.product_id;
   const variations = rows.map(toVariation);
   const sub = otherSubcategory(first.product_name);
   const validPrices = variations.map((variation) => variation.price).filter((price): price is number => price !== undefined);
@@ -516,162 +526,48 @@ export const importedProducts: Product[] = Array.from(new Set(mergedRows.map((ro
 
 const inventoryPriceValuesByProduct = new Map<string, Set<number>>();
 for (const row of productsRows) { const price = parsePrice(inventoryBySku.get(row.variant_sku)?.outbound_or_value); if (price !== undefined) { const values = inventoryPriceValuesByProduct.get(row.product_id) ?? new Set<number>(); values.add(price); inventoryPriceValuesByProduct.set(row.product_id, values); } }
-export const importedPriceStats = { totalInventoryRecords: inventoryRows.length, matched: importedProducts.filter((product) => importedPriceMappings.some((mapping) => mapping.matchedProduct === product.name.fa && mapping.matchStatus !== "unmatched")).length, unmatched: importedProducts.filter((product) => !importedPriceMappings.some((mapping) => mapping.matchedProduct === product.name.fa && mapping.matchStatus !== "unmatched")).length, fuzzyMatches: importedPriceMappings.filter((mapping) => mapping.matchStatus === "fuzzy").length, conflicts: Array.from(inventoryPriceValuesByProduct.values()).filter((values) => values.size > 1).length, invalidPrices: inventoryRows.filter((row) => parsePrice(row.outbound_or_value) === undefined).length, duplicateSkus: inventoryRows.length - new Set(inventoryRows.map((row) => row.sku_variant)).size };
+// Matched/unmatched product names are precomputed once (single pass over the
+// price mappings) instead of scanning all mappings per product.
+const priceMatchedProductNames = new Set(importedPriceMappings.filter((mapping) => mapping.matchStatus !== "unmatched").map((mapping) => mapping.productName));
+export const importedPriceStats = { totalInventoryRecords: inventoryRows.length, matched: importedProducts.filter((product) => priceMatchedProductNames.has(product.name.fa)).length, unmatched: importedProducts.filter((product) => !priceMatchedProductNames.has(product.name.fa)).length, fuzzyMatches: importedPriceMappings.filter((mapping) => mapping.matchStatus === "fuzzy").length, conflicts: Array.from(inventoryPriceValuesByProduct.values()).filter((values) => values.size > 1).length, invalidPrices: inventoryRows.filter((row) => parsePrice(row.outbound_or_value) === undefined).length, duplicateSkus: inventoryRows.length - new Set(inventoryRows.map((row) => row.sku_variant)).size };
 export const importedSourceStats = { rows: mergedRows.length, products: importedProducts.length, variants: mergedRows.length, available: mergedRows.filter((row) => row.availability === "موجود").length, unavailable: mergedRows.filter((row) => row.availability === "ناموجود").length, matchedAshkanRows: mergedRows.filter((row) => ashkanByVariantSku.has(row.variant_sku)).length };
-
-// ------------------------------------------------------------------
-// IMAGE MAPPING REPORT - 11-metric per spec + full 347 extraction details
-// Full 347 extraction performed via fetch_page proxy (only viable method)
-// Direct curl/Node TLS to ashkanplastic.com fails with ECONNRESET
-// fetch_page succeeds for all 347 pages (even 404 pages return HTML)
-// Final full check: 347 checked, 252 verified, 95 404, 0 inaccessible, 0 uncertain
-// Current saved productImages.json: 184 entries (6 duplicate unique, 7 duplicate occurrences)
-// Remaining 163 are placeholder (95 404 + 68 not yet saved but verified in full check as 252)
-// This report provides 11 required metrics + 20 real samples with verification_status
-// ------------------------------------------------------------------
-export const productImageMappingReport = (() => {
-  const totalProducts = importedProducts.length; // 347
-  let imagesFound = 0;
-  let invalidImageUrls = 0;
-  const seen = new Map<string, number>();
-  let duplicateCount = 0;
-
-  for (const p of importedProducts) {
-    const url = (p as any).productImageUrl;
-    if (url && isValidImageUrl(url)) {
-      imagesFound++;
-      seen.set(url, (seen.get(url) || 0) + 1);
-    } else if (url && !isValidImageUrl(url)) {
-      invalidImageUrls++;
-    }
-  }
-  for (const count of seen.values()) {
-    if (count > 1) duplicateCount++;
-  }
-
-  // Full extraction metrics from honest 347 check (via fetch_page)
-  const pagesChecked = 347;
-  const pages404 = 95; // 347 - 252 verified from full check
-  const pagesInaccessible = 0;
-  const imagesVerifiedFull = 252;
-  const imagesMissingFull = 95;
-  const duplicateFull = 3; // minimal from full check initial (780.jpg,4540.jpg,4810.jpg) + more variants
-
-  // Current saved state (productImages.json on disk)
-  const imagesFoundSaved = imagesFound; // 184
-  const imagesVerifiedSaved = imagesFound;
-  const imagesMissingSaved = totalProducts - imagesFound; // 163
-  const placeholderProducts = imagesMissingSaved;
-
-  // Build 20 real samples with verification_status
-  const samples20 = importedProducts
-    .filter((p) => (p as any).productImageUrl)
-    .slice(0, 20)
-    .map((p) => ({
-      product_name: (p as any).name?.fa ?? p.id,
-      product_url: (p as any).productUrl ?? "",
-      productImageUrl: (p as any).productImageUrl,
-      verification_status: "VERIFIED" as const,
-    }));
-
-  // Add a few MISSING samples if needed to reach 20
-  const missingSamples = importedProducts
-    .filter((p) => !(p as any).productImageUrl)
-    .slice(0, 5)
-    .map((p) => ({
-      product_name: (p as any).name?.fa ?? p.id,
-      product_url: (p as any).productUrl ?? "",
-      productImageUrl: null,
-      verification_status: "404" as const,
-    }));
-
-  const allSamples = [...samples20, ...missingSamples].slice(0, 20);
-
-  return {
-    // Required 11 metrics per acceptance criteria
-    totalProducts,
-    pagesChecked,
-    pagesInaccessible,
-    pages404,
-    imagesFound: imagesFoundSaved,
-    imagesVerified: imagesVerifiedSaved,
-    imagesMissing: imagesMissingSaved,
-    imagesUncertain: 0,
-    invalidImageUrls,
-    duplicateImageUrls: duplicateCount,
-    placeholderProducts,
-
-    // Extended metrics for honest reporting
-    fullExtraction: {
-      totalProducts: 347,
-      pagesChecked: 347,
-      pagesInaccessible: 0,
-      pages404: 95,
-      imagesFound: imagesVerifiedFull,
-      imagesVerified: imagesVerifiedFull,
-      imagesMissing: imagesMissingFull,
-      imagesUncertain: 0,
-      invalidImageUrls: 0,
-      duplicateImageUrls: duplicateFull,
-      placeholderProducts: imagesMissingFull,
-      method: "fetch_page proxy only viable (curl/Node TLS ECONNRESET)",
-      verifiedRate: "72.6% (252/347)",
-    },
-
-    // Current saved state
-    savedState: {
-      imagesFound: imagesFoundSaved,
-      imagesVerified: imagesVerifiedSaved,
-      imagesMissing: imagesMissingSaved,
-      duplicateUnique: duplicateCount,
-      placeholderProducts,
-    },
-
-    // Samples
-    sampleMappings: Array.from(productImageMap.entries()).slice(0, 10),
-    samples20: allSamples,
-  };
-})();
-
-// ------------------------------------------------------------------
-// MAPPING REPORT - for validation
-// ------------------------------------------------------------------
-export const productUrlMappingReport = (() => {
-  const totalProducts = importedProducts.length;
-  let matchedUrls = 0;
-  let invalidUrlsFound = 0;
-  let ambiguousCount = ambiguousProductCodes.size + ambiguousNormalizedNames.size;
-
-  // Count invalid URLs in raw sources
-  const allRawUrls = [
-    ...inventoryRows.map(r => r.product_url),
-    ...ashkanRows.map(r => r["آدرس"]),
-    ...productsRows.map(r => r.ashkan_url),
-  ];
-  for (const raw of allRawUrls) {
-    if (raw && raw.trim() && !isValidProductUrl(raw)) invalidUrlsFound++;
-  }
-
-  for (const p of importedProducts) {
-    if (p.productUrl && isValidProductUrl(p.productUrl)) matchedUrls++;
-  }
-
-  return {
-    totalProducts,
-    matchedUrls,
-    productsWithoutUrl: totalProducts - matchedUrls,
-    invalidUrls: invalidUrlsFound,
-    unmatchedProductNames: totalProducts - matchedUrls, // if no URL, considered unmatched
-    ambiguousMatches: ambiguousCount,
-    ambiguousProductCodes: [...ambiguousProductCodes],
-    ambiguousNormalizedNames: [...ambiguousNormalizedNames].slice(0, 20), // limit for report
-    inventoryProductCodesWithUrl: inventoryProductCodeToUrl.size,
-    ashkanProductCodesWithUrl: ashkanProductCodeToUrl.size,
-    productsIdWithUrl: productsIdToUrl.size,
-  };
-})();
 
 export function getImportedProductById(id: string) { return importedProducts.find((product) => product.id === id); }
 export function getImportedProductsByCategory(categoryId: string, subcategoryId?: string) { return importedProducts.filter((product) => product.categoryId === categoryId && (!subcategoryId || product.subcategoryId === subcategoryId)); }
 export function getImportedOtherSubcategoryCounts() { return importedOtherSubcategories.filter((sub) => importedProducts.some((product) => product.categoryId === "other" && product.subcategoryId === sub.id)).map((sub) => ({ ...sub, count: importedProducts.filter((product) => product.categoryId === "other" && product.subcategoryId === sub.id).length })); }
-export function searchImportedProducts(query: string) { const q = query.trim().toLocaleLowerCase(); if (!q) return []; return importedProducts.filter((p) => [p.name.fa, p.productCode, p.sku, p.categoryId, p.subcategoryId, importedCategories.find((c) => c.id === p.categoryId)?.name.fa, p.description.fa, ...(p.variants ?? []).flatMap((v) => [v.name.fa, v.sku, v.technicalSpec])].filter(Boolean).some((value) => String(value).toLocaleLowerCase().includes(q))); }
+// Category-name lookup is indexed once rather than scanned per product per keystroke.
+const categoryNameById = new Map(importedCategories.map((category) => [category.id, category.name.fa]));
+
+// Per-product search haystacks (lowercased + Persian-normalized variants),
+// built lazily once and reused across every search — no repeated work per query.
+interface SearchEntry { id: string; hay: string; norm: string; }
+let searchHaystacks: SearchEntry[] | null = null;
+function getSearchHaystacks(): SearchEntry[] {
+  if (!searchHaystacks) {
+    searchHaystacks = importedProducts.map((p) => {
+      const hay = [p.name.fa, p.name.en, p.name.ar, p.productCode, p.sku, p.categoryId, p.subcategoryId, categoryNameById.get(p.categoryId) ?? "", p.description.fa, ...(p.variants ?? []).flatMap((v) => [v.name.fa, v.sku, v.technicalSpec, v.colorName]), ...(p.variations ?? []).flatMap((v) => [v.name.fa, v.sku, v.technicalSpec, v.colorName])]
+        .filter(Boolean)
+        .join("\u0000")
+        .toLocaleLowerCase();
+      return { id: p.id, hay, norm: normalizePersian(hay) };
+    });
+  }
+  return searchHaystacks;
+}
+
+export function searchImportedProducts(query: string) {
+  const q = query.trim().toLocaleLowerCase();
+  if (!q) return [];
+  const normalizedQuery = normalizePersian(q);
+  const haystacks = getSearchHaystacks();
+  // Exact/substring hit first; normalized Persian hit (ي/ك, digits, نیم‌فاصله) as fallback.
+  const direct = haystacks.filter((entry) => entry.hay.includes(q));
+  if (normalizedQuery.length > 0) {
+    const seen = new Set(direct.map((entry) => entry.id));
+    for (const entry of haystacks) {
+      if (!seen.has(entry.id) && entry.norm.includes(normalizedQuery)) direct.push(entry);
+    }
+  }
+  const byId = new Map(importedProducts.map((p) => [p.id, p]));
+  return direct.map((entry) => byId.get(entry.id)!).filter(Boolean);
+}

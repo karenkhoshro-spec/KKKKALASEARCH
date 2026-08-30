@@ -2,16 +2,23 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 
+/**
+ * In-site back control. It mirrors the device BACK button behaviour:
+ * when an earlier in-site entry exists (product → its category/search page,
+ * category → homepage…), it navigates the real history back; otherwise it
+ * falls back to the provided destination so navigation never leaves the app.
+ */
 export default function BackButton({ to, label }: { to?: string; label?: string }) {
   const navigate = useNavigate();
   const { t, dir } = useLanguage();
   const Icon = dir === "rtl" ? ArrowRight : ArrowLeft;
 
   const handleClick = () => {
-    if (to) {
-      navigate(to);
-    } else if (window.history.state && window.history.state.idx > 0) {
+    const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
+    if (idx > 0) {
       navigate(-1);
+    } else if (to) {
+      navigate(to);
     } else {
       navigate("/");
     }
