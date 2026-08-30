@@ -30,9 +30,11 @@ function useSafeTheme(): "light" | "dark" {
 function RealBrand({
   layout,
   className = "",
+  compact = false,
 }: {
   layout: "horizontal" | "vertical";
   className?: string;
+  compact?: boolean;
 }) {
   const theme = useSafeTheme();
   const { lang } = useLanguage();
@@ -41,7 +43,9 @@ function RealBrand({
   const alt = lang === "en" ? "KalaSearch" : "کالا سرچ";
 
   return (
-    <div className={`ks-real-brand ks-real-brand--${layout} ${className}`}>
+    <div
+      className={`ks-real-brand ks-real-brand--${layout}${compact ? " ks-real-brand--compact" : ""} ${className}`}
+    >
       <img src={nameSrc} alt={alt} className="ks-real-name" draggable={false} />
       <img src={bag} alt="" className="ks-real-bag" draggable={false} />
     </div>
@@ -55,9 +59,11 @@ export function VerticalBrandingLogo({ className = "" }: { className?: string })
 export function HorizontalBrandingLogo({
   className = "",
   showTagline: _showTagline = false,
+  compact = false,
 }: {
   className?: string;
   showTagline?: boolean;
+  compact?: boolean;
 }) {
-  return <RealBrand layout="horizontal" className={className} />;
+  return <RealBrand layout="horizontal" className={className} compact={compact} />;
 }

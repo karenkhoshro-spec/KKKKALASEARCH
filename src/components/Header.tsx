@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { Menu, ShoppingCart, UserRound } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useCart } from "../context/CartContext";
-import Logo from "./Logo";
+import { HorizontalBrandingLogo } from "./BrandingLogo";
 import ThemeToggle from "./ThemeToggle";
+import "./Header.css";
 import SideMenu from "./SideMenu";
 
 export default function Header() {
@@ -15,9 +16,9 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-[120] w-full transition-shadow duration-300">
+      <header className="ks-site-header sticky top-0 z-[120] w-full transition-shadow duration-300">
         <div className="glass-strong border-b" style={{ borderColor: "var(--border-soft)" }}>
-          <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-3 py-2.5 sm:px-6">
+          <div className="ks-site-header-inner mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-3 py-2 sm:px-6">
             {/* Nav controls group */}
             <div className="flex items-center gap-1.5 sm:gap-2.5">
               <button
@@ -31,9 +32,9 @@ export default function Header() {
             </div>
 
             {/* Center logo */}
-            <div className="flex items-center justify-center">
-              <Link to="/" aria-label="Kala Search">
-                <Logo />
+            <div className="ks-site-header-brand flex items-center justify-center overflow-visible">
+              <Link to="/" aria-label="Kala Search" className="overflow-visible">
+                <HorizontalBrandingLogo compact showTagline={false} />
               </Link>
             </div>
 

@@ -1,0 +1,10 @@
+.ks-site-header,
+.ks-site-header .glass-strong,
+.ks-site-header-inner,
+.ks-site-header-brand {
+  overflow: visible;
+}
+
+.ks-site-header-inner {
+  min-height: 3.25rem;
+}
