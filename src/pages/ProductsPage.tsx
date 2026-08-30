@@ -40,7 +40,7 @@ export default function ProductsPage() {
     <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6" dir={dir}>
       {/* Unified overlay header with Back button on right in RTL */}
       <div
-        className="mb-5 grid w-full grid-cols-[auto_1fr_auto] items-center gap-2 border-b pb-3.5 pt-1 sm:gap-4"
+        className="mb-5 grid w-full grid-cols-[1fr_auto_1fr] items-center gap-2 border-b pb-3.5 pt-1 sm:gap-4"
         style={{ borderColor: "var(--border-soft)" }}
       >
         <div className="flex items-center justify-start">

@@ -1,4 +1,3 @@
-import { Globe2 } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import type { Lang } from "../types";
 import Logo from "./Logo";
@@ -19,11 +18,12 @@ export default function LanguageWelcomeModal({ onDone }: { onDone: () => void })
         <div className="pointer-events-none absolute -bottom-20 -left-10 h-48 w-48 rounded-full opacity-30 animate-glow-pulse" style={{ background: "var(--accent-3)" }} />
 
         <div className="relative flex flex-col items-center text-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl" style={{ background: "var(--chip-bg)" }}>
-            <Globe2 size={28} style={{ color: "var(--accent-1)" }} />
+          {/* Centered KalaSearch Logo and Styled Brand Name */}
+          <div className="mb-3 scale-110 flex items-center justify-center">
+            <Logo />
           </div>
-          <div className="mb-1 scale-110"><Logo /></div>
-          <h2 className="mt-4 text-xl font-bold" style={{ color: "var(--text-primary)" }}>
+
+          <h2 className="mt-2 text-xl font-bold" style={{ color: "var(--text-primary)" }}>
             {t("welcome.title")}
           </h2>
           <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
