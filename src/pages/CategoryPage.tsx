@@ -41,7 +41,7 @@ export default function CategoryPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-3.5 py-4 sm:px-6">
-      {/* 1. Unified Overlay Header */}
+      {/* 1. Standardized Single-Row Overlay Header */}
       <CategoryOverlayHeader
         categoryId={isOther && subcategoryId ? subcategoryId : categoryId}
         title={
@@ -64,7 +64,7 @@ export default function CategoryPage() {
                 type="button"
                 key={sub.id}
                 onClick={() => setSubcategoryId(sub.id)}
-                className="ks-category-tile animate-fade-up group cursor-pointer"
+                className="ks-category-tile animate-fade-up group flex h-full min-h-[95px] flex-col items-center justify-center p-3 text-center cursor-pointer sm:min-h-[115px] sm:p-4"
                 style={{ animationDelay: `${index * 0.05}s` }}
                 aria-label={sub.name[lang]}
               >
@@ -87,7 +87,7 @@ export default function CategoryPage() {
                   type="button"
                   key={sub.id}
                   onClick={() => setSubcategoryId(sub.id)}
-                  className="glass ks-other-sub-card group flex flex-col items-center justify-center gap-2.5 rounded-2xl p-3.5 text-center transition-all duration-200 hover:-translate-y-1 hover:border-violet-500/50 hover:shadow-[0_0_14px_var(--accent-glow)] active:scale-95 cursor-pointer"
+                  className="glass ks-other-sub-card group flex h-full min-h-[90px] flex-col items-center justify-center gap-2 rounded-2xl p-3 text-center transition-all duration-200 hover:-translate-y-1 hover:border-violet-500/50 hover:shadow-[0_0_14px_var(--accent-glow)] active:scale-95 cursor-pointer sm:min-h-[105px] sm:p-3.5"
                   style={{
                     background: "var(--surface)",
                     borderColor: "var(--border-soft)",
@@ -95,7 +95,7 @@ export default function CategoryPage() {
                   }}
                 >
                   <div
-                    className="flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110"
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110 sm:h-10 sm:w-10"
                     style={{
                       background: "var(--chip-bg)",
                       color: "var(--accent-1)",

@@ -120,9 +120,9 @@ export default function ProductDetails() {
       {activeImage && (
         <link rel="preload" as="image" href={activeImage} fetchPriority="high" referrerPolicy="no-referrer" />
       )}
-      {/* Overlay header with back button on the right in RTL, title in center */}
+      {/* Clean Product Overlay Header: Back Button only, no redundant chip above image */}
       <div
-        className="mb-5 grid w-full grid-cols-[auto_1fr_auto] items-center gap-2 border-b pb-3.5 pt-1 sm:gap-4"
+        className="mb-5 flex w-full items-center justify-between border-b pb-3.5 pt-1"
         style={{ borderColor: "var(--border-soft)" }}
         dir={dir}
       >
@@ -143,29 +143,10 @@ export default function ProductDetails() {
             <span>{t("category.back") || "بازگشت"}</span>
           </button>
         </div>
-
-        <div className="flex items-center justify-center">
-          <div
-            className="glass-strong flex max-w-[90%] items-center gap-2 rounded-2xl px-3 py-1.5 sm:px-4 sm:py-2"
-            style={{
-              border: "1.2px solid var(--border-strong)",
-              background: "var(--surface-strong)",
-              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.06)",
-            }}
-          >
-            <span className="truncate text-xs font-extrabold sm:text-sm" style={{ color: "var(--text-primary)" }}>
-              {product.name[lang]}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-end">
-          <div className="w-4" />
-        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 md:gap-8">
-        {/* Compact Product Media + Ashkan Button Directly Below */}
+        {/* Main Product Image + Ashkan Button Directly Below */}
         <div className="flex flex-col gap-3">
           <div className="glass product-media relative flex h-[220px] w-full items-center justify-center overflow-hidden rounded-3xl p-3 sm:h-[260px] sm:p-4 md:h-[300px]">
             {activeImage ? (

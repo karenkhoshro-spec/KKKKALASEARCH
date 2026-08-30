@@ -73,7 +73,7 @@ describe("UI & UX System Polish & Validation Suite", () => {
     expect(html).toContain("ارسال کد تأیید");
   });
 
-  it("renders ProductDetails with eager image loading, 0-initial quantity, and no close X button", () => {
+  it("renders ProductDetails with clean layout, eager image loading, 0-initial quantity, and no extra badge above image", () => {
     const html = renderToString(
       <MemoryRouter initialEntries={["/product/1290031"]}>
         <LanguageProvider>

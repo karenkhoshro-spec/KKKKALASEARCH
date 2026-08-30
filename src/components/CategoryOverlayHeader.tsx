@@ -36,19 +36,19 @@ export default function CategoryOverlayHeader({
 
   return (
     <div
-      className="mb-5 grid w-full grid-cols-[auto_1fr_auto] items-center gap-2 border-b pb-3.5 pt-1 sm:gap-4"
+      className="mb-6 flex w-full items-center justify-between border-b pb-4 pt-1"
       style={{
         borderColor: "var(--border-soft)",
       }}
       dir={dir}
     >
       {/* Right side in RTL (Left in LTR): Back Button */}
-      <div className="flex items-center justify-start">
+      <div className="flex shrink-0 items-center justify-start">
         <button
           type="button"
           onClick={handleBack}
           aria-label={t("category.back") || "بازگشت"}
-          className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 sm:text-sm"
+          className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 sm:text-sm cursor-pointer"
           style={{
             color: "var(--text-primary)",
             borderColor: "var(--border-strong)",
@@ -62,9 +62,9 @@ export default function CategoryOverlayHeader({
       </div>
 
       {/* Center: Category Title inside Crystal Capsule */}
-      <div className="flex items-center justify-center">
+      <div className="flex flex-1 items-center justify-center px-2">
         <div
-          className="glass-strong flex max-w-full items-center gap-2 rounded-2xl px-3 py-1.5 sm:px-4 sm:py-2"
+          className="glass-strong flex max-w-full items-center gap-2 rounded-2xl px-3 py-1.5 sm:px-5 sm:py-2"
           style={{
             border: "1.2px solid var(--border-strong)",
             background: "var(--surface-strong)",
@@ -87,7 +87,7 @@ export default function CategoryOverlayHeader({
       </div>
 
       {/* Left side in RTL (Right in LTR): Product Count in small Crystal Capsule */}
-      <div className="flex items-center justify-end">
+      <div className="flex shrink-0 items-center justify-end">
         {productCount !== undefined ? (
           <span
             className="glass rounded-full px-2.5 py-1 text-[11px] font-bold sm:px-3.5 sm:text-xs"
@@ -100,7 +100,7 @@ export default function CategoryOverlayHeader({
             {productCount} {t("category.productsCount") || "محصول"}
           </span>
         ) : (
-          <div className="w-4" />
+          <div className="w-8" />
         )}
       </div>
     </div>
