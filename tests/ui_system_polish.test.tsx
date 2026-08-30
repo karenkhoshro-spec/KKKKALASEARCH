@@ -95,9 +95,37 @@ describe("UI & UX System Polish & Validation Suite", () => {
     expect(html).toContain("بازگشت");
     expect(html).toContain('loading="eager"');
     expect(html).toContain('fetchPriority="high"');
-    expect(html).toContain("مشاهده در سایت اشکان پلاستیک");
+    expect(html).toContain("مشاهده محصول در سایت اشکان پلاستیک");
+    expect(html).toContain("کد محصول");
+    expect(html).toContain("شناسه موجودی");
+    expect(html).toContain("تعداد در بسته");
     expect(html).toContain("افزودن به سبد خرید");
     expect(html).toContain("0"); // initial quantity is 0
+  });
+
+  it("renders ProductDetails for out-of-stock product with clean out-of-stock badge and summary card", () => {
+    const html = renderToString(
+      <MemoryRouter initialEntries={["/product/1290031"]}>
+        <LanguageProvider>
+          <ListContextProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <ToastProvider>
+                  <Routes>
+                    <Route path="/product/:id" element={<ProductDetails />} />
+                  </Routes>
+                </ToastProvider>
+              </WishlistProvider>
+            </CartProvider>
+          </ListContextProvider>
+        </LanguageProvider>
+      </MemoryRouter>
+    );
+
+    expect(html).toContain("کد محصول");
+    expect(html).toContain("شناسه موجودی");
+    expect(html).toContain("تعداد در بسته");
+    expect(html).toContain("مشاهده محصول در سایت اشکان پلاستیک");
   });
 
   it("renders SideMenu with uniform crystal cards and About Us overlay trigger", () => {
@@ -142,5 +170,34 @@ describe("UI & UX System Polish & Validation Suite", () => {
 
     expect(cartHtml).toContain("بازگشت");
     expect(cartHtml).toContain("سبد خرید");
+  });
+
+  it("renders ProductDetails for in-stock variant product with price, color options, and spec count", () => {
+    const html = renderToString(
+      <MemoryRouter initialEntries={["/product/1100312"]}>
+        <LanguageProvider>
+          <ListContextProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <ToastProvider>
+                  <Routes>
+                    <Route path="/product/:id" element={<ProductDetails />} />
+                  </Routes>
+                </ToastProvider>
+              </WishlistProvider>
+            </CartProvider>
+          </ListContextProvider>
+        </LanguageProvider>
+      </MemoryRouter>
+    );
+
+    expect(html).toContain("آبکش تخت 1000");
+    expect(html).toContain("موجود در انبار");
+    expect(html).toContain("کد محصول");
+    expect(html).toContain("شناسه موجودی");
+    expect(html).toContain("تعداد در بسته");
+    expect(html).toContain("54,000");
+    expect(html).toContain("تومان");
+    expect(html).toContain("مشاهده محصول در سایت اشکان پلاستیک");
   });
 });

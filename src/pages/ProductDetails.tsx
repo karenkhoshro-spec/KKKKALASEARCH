@@ -77,7 +77,7 @@ export default function ProductDetails() {
   const available = selectedVariation?.inStock ?? product.inStock;
   const activePrice = selectedVariation ? selectedVariation.price : product.price;
 
-  // Bulk mapping: exact Ashkan URL for selected variation or product
+  // Strict Ashkan URL resolution matching product / variant
   const rawActiveUrl = selectedVariation?.url || product.productUrl || product.ashkanProductUrl;
   const activeUrl = rawActiveUrl && isValidProductUrl(rawActiveUrl) ? rawActiveUrl.trim() : undefined;
   const activeSpec = selectedVariation?.technicalSpec || product.description[lang];
@@ -120,7 +120,7 @@ export default function ProductDetails() {
       {activeImage && (
         <link rel="preload" as="image" href={activeImage} fetchPriority="high" referrerPolicy="no-referrer" />
       )}
-      {/* Clean Product Overlay Header: Back Button only, no redundant chip above image */}
+      {/* 1. Standard Header: Clean Back button, zero redundant chips above image */}
       <div
         className="mb-5 flex w-full items-center justify-between border-b pb-3.5 pt-1"
         style={{ borderColor: "var(--border-soft)" }}
@@ -146,7 +146,7 @@ export default function ProductDetails() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 md:gap-8">
-        {/* Main Product Image + Ashkan Button Directly Below */}
+        {/* 2. Product Media Area + Ashkan CTA Directly Below */}
         <div className="flex flex-col gap-3">
           <div className="glass product-media relative flex h-[220px] w-full items-center justify-center overflow-hidden rounded-3xl p-3 sm:h-[260px] sm:p-4 md:h-[300px]">
             {activeImage ? (
@@ -171,62 +171,148 @@ export default function ProductDetails() {
               href={activeUrl}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={t("product.viewOnAshkan") || "مشاهده محصول در سایت اشکان پلاستیک ↗"}
               className="ks-ashkan-btn inline-flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-bold transition-all duration-300 active:scale-95 sm:py-3 sm:text-sm"
             >
-              <ExternalLink size={15} />
-              <span>{t("product.viewOnAshkan") || "مشاهده در سایت اشکان پلاستیک"}</span>
+              <ExternalLink size={16} />
+              <span>{t("product.viewOnAshkan") || "مشاهده محصول در سایت اشکان پلاستیک"} ↗</span>
             </a>
           )}
         </div>
 
-        {/* Product Details Information */}
-        <div className="flex flex-col">
-          <h1 className="text-xl font-black leading-8 sm:text-2xl sm:leading-9" style={{ color: "var(--text-primary)" }}>
-            {product.name[lang]}
-          </h1>
+        {/* 3. Product Details Information */}
+        <div className="flex flex-col gap-4">
+          {/* Main Product Summary Crystal Card */}
+          <div
+            className="glass-strong rounded-3xl p-4 sm:p-5 flex flex-col gap-3.5 transition-all"
+            style={{
+              border: "1.2px solid var(--border-strong)",
+              background: "var(--surface-strong)",
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08), inset 0 1px 1.5px rgba(255, 255, 255, 0.12)",
+            }}
+          >
+            {/* Product Name Title & Status Badge */}
+            <div className="flex flex-col gap-2">
+              <h1 className="text-xl font-black leading-8 sm:text-2xl sm:leading-9 tracking-tight" style={{ color: "var(--text-primary)" }}>
+                {product.name[lang]}
+              </h1>
 
-          <div className="mt-2.5 flex items-center gap-2">
-            {available ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold" style={{ background: "var(--chip-bg)", color: "var(--success)" }}>
-                <CheckCircle2 size={13} />
-                {(selectedVariation?.stockCount ?? product.stockCount) && (selectedVariation?.stockCount ?? product.stockCount)! <= 8 ? t("product.lowStock") : t("product.inStock")}
+              {/* Status Badge */}
+              <div className="flex items-center">
+                {available ? (
+                  <span
+                    className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-bold transition-all sm:text-sm"
+                    style={{
+                      background: "rgba(34, 197, 94, 0.14)",
+                      color: "var(--success)",
+                      border: "1px solid rgba(34, 197, 94, 0.35)",
+                    }}
+                  >
+                    <CheckCircle2 size={15} />
+                    <span>
+                      {(selectedVariation?.stockCount ?? product.stockCount) && (selectedVariation?.stockCount ?? product.stockCount)! <= 8
+                        ? t("product.lowStock")
+                        : t("product.inStock")}
+                    </span>
+                  </span>
+                ) : (
+                  <span
+                    className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-bold transition-all sm:text-sm"
+                    style={{
+                      background: "rgba(244, 63, 94, 0.14)",
+                      color: "var(--danger)",
+                      border: "1px solid rgba(244, 63, 94, 0.35)",
+                    }}
+                  >
+                    <XCircle size={15} />
+                    <span>{t("product.outOfStock") || "ناموجود"}</span>
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Product Metadata Grid: Product Code, Stock ID (SKU), Pack Quantity */}
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-2.5 pt-2 border-t" style={{ borderColor: "var(--border-soft)" }}>
+              {/* Product Code */}
+              <div
+                className="glass flex items-center justify-between rounded-xl px-3 py-2 sm:flex-col sm:items-start sm:gap-1"
+                style={{
+                  background: "var(--surface)",
+                  borderColor: "var(--border-soft)",
+                }}
+              >
+                <span className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+                  {t("product.productCode") || "کد محصول"}
+                </span>
+                <span className="text-sm font-black" style={{ color: "var(--text-primary)" }}>
+                  {product.productCode ?? product.id ?? "-"}
+                </span>
+              </div>
+
+              {/* Stock ID / SKU */}
+              <div
+                className="glass flex items-center justify-between rounded-xl px-3 py-2 sm:flex-col sm:items-start sm:gap-1"
+                style={{
+                  background: "var(--surface)",
+                  borderColor: "var(--border-soft)",
+                }}
+              >
+                <span className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+                  {t("product.sku") || "شناسه موجودی"}
+                </span>
+                <span className="text-sm font-black" style={{ color: "var(--text-primary)" }}>
+                  {selectedVariation?.sku ?? product.sku ?? "-"}
+                </span>
+              </div>
+
+              {/* Pack Quantity */}
+              <div
+                className="glass flex items-center justify-between rounded-xl px-3 py-2 sm:flex-col sm:items-start sm:gap-1"
+                style={{
+                  background: "var(--surface)",
+                  borderColor: "var(--border-soft)",
+                }}
+              >
+                <span className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+                  {t("product.packQuantity") || "تعداد در بسته"}
+                </span>
+                <span className="text-sm font-black" style={{ color: "var(--text-primary)" }}>
+                  {selectedVariation?.packQuantity ?? product.packQuantity ?? "-"}
+                </span>
+              </div>
+            </div>
+
+            {/* Price Row inside Summary Card */}
+            <div className="flex items-baseline justify-between pt-2 border-t" style={{ borderColor: "var(--border-soft)" }}>
+              <span className="text-xs font-semibold sm:text-sm" style={{ color: "var(--text-secondary)" }}>
+                {t("product.price") || "قیمت واحد"}
               </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold" style={{ background: "var(--chip-bg)", color: "var(--danger)" }}>
-                <XCircle size={13} />
-                {t("product.outOfStock")}
-              </span>
-            )}
+              {available && activePrice !== undefined ? (
+                <span className="text-xl font-black sm:text-2xl" style={{ color: "var(--accent-1)" }}>
+                  {activePrice.toLocaleString()} {t("product.toman")}
+                </span>
+              ) : available ? (
+                <span className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>
+                  {t("product.priceUnknown")}
+                </span>
+              ) : (
+                <span className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>
+                  -
+                </span>
+              )}
+            </div>
           </div>
 
-          <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
-            <span>{t("product.productCode")}: {product.productCode ?? "-"}</span>
-            <span>{t("product.sku")}: {selectedVariation?.sku ?? product.sku ?? "-"}</span>
-            <span>{t("product.stockQuantity")}: {selectedVariation?.stockCount ?? product.stockCount ?? "-"}</span>
-            <span>{t("product.packQuantity")}: {selectedVariation?.packQuantity ?? product.packQuantity ?? "-"}</span>
-          </div>
-
-          <div className="mt-3 flex items-baseline gap-3">
-            {available && activePrice !== undefined ? (
-              <span className="text-xl font-black sm:text-2xl" style={{ color: "var(--accent-1)" }}>
-                {activePrice.toLocaleString()} {t("product.toman")}
-              </span>
-            ) : available ? (
-              <span className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>
-                {t("product.priceUnknown")}
-              </span>
-            ) : null}
-          </div>
-
+          {/* Active Specification / Description */}
           {activeSpec && activeSpec !== "-" && (
-            <p className="mt-4 text-xs leading-6 sm:text-sm sm:leading-7" style={{ color: "var(--text-secondary)" }}>
+            <p className="text-xs leading-6 sm:text-sm sm:leading-7" style={{ color: "var(--text-secondary)" }}>
               {activeSpec}
             </p>
           )}
 
-          {/* Collapsible specifications */}
+          {/* Technical Specifications Accordion */}
           {allSpecifications.length > 0 && (
-            <div className="glass mt-4 rounded-2xl p-3.5" style={{ border: "1px solid var(--border-soft)" }}>
+            <div className="glass rounded-2xl p-3.5" style={{ border: "1px solid var(--border-soft)" }}>
               <button
                 type="button"
                 onClick={() => setShowSpecs((open) => !open)}
@@ -234,7 +320,7 @@ export default function ProductDetails() {
                 aria-expanded={showSpecs}
               >
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xs font-bold sm:text-sm" style={{ color: "var(--text-primary)" }}>{t("product.specTitle") || "مشخصات محصول"}</h3>
+                  <h3 className="text-xs font-bold sm:text-sm" style={{ color: "var(--text-primary)" }}>{t("product.specTitle") || "مشخصات فنی محصول"}</h3>
                   <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ background: "var(--chip-bg)", color: "var(--accent-1)" }}>
                     {allSpecifications.length}
                   </span>
@@ -260,7 +346,7 @@ export default function ProductDetails() {
 
           {/* Color variations if available */}
           {uniqueColors.length > 0 && (
-            <div className="mt-4">
+            <div>
               <h3 className="mb-2 text-xs font-bold sm:text-sm" style={{ color: "var(--text-primary)" }}>رنگ</h3>
               <div className="flex flex-wrap gap-2">
                 {uniqueColors.map((v) => (
@@ -288,7 +374,7 @@ export default function ProductDetails() {
           )}
 
           {/* Quantity selector: initial 0, [-] [0] [+] */}
-          <div className="mt-5 flex items-center gap-4">
+          <div className="flex items-center gap-4">
             <span className="text-xs font-semibold sm:text-sm" style={{ color: "var(--text-primary)" }}>
               {t("product.quantity")}
             </span>
@@ -316,7 +402,7 @@ export default function ProductDetails() {
           </div>
 
           {/* Add to cart & Wishlist buttons */}
-          <div className="mt-5 flex items-center gap-3">
+          <div className="flex items-center gap-3">
             {available ? (
               <button
                 onClick={handleAddToCart}

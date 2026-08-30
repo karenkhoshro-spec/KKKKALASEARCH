@@ -449,3 +449,81 @@ html[data-theme="light"] .ks-other-sub-card:hover {
   border-color: rgba(47, 125, 80, 0.45);
   box-shadow: 0 8px 24px rgba(47, 125, 80, 0.15), 0 0 16px rgba(233, 130, 50, 0.12), inset 0 1px 2px rgba(255, 255, 255, 1);
 }
+
+/* ==========================================================================
+   3D KalaSearch Brand Logo & Product Summary Cards
+   ========================================================================== */
+.ks-brand-logo {
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.ks-brand-logo:hover {
+  transform: scale(1.03);
+}
+
+.ks-logo-container {
+  position: relative;
+}
+
+.ks-logo-glow {
+  background: radial-gradient(circle, var(--accent-1) 0%, rgba(168, 85, 247, 0.45) 45%, transparent 75%);
+}
+
+.ks-logo-shell {
+  background: radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.25) 0%, rgba(168, 85, 247, 0.3) 50%, rgba(26, 13, 52, 0.85) 100%);
+  border: 1.2px solid rgba(192, 132, 252, 0.4);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.45),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.6),
+    0 0 12px rgba(168, 85, 247, 0.35);
+}
+
+.ks-logo-atom {
+  color: #c084fc;
+  filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.6));
+}
+
+.ks-brand-title {
+  background: linear-gradient(135deg, #ffffff 0%, #f3e8ff 55%, #c084fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+
+.ks-logo-search-gem {
+  color: #c084fc;
+  filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.5));
+}
+
+html[data-theme="light"] .ks-logo-glow {
+  background: radial-gradient(circle, rgba(233, 130, 50, 0.35) 0%, rgba(47, 125, 80, 0.25) 50%, transparent 75%);
+}
+
+html[data-theme="light"] .ks-logo-shell {
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #fff8ec 60%, #f4e8d3 100%);
+  border: 1.2px solid rgba(47, 125, 80, 0.35);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 1),
+    inset 0 -1px 2px rgba(233, 130, 50, 0.15),
+    0 2px 8px rgba(38, 51, 44, 0.08),
+    0 0 10px rgba(47, 125, 80, 0.18);
+}
+
+html[data-theme="light"] .ks-logo-atom {
+  color: #2f7d50;
+  filter: drop-shadow(0 0 5px rgba(47, 125, 80, 0.35));
+}
+
+html[data-theme="light"] .ks-brand-title {
+  background: linear-gradient(135deg, #1b2820 0%, #2f7d50 65%, #e98232 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.8));
+}
+
+html[data-theme="light"] .ks-logo-search-gem {
+  color: #e98232;
+  filter: drop-shadow(0 0 5px rgba(233, 130, 50, 0.4));
+}
