@@ -35,7 +35,7 @@ describe("UI & UX System Polish & Validation Suite", () => {
     expect(html).not.toContain('href="/wishlist"');
   });
 
-  it("renders CategoryPage for 'other' with the 3 prominent vertical subcategory cards", () => {
+  it("renders CategoryPage for 'other' with the 3 prominent subcategory cards", () => {
     const html = renderToString(
       <MemoryRouter initialEntries={["/category/other"]}>
         <LanguageProvider>
@@ -100,25 +100,34 @@ describe("UI & UX System Polish & Validation Suite", () => {
     expect(html).toContain("0"); // initial quantity is 0
   });
 
-  it("renders SideMenu with 'محصولات' beside 'سایر' and no duplicate rotating atom logo", () => {
+  it("renders SideMenu with uniform crystal cards and About Us overlay trigger", () => {
     const html = renderToString(
       <MemoryRouter>
         <LanguageProvider>
           <ThemeProvider>
             <AccountProvider>
-              <SideMenu open={true} onClose={() => {}} />
+              <CartProvider>
+                <WishlistProvider>
+                  <SideMenu open={true} onClose={() => {}} />
+                </WishlistProvider>
+              </CartProvider>
             </AccountProvider>
           </ThemeProvider>
         </LanguageProvider>
       </MemoryRouter>
     );
 
-    expect(html).toContain('href="/products"');
-    expect(html).toContain('href="/category/other"');
+    expect(html).toContain('href="/"');
+    expect(html).toContain('href="/account"');
+    expect(html).toContain('href="/cart"');
+    expect(html).toContain('href="/wishlist"');
     expect(html).toContain("درباره ما");
+    // Removed from UI menu per Requirement 1
+    expect(html).not.toContain('href="/products"');
+    expect(html).not.toContain('href="/category/other"');
   });
 
-  it("renders CartPage with unified left back button headers", () => {
+  it("renders CartPage with standardized 3-column crystal header", () => {
     const cartHtml = renderToString(
       <MemoryRouter>
         <LanguageProvider>

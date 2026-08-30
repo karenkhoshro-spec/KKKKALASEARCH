@@ -24,8 +24,33 @@ export default function ProductDetails() {
   const product = getProductById(id);
   // Initial quantity is strictly 0 per requirement
   const [quantity, setQuantity] = useState(0);
-  const [variationId, setVariationId] = useState(product?.variations?.[0]?.id);
+  const [variationId, setVariationId] = useState<string | undefined>(product?.variations?.[0]?.id);
   const [showSpecs, setShowSpecs] = useState(false);
+  const [imgAttempt, setImgAttempt] = useState(0);
+  const [imgLoaded, setImgLoaded] = useState(false);
+
+  // Sync variationId when product changes
+  useEffect(() => {
+    if (product?.variations?.[0]?.id) {
+      setVariationId(product.variations[0].id);
+    }
+  }, [product?.id]);
+
+  const selectedVariation = product?.variations?.find((v) => v.id === variationId);
+  const rawActiveImage = selectedVariation?.image || (product as any)?.productImageUrl || product?.image;
+  const imageChain = rawActiveImage ? fullImageChain(rawActiveImage, 900) : [];
+  const activeImage = imageChain[imgAttempt];
+
+  useEffect(() => {
+    setImgAttempt(0);
+    setImgLoaded(false);
+  }, [rawActiveImage]);
+
+  useEffect(() => {
+    if (!rawActiveImage || imgLoaded || imgAttempt >= imageChain.length) return;
+    const timer = setTimeout(() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }, 6000);
+    return () => clearTimeout(timer);
+  }, [rawActiveImage, activeImage, imgLoaded, imgAttempt, imageChain.length]);
 
   const backPath = listContext.type === "home" ? "/" : listContextToPath(listContext);
 
@@ -49,24 +74,8 @@ export default function ProductDetails() {
     );
   }
 
-  const selectedVariation = product.variations?.find((v) => v.id === variationId);
   const available = selectedVariation?.inStock ?? product.inStock;
   const activePrice = selectedVariation ? selectedVariation.price : product.price;
-
-  // Product image: priority productImageUrl > variation image > legacy image
-  const rawActiveImage = selectedVariation?.image || (product as any).productImageUrl || product.image;
-  // Fast-first chain (relay webp -> real site URL -> 2nd relay -> placeholder)
-  const imageChain = rawActiveImage ? fullImageChain(rawActiveImage, 900) : [];
-  const [imgAttempt, setImgAttempt] = useState(0);
-  const [imgLoaded, setImgLoaded] = useState(false);
-  const activeImage = imageChain[imgAttempt];
-  useEffect(() => { setImgAttempt(0); setImgLoaded(false); }, [rawActiveImage]);
-  // If an attempt stalls (neither load nor error), move on instead of leaving an empty box
-  useEffect(() => {
-    if (!rawActiveImage || imgLoaded || imgAttempt >= imageChain.length) return;
-    const timer = setTimeout(() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }, 6000);
-    return () => clearTimeout(timer);
-  }, [rawActiveImage, activeImage, imgLoaded]);
 
   // Bulk mapping: exact Ashkan URL for selected variation or product
   const rawActiveUrl = selectedVariation?.url || product.productUrl || product.ashkanProductUrl;
@@ -122,7 +131,7 @@ export default function ProductDetails() {
             type="button"
             onClick={handleBack}
             aria-label={t("category.back") || "بازگشت"}
-            className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 sm:text-sm"
+            className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 sm:text-sm cursor-pointer"
             style={{
               color: "var(--text-primary)",
               borderColor: "var(--border-strong)",
@@ -240,7 +249,7 @@ export default function ProductDetails() {
               <button
                 type="button"
                 onClick={() => setShowSpecs((open) => !open)}
-                className="flex w-full items-center justify-between gap-3 text-start transition-opacity hover:opacity-85"
+                className="flex w-full items-center justify-between gap-3 text-start transition-opacity hover:opacity-85 cursor-pointer"
                 aria-expanded={showSpecs}
               >
                 <div className="flex items-center gap-2">

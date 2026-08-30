@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { X, Home, Package, Heart, ShoppingCart, User, Info, Phone, Sparkles } from "lucide-react";
+import { X, Home, Heart, ShoppingCart, User, Info, Phone, Sparkles } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useAccount } from "../context/AccountContext";
 import { useCart } from "../context/CartContext";
@@ -14,7 +14,7 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
   const { t, dir } = useLanguage();
   const { account } = useAccount();
   const { count: cartCount } = useCart();
-  const { items: wishlistItems } = useWishlist();
+  const { ids: wishlistIds = [] } = useWishlist();
   const [showAboutOverlay, setShowAboutOverlay] = useState(false);
   const closedTransform = dir === "rtl" ? "translateX(100%)" : "translateX(-100%)";
 
@@ -167,12 +167,12 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
               </div>
               <span>{t("menu.wishlist") || "علاقه‌مندی‌ها"}</span>
             </div>
-            {wishlistItems.length > 0 ? (
+            {wishlistIds.length > 0 ? (
               <span
                 className="flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-[11px] font-bold text-white"
                 style={{ background: "var(--accent-3)" }}
               >
-                {wishlistItems.length}
+                {wishlistIds.length}
               </span>
             ) : (
               <span className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>›</span>

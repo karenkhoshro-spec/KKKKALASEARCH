@@ -85,6 +85,7 @@ export const translations: Record<Lang, Dict> = {
       back: "بازگشت",
       productsCount: "محصول",
       selectSubcategory: "برای مشاهده محصولات، یکی از دسته‌بندی‌های بالا را انتخاب کنید",
+      otherSubcategories: "سایر زیردسته‌ها",
     },
     product: {
       addToCart: "افزودن به سبد خرید",
@@ -280,6 +281,7 @@ export const translations: Record<Lang, Dict> = {
       back: "Back",
       productsCount: "products",
       selectSubcategory: "Pick a subcategory above to browse its products",
+      otherSubcategories: "Other Subcategories",
     },
     product: {
       addToCart: "Add to Cart",
@@ -475,6 +477,7 @@ export const translations: Record<Lang, Dict> = {
       back: "رجوع",
       productsCount: "منتج",
       selectSubcategory: "اختر تصنيفًا فرعيًا من الأعلى لعرض منتجاته",
+      otherSubcategories: "الفئات الفرعية الأخرى",
     },
     product: {
       addToCart: "أضف إلى السلة",
