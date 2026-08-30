@@ -1,32 +1,40 @@
-import { Atom, Search } from "lucide-react";
-import { useLanguage } from "../i18n/LanguageContext";
+import { useTheme } from "../context/ThemeContext";
 
-export default function Logo({ compact = false }: { compact?: boolean }) {
-  const { lang } = useLanguage();
-  const brandFa = "کالا سرچ";
+interface LogoProps {
+  compact?: boolean;
+  variant?: "vertical" | "horizontal";
+}
+
+export default function Logo({ compact = false, variant }: LogoProps) {
+  const { theme } = useTheme();
+  const isVertical = variant === "vertical" || compact;
+
+  const assetSrc = isVertical
+    ? "/branding/kalasearch-vertical.png"
+    : "/branding/kalasearch-horizontal.png";
 
   return (
-    <div className="flex select-none items-center gap-2" style={{ color: "var(--text-primary)" }}>
-      <span className="relative flex h-8 w-8 items-center justify-center shrink-0">
-        <span
-          className="absolute inset-0 rounded-full blur-md opacity-70"
-          style={{ background: "radial-gradient(circle, var(--accent-1), transparent 70%)" }}
-        />
-        <Atom size={compact ? 22 : 26} className="relative animate-spin-slow" style={{ color: "var(--accent-1)" }} strokeWidth={1.8} />
-      </span>
-      <span className={`flex items-baseline gap-1.5 font-extrabold tracking-tight ${compact ? "text-base" : "text-lg sm:text-xl"}`}>
-        {lang === "fa" ? (
-          <span style={{ color: "var(--text-primary)" }}>{brandFa}</span>
-        ) : (
-          <>
-            <span style={{ color: "var(--text-primary)" }}>KALA</span>
-            <span className="font-medium" style={{ color: "var(--text-secondary)" }}>
-              {lang === "ar" ? "سيرش" : "SEARCH"}
-            </span>
-          </>
-        )}
-      </span>
-      <Search size={compact ? 15 : 17} className="shrink-0" style={{ color: "var(--accent-1)" }} strokeWidth={2.5} />
+    <div
+      className={`relative inline-flex items-center justify-center select-none overflow-hidden transition-transform duration-200 hover:opacity-95 ${
+        isVertical
+          ? "w-24 h-20 sm:w-28 sm:h-24 rounded-2xl"
+          : "h-8 sm:h-10 w-32 sm:w-40"
+      }`}
+      aria-label="KalaSearch"
+    >
+      <img
+        src={assetSrc}
+        alt="Kala Search Logo"
+        className="absolute select-none pointer-events-none max-w-none"
+        style={{
+          width: isVertical ? "200%" : "100%",
+          height: isVertical ? "170%" : "210%",
+          objectFit: "cover",
+          objectPosition: isVertical
+            ? (theme === "dark" ? "right 10%" : "left 10%")
+            : (theme === "dark" ? "center bottom" : "center top"),
+        }}
+      />
     </div>
   );
 }
