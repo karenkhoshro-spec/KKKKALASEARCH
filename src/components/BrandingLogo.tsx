@@ -1,56 +1,63 @@
 import { useLanguage } from "../i18n/LanguageContext";
-import BrandMark from "./BrandMark";
+import { useTheme } from "../context/ThemeContext";
 import "./BrandingLogo.css";
 
-function BrandWord() {
+const BAG = {
+  light: "/images/branding/kalasearch-bag-light.png",
+  dark: "/images/branding/kalasearch-bag-dark.png",
+};
+const NAME_FA = {
+  light: "/images/branding/kalasearch-name-fa-light.png",
+  dark: "/images/branding/kalasearch-name-fa-dark.png",
+};
+const NAME_EN = {
+  light: "/images/branding/kalasearch-name-en-light.png",
+  dark: "/images/branding/kalasearch-name-en-dark.png",
+};
+
+function useSafeTheme(): "light" | "dark" {
+  try {
+    return useTheme().theme;
+  } catch {
+    if (typeof document !== "undefined") {
+      const docTheme = document.documentElement.getAttribute("data-theme");
+      if (docTheme === "dark" || docTheme === "light") return docTheme;
+    }
+    return "light";
+  }
+}
+
+function RealBrand({
+  layout,
+  className = "",
+}: {
+  layout: "horizontal" | "vertical";
+  className?: string;
+}) {
+  const theme = useSafeTheme();
   const { lang } = useLanguage();
-  if (lang === "en") {
-    return (
-      <span className="ks-brand-word ks-brand-en">
-        <span className="ks-brand-kala">Kala</span>
-        <span className="ks-brand-search">Search</span>
-      </span>
-    );
-  }
-  if (lang === "ar") {
-    return <span className="ks-brand-word ks-brand-ar">كالا سيرش</span>;
-  }
+  const bag = BAG[theme];
+  const nameSrc = lang === "en" ? NAME_EN[theme] : NAME_FA[theme];
+  const alt = lang === "en" ? "KalaSearch" : "کالا سرچ";
+
   return (
-    <span className="ks-brand-word ks-brand-fa">
-      <span className="ks-brand-kala">کالا</span>
-      <span className="ks-brand-search">سرچ</span>
-    </span>
+    <div className={`ks-real-brand ks-real-brand--${layout} ${className}`}>
+      <img src={bag} alt="" className="ks-real-bag" draggable={false} />
+      <img src={nameSrc} alt={alt} className="ks-real-name" draggable={false} />
+    </div>
   );
 }
 
 export function VerticalBrandingLogo({ className = "" }: { className?: string }) {
-  return (
-    <div className={`flex flex-col items-center justify-center gap-1.5 text-center select-none ${className}`}>
-      <BrandMark size={76} />
-      <BrandWord />
-    </div>
-  );
+  return <RealBrand layout="vertical" className={className} />;
 }
 
 export function HorizontalBrandingLogo({
   className = "",
-  showTagline = false,
+  showTagline: _showTagline = false,
 }: {
   className?: string;
   showTagline?: boolean;
 }) {
-  const { t } = useLanguage();
-  return (
-    <div className={`flex flex-col items-center justify-center gap-1.5 select-none ${className}`}>
-      <div className="ks-brand-logo flex items-center gap-3">
-        <BrandMark size={58} />
-        <BrandWord />
-      </div>
-      {showTagline && (
-        <p className="mt-0.5 text-center text-xs font-semibold sm:text-sm" style={{ color: "var(--text-secondary)" }}>
-          {t("menu.familyCaption")}
-        </p>
-      )}
-    </div>
-  );
+  return <RealBrand layout="horizontal" className={className} />;
 }
