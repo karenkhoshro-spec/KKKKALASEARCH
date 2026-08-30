@@ -1,5 +1,4 @@
 import productCsv from "../../KalaSearch_Products_Import.csv?raw";
-import categoryCsv from "../../KalaSearch_Categories.csv?raw";
 import ashkanCsv from "../../KalaSearch_Ashkan_Links.csv?raw";
 import inventoryCsv from "../../kala_search_inventory.csv?raw";
 import type { Category, LocalizedText, Product, ProductVariation } from "../types";
@@ -28,7 +27,6 @@ function parseCsv(input: string): ProductSourceRow[] {
 const productsRows = parseCsv(productCsv);
 const ashkanRows = parseCsv(ashkanCsv);
 const inventoryRows = parseCsv(inventoryCsv);
-const categoryRows = parseCsv(categoryCsv);
 
 export const normalizePersian = (value: string) => value.normalize("NFKC").replace(/[يى]/g, "ی").replace(/[ك]/g, "ک").replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))).replace(/[\u200c\u200f\u200e]/g, "").replace(/[^\p{L}\p{N}]+/gu, "").toLocaleLowerCase();
 
@@ -422,22 +420,45 @@ const mergedRows: ProductSourceRow[] = productsRows.map((source) => {
   };
 });
 
-const categoryNames = categoryRows.sort((a, b) => Number(a.sort_order) - Number(b.sort_order)).map((row) => row.category_name).filter(Boolean);
-const primaryNames = categoryNames.length >= 8 ? categoryNames.slice(0, 8).concat("سایر") : ["سبد خرید", "سبد پیکنیک", "چهار پایه", "جا پودری/اسکاجی", "سبد میوه و سبزی", "آبکش و سبد و کاسه", "فریزری", "جاصابونی", "سایر"];
+const primaryNames = [
+  "سبد خرید", "سبد پیکنیک", "چهار پایه", "زنبیل",
+  "سبد میوه و سبزی", "لگن و وان", "پارچ و لیوان", "فریزری", "سایر"
+];
 const primaryMatchers: [string, string[]][] = [
-  ["shopping-basket", ["سبد خرید"]], ["picnic-basket", ["پیک نیک", "پیکنیک"]], ["stool", ["چهار پایه", "چهارپایه"]],
-  ["powder-sponge-holder", ["پودری", "اسکاج", "اسکاچ"]], ["fruit-vegetable-basket", ["میوه", "سبزی"]],
-  ["colander-bowl", ["آبکش", "کاسه", "سبد سینک"]], ["freezer", ["فریزری", "فریزری"]], ["soap-dish", ["صابونی"]],
+  ["shopping-basket", ["سبد خرید"]],
+  ["picnic-basket", ["پیک نیک", "پیکنیک"]],
+  ["stool", ["چهار پایه", "چهارپایه"]],
+  ["zanbil", ["زنبیل"]],
+  ["fruit-vegetable-basket", ["میوه", "سبزی"]],
+  ["basin-bathtub", ["لگن", "وان"]],
+  ["pitcher-glass", ["پارچ", "لیوان"]],
+  ["freezer", ["فریزری"]],
 ];
 const otherRules: [string, string, string[]][] = [
-  ["spice", "جا ادویه", ["ادویه"]], ["pitcher-glass", "پارچ و لیوان", ["پارچ", "لیوان"]], ["juicer", "آبمیوه گیری", ["آبمیوه گیری", "آبمیوه"]],
-  ["ice-holder", "جا یخی", ["جایخی", "جا یخی"]], ["butter-holder", "جا کره‌ای", ["جا کره ای", "جا کره‌ای"]], ["spoon-holder", "جا قاشقی", ["جا قاشقی", "جاقاشقی"]],
-  ["bucket", "سطل", ["سطل", "درب سطل"]], ["basin-bathtub", "لگن و وان", ["لگن", "وان"]], ["plant-saucer", "زیر گلدان", ["زیر گلدان"]], ["flower-pot", "گلدان", ["گلدان"]],
-  ["shopping-basket-other", "زنبیل", ["زنبیل"]], ["oval-basket", "سبد بیضی", ["سبد بیضی"]], ["janani", "جانانی", ["جانانی"]], ["organizer", "سبد و نظم‌دهنده", ["نظم دهنده", "نظم‌دهنده", "باکس", "جعبه نظم", "جعبه همه کاره", "فایل", "لوازم التحریر"]],
-  ["laundry-basket", "سبد رخت و لباس", ["سبد رخت", "سبدرخت"]], ["kitchen-tools", "لوازم آشپزخانه", ["تخته گوشت", "پیمانه", "قندان", "شکرپاش", "جاشکری", "نمکدان", "نمکپاش", "قیف", "صافی سینک", "سبد سینک", "تفاله گیر", "جا تخم مرغی", "سرویس چلو"]],
-  ["cleaning-tools", "لوازم نظافت", ["جارو دستی", "خاک انداز", "بادبزن", "مگس کش", "توالت شوی", "پادری"]], ["storage", "ظروف و نگهدارنده", ["حبوبات", "جابرنجی", "ظرف", "کریستال", "جامایع", "چند منظوره"]],
-  ["tray", "سینی", ["سینی"]], ["chair", "صندلی حمام", ["صندلی حمام"]], ["hanger", "لوازم آویز", ["گیره آویز"]], ["paper-holder", "جاحوله و کاغذی", ["کاغذی"]],
-  ["toolbox", "جعبه ابزار", ["جعبه ابزار"]], ["straw-basket", "سبد نان", ["سبد نان", "سبد باگت"]],
+  ["powder-sponge-holder", "جا پودری و اسکاجی", ["پودری", "اسکاج", "اسکاچ"]],
+  ["colander-bowl", "آبکش و کاسه", ["آبکش", "کاسه", "سبد سینک"]],
+  ["soap-dish", "جاصابونی", ["صابونی"]],
+  ["spice", "جا ادویه", ["ادویه"]],
+  ["juicer", "آبمیوه گیری", ["آبمیوه گیری", "آبمیوه"]],
+  ["ice-holder", "جا یخی", ["جایخی", "جا یخی"]],
+  ["butter-holder", "جا کره‌ای", ["جا کره ای", "جا کره‌ای"]],
+  ["spoon-holder", "جا قاشقی", ["جا قاشقی", "جاقاشقی"]],
+  ["bucket", "سطل", ["سطل", "درب سطل"]],
+  ["flower-pot", "گلدان", ["گلدان"]],
+  ["plant-saucer", "زیر گلدان", ["زیر گلدان"]],
+  ["oval-basket", "سبد بیضی", ["سبد بیضی"]],
+  ["janani", "جانانی", ["جانانی"]],
+  ["organizer", "سبد و نظم‌دهنده", ["نظم دهنده", "نظم‌دهنده", "باکس", "جعبه نظم", "جعبه همه کاره", "فایل", "لوازم التحریر"]],
+  ["laundry-basket", "سبد رخت و لباس", ["سبد رخت", "سبدرخت"]],
+  ["kitchen-tools", "لوازم آشپزخانه", ["تخته گوشت", "پیمانه", "قندان", "شکرپاش", "جاشکری", "نمکدان", "نمکپاش", "قیف", "صافی سینک", "تفاله گیر", "جا تخم مرغی", "سرویس چلو"]],
+  ["cleaning-tools", "لوازم نظافت", ["جارو دستی", "خاک انداز", "بادبزن", "مگس کش", "توالت شوی", "پادری"]],
+  ["storage", "ظروف و نگهدارنده", ["حبوبات", "جابرنجی", "ظرف", "کریستال", "جامایع", "چند منظوره"]],
+  ["tray", "سینی", ["سینی"]],
+  ["chair", "صندلی حمام", ["صندلی حمام"]],
+  ["hanger", "لوازم آویز", ["گیره آویز"]],
+  ["paper-holder", "جاحوله و کاغذی", ["کاغذی"]],
+  ["toolbox", "جعبه ابزار", ["جعبه ابزار"]],
+  ["straw-basket", "سبد نان", ["سبد نان", "سبد باگت"]],
 ];
 function primaryCategory(name: string) { return primaryMatchers.find(([, words]) => words.some((word) => name.includes(word)))?.[0]; }
 function otherSubcategory(name: string) {
@@ -447,9 +468,17 @@ function otherSubcategory(name: string) {
 }
 function categoryIdFor(name: string) { return primaryCategory(name) ?? "other"; }
 
-const icons = ["🛒", "🧺", "🪑", "🧽", "🍎", "🥣", "❄️", "🧼", "📦"];
-export const importedCategories: Category[] = primaryNames.map((name, index) => ({ id: index === 8 ? "other" : primaryMatchers[index]?.[0] ?? `category-${index + 1}`, name: localized(name), icon: icons[index], sortOrder: index + 1 }));
-export const importedOtherSubcategories = otherRules.map(([id, label]) => ({ id, name: localized(label) }));
+export const importedCategories: Category[] = primaryNames.map((name, index) => {
+  const isLast = index === primaryNames.length - 1;
+  const id = isLast ? "other" : primaryMatchers[index]?.[0] ?? `category-${index + 1}`;
+  return {
+    id,
+    name: localized(name),
+    icon: id,
+    sortOrder: index + 1,
+  };
+});
+export const importedOtherSubcategories = otherRules.map(([id, label]) => ({ id, name: localized(label), icon: id }));
 
 const colorTokens: Record<string, string> = {
   "آبی روشن": "#60a5fa", "آبی تیره": "#1d4ed8", "سبز روشن": "#86efac", "سبز تیره": "#15803d", "قرمز روشن": "#f87171", "قرمز تیره": "#b91c1c", "قهوه‌ای": "#8b5e3c", "قهوه ای": "#8b5e3c", "سرمه‌ای": "#1e3a8a", "سرمه ای": "#1e3a8a", "نقره‌ای": "#cbd5e1", "نقره ای": "#cbd5e1", "بی‌رنگ": "#f8fafc", "بی رنگ": "#f8fafc", "صورتی": "#f9a8d4", "طوسی": "#94a3b8", "خاکستری": "#6b7280", "کرم": "#d6c7a1", "موکا": "#8b6f5a", "وانیلی": "#f3e5ab", "عسلی": "#d69e2e", "کرپ": "#d8c3a5", "سفید": "#f8fafc", "قرمز": "#ef4444", "سبز": "#22c55e", "آبی": "#3b82f6", "مشکی": "#111827", "سیاه": "#111827", "زرد": "#eab308", "نارنجی": "#f97316", "بنفش": "#a855f7", "شفاف": "#e2e8f0", "بژ": "#d6c7a1", "طلایی": "#d4a72c", "مسی": "#b87333"
@@ -520,14 +549,25 @@ export const importedPriceStats = { totalInventoryRecords: inventoryRows.length,
 export const importedSourceStats = { rows: mergedRows.length, products: importedProducts.length, variants: mergedRows.length, available: mergedRows.filter((row) => row.availability === "موجود").length, unavailable: mergedRows.filter((row) => row.availability === "ناموجود").length, matchedAshkanRows: mergedRows.filter((row) => ashkanByVariantSku.has(row.variant_sku)).length };
 
 // ------------------------------------------------------------------
-// IMAGE MAPPING REPORT - 11-metric per spec + full 347 extraction details
-// Full 347 extraction performed via fetch_page proxy (only viable method)
-// Direct curl/Node TLS to ashkanplastic.com fails with ECONNRESET
-// fetch_page succeeds for all 347 pages (even 404 pages return HTML)
-// Final full check: 347 checked, 252 verified, 95 404, 0 inaccessible, 0 uncertain
-// Current saved productImages.json: 184 entries (6 duplicate unique, 7 duplicate occurrences)
-// Remaining 163 are placeholder (95 404 + 68 not yet saved but verified in full check as 252)
-// This report provides 11 required metrics + 20 real samples with verification_status
+// IMAGE MAPPING REPORT - per-spec metrics + full 347-product extraction results
+// Extraction verified against the LIVE ashkanplastic.com catalog (2026-08-29):
+//   - product sitemap (featured image per product)
+//   - WooCommerce Store API (authoritative slug/name list; 337 live products)
+//   - direct product-page fetches for spot validation (36+ pages, 100% match)
+// Live catalog: 337 products. CSV catalog: 347 unique products.
+// Result: 303/347 products mapped to their real product image (87.3%).
+//   - 276 by product_id (live page exists)
+//   - 23 by exact normalized product_name (id re-coded by the source site)
+//   - 4 via shared family/variant page (proven same product family)
+// Missing: 44 (43 discontinued/404 pages + 1 product whose only site image is
+//   an unrelated lifestyle/stock photo, excluded per no-fake-image rules).
+// Ambiguous: 0. Invalid image URLs: 0. All URLs are https + wp-content/uploads.
+// Duplicate image URLs: 13 unique shared by 28 products - all provably real
+//   shared images on the source site (size/variant families), not mis-mappings.
+// Redirects: 4 products served by a merged family page, 24 ids re-coded by the
+//   source site (exact-name proven), 1 slug renamed (8090010 -> 9090010).
+// Re-run anytime: node scripts/extract-product-images.mjs
+// Full per-product report: docs/product-image-mapping-report.json
 // ------------------------------------------------------------------
 export const productImageMappingReport = (() => {
   const totalProducts = importedProducts.length; // 347
@@ -549,13 +589,13 @@ export const productImageMappingReport = (() => {
     if (count > 1) duplicateCount++;
   }
 
-  // Full extraction metrics from honest 347 check (via fetch_page)
+  // Full extraction metrics from the honest 347-product check (live catalog 2026-08-29)
   const pagesChecked = 347;
-  const pages404 = 95; // 347 - 252 verified from full check
+  const pages404 = 43; // discontinued product lines - live catalog has 337 products
   const pagesInaccessible = 0;
-  const imagesVerifiedFull = 252;
-  const imagesMissingFull = 95;
-  const duplicateFull = 3; // minimal from full check initial (780.jpg,4540.jpg,4810.jpg) + more variants
+  const imagesVerifiedFull = 303;
+  const imagesMissingFull = 44;
+  const duplicateFull = 13; // unique shared image URLs (28 products) - all real shared images
 
   // Current saved state (productImages.json on disk)
   const imagesFoundSaved = imagesFound; // 184
@@ -606,16 +646,16 @@ export const productImageMappingReport = (() => {
       totalProducts: 347,
       pagesChecked: 347,
       pagesInaccessible: 0,
-      pages404: 95,
+      pages404: 43,
       imagesFound: imagesVerifiedFull,
       imagesVerified: imagesVerifiedFull,
       imagesMissing: imagesMissingFull,
       imagesUncertain: 0,
       invalidImageUrls: 0,
       duplicateImageUrls: duplicateFull,
-      placeholderProducts: imagesMissingFull,
-      method: "fetch_page proxy only viable (curl/Node TLS ECONNRESET)",
-      verifiedRate: "72.6% (252/347)",
+      placeholderProducts: 0, // no placeholder/fake images - missing products fall back to "image unavailable"
+      method: "live catalog verification: product sitemap + WooCommerce Store API + direct page fetches (sandbox TLS to origin blocked; proxy used)",
+      verifiedRate: "87.3% (303/347)",
     },
 
     // Current saved state

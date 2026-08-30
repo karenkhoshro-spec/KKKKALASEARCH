@@ -3,10 +3,10 @@ import { Check, Globe2, Sparkles } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import type { Lang } from "../types";
 
-const OPTIONS: { code: Lang; native: string; flag: string; short: string; glow: string }[] = [
-  { code: "fa", native: "فارسی", flag: "🇮🇷", short: "فا", glow: "#a855f7" },
-  { code: "en", native: "English", flag: "🇬🇧", short: "EN", glow: "#22d3ee" },
-  { code: "ar", native: "العربية", flag: "🇸🇦", short: "ع", glow: "#ec4899" },
+const OPTIONS: { code: Lang; native: string }[] = [
+  { code: "fa", native: "فارسی" },
+  { code: "en", native: "English" },
+  { code: "ar", native: "العربية" },
 ];
 
 export default function LanguageSwitcher({ variant = "header" }: { variant?: "header" | "menu" }) {
@@ -26,8 +26,16 @@ export default function LanguageSwitcher({ variant = "header" }: { variant?: "he
     return (
       <div className="flex flex-wrap gap-2" dir={dir}>
         {OPTIONS.map((opt) => (
-          <button key={opt.code} onClick={() => setLang(opt.code)} className="rounded-xl border px-3 py-2 text-xs font-semibold transition-colors" style={{ borderColor: lang === opt.code ? opt.glow : "var(--border-soft)", background: lang === opt.code ? "var(--chip-bg)" : "transparent", color: "var(--text-primary)" }}>
-            <span className="text-lg leading-none" aria-hidden="true">{opt.flag}</span>
+          <button
+            key={opt.code}
+            onClick={() => setLang(opt.code)}
+            className="flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors"
+            style={{
+              borderColor: lang === opt.code ? "var(--accent-1)" : "var(--border-soft)",
+              background: lang === opt.code ? "var(--chip-bg)" : "transparent",
+              color: "var(--text-primary)",
+            }}
+          >
             <span>{opt.native}</span>
           </button>
         ))}
@@ -37,25 +45,58 @@ export default function LanguageSwitcher({ variant = "header" }: { variant?: "he
 
   return (
     <div className="relative" ref={ref}>
-      <button onClick={() => setOpen((o) => !o)} title={t("header.language")} aria-label={t("header.language")} aria-expanded={open} className={`relative flex h-9 w-9 items-center justify-center rounded-full transition-all duration-300 ${open ? "rotate-12 scale-110" : "hover:scale-110"}`} style={{ color: "var(--text-primary)" }}>
-        <span className="absolute inset-0 rounded-full opacity-0 blur-md transition-opacity duration-300" style={{ background: "var(--accent-1)", opacity: open ? 0.45 : 0 }} />
+      <button
+        onClick={() => setOpen((o) => !o)}
+        title={t("header.language")}
+        aria-label={t("header.language")}
+        aria-expanded={open}
+        className={`relative flex h-9 w-9 items-center justify-center rounded-full transition-all duration-300 ${open ? "rotate-12 scale-110" : "hover:scale-110"}`}
+        style={{ color: "var(--text-primary)" }}
+      >
+        <span
+          className="absolute inset-0 rounded-full opacity-0 blur-md transition-opacity duration-300"
+          style={{ background: "var(--accent-1)", opacity: open ? 0.45 : 0 }}
+        />
         <Globe2 size={20} className="relative" />
       </button>
       {open && (
-        <div dir={dir} className="fixed end-3 top-14 z-[240] w-[calc(100vw-24px)] max-w-[268px] animate-pop rounded-3xl p-[1px] shadow-[0_16px_50px_rgba(0,0,0,0.35)] sm:absolute sm:end-0 sm:top-11 sm:w-[268px]" style={{ insetInlineEnd: "max(12px, env(safe-area-inset-right))" }}>
-          <div className="glass-strong overflow-hidden rounded-[23px] p-2.5" style={{ background: "var(--dropdown-bg)", backdropFilter: "blur(24px) saturate(160%)" }}>
-            <div className="mb-2 flex items-center gap-2 px-2 py-1" style={{ color: "var(--text-secondary)" }}>
-              <Sparkles size={15} style={{ color: "var(--accent-1)" }} />
+        <div
+          dir={dir}
+          className="fixed end-3 top-14 z-[240] w-[calc(100vw-24px)] max-w-[240px] animate-pop rounded-2xl p-[1px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] sm:absolute sm:end-0 sm:top-11 sm:w-[240px]"
+          style={{ insetInlineEnd: "max(12px, env(safe-area-inset-right))" }}
+        >
+          <div
+            className="overflow-hidden rounded-[15px] border p-2"
+            style={{
+              background: "var(--dropdown-bg)",
+              borderColor: "var(--border-strong)",
+              backdropFilter: "blur(32px) saturate(180%)",
+              boxShadow: "inset 0 1px 1px rgba(255,255,255,0.15)",
+            }}
+          >
+            <div className="mb-1.5 flex items-center gap-2 px-2.5 py-1" style={{ color: "var(--text-secondary)" }}>
+              <Sparkles size={14} style={{ color: "var(--accent-1)" }} />
               <span className="text-xs font-bold">{t("header.language")}</span>
             </div>
             <div className="flex flex-col gap-1">
               {OPTIONS.map((opt) => {
                 const active = lang === opt.code;
                 return (
-                  <button key={opt.code} onClick={() => { setLang(opt.code); setOpen(false); }} className="group flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-start transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10" style={{ color: active ? opt.glow : "var(--text-primary)", background: active ? "var(--surface-strong)" : "transparent", boxShadow: active ? `0 0 22px ${opt.glow}33` : "none" }}>
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xl leading-none shadow-lg transition-transform duration-300 group-hover:rotate-6" style={{ background: `linear-gradient(135deg, ${opt.glow}, var(--accent-2))` }} aria-hidden="true">{opt.flag}</span>
-                    <span className="flex-1 text-sm font-semibold">{opt.native}</span>
-                    {active && <Check size={17} />}
+                  <button
+                    key={opt.code}
+                    onClick={() => {
+                      setLang(opt.code);
+                      setOpen(false);
+                    }}
+                    className="group flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-start transition-all duration-200 hover:bg-white/10"
+                    style={{
+                      color: active ? "var(--accent-1)" : "var(--text-primary)",
+                      background: active ? "var(--surface-strong)" : "transparent",
+                      fontWeight: active ? 700 : 500,
+                    }}
+                  >
+                    <span className="flex-1 text-sm">{opt.native}</span>
+                    {active && <Check size={16} style={{ color: "var(--accent-1)" }} />}
                   </button>
                 );
               })}

@@ -1,53 +1,53 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useListContext } from "../context/ListContext";
-import { categories } from "../data/categories";
 import SearchBar from "../components/SearchBar";
+import CategoryNav from "../components/CategoryNav";
+import { HorizontalBrandingLogo } from "../components/BrandingLogo";
 
 export default function Home() {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   const { setListContext } = useListContext();
 
   useEffect(() => {
     setListContext({ type: "home" });
   }, [setListContext]);
 
-  const mainCategories = categories.slice(0, 8);
-  const otherCategory = categories[8];
-
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6">
-      {/* 12. Prominent search hero */}
-      <section className="mb-12 text-center">
-        <p className="animate-fade-up mx-auto mt-2 max-w-xl text-sm font-extrabold sm:text-base" style={{ color: "var(--text-secondary)", animationDelay: "0.05s" }}>
-          {(() => {
-            const subtitle = t("home.heroSubtitle");
-            const marker = "خانگی";
-            const [before, after] = subtitle.split(marker);
-            return after === undefined ? subtitle : <>{before}<span className="mx-1 inline-block text-[1.2em] font-black text-[var(--accent-1)]">{marker}</span>{after}</>;
-          })()}
+      {/* 1. Main Homepage Hero: Horizontal Logo + Tagline + Search Box */}
+      <section className="mb-10 flex flex-col items-center text-center">
+        {/* Horizontal KalaSearch Logo */}
+        <div className="mb-3">
+          <HorizontalBrandingLogo showTagline={false} />
+        </div>
+
+        {/* Tagline (not a second brand name) */}
+        <p className="animate-fade-up mx-auto max-w-xl text-base font-extrabold sm:text-lg" style={{ color: "var(--text-secondary)", animationDelay: "0.05s" }}>
+          {t("home.heroTitle")}
         </p>
-        <div className="mt-6">
+
+        <h2
+          className="mt-5 text-lg font-black tracking-tight sm:text-xl"
+          style={{ color: "var(--text-primary)" }}
+        >
+          {t("home.smartSearch")}
+        </h2>
+
+        {/* Search Box */}
+        <div className="mt-3 w-full max-w-2xl">
           <SearchBar large />
         </div>
       </section>
 
+      {/* 2. Primary Categories Grid */}
       <section className="mb-14">
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-2xl font-bold sm:text-3xl" style={{ color: "var(--text-primary)" }}>
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-2xl font-black sm:text-3xl" style={{ color: "var(--text-primary)" }}>
             {t("home.categoriesTitle")}
           </h2>
         </div>
-        <div className="grid grid-cols-4 gap-3 sm:gap-4">
-          {mainCategories.map((cat) => (
-            <Link key={cat.id} to={`/category/${cat.id}`} className="glass category-tile animate-fade-up flex min-w-0 flex-col items-center gap-2 rounded-2xl px-1 py-4 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-glow)]">
-              <span className="text-2xl">{cat.icon}</span>
-              <span className="w-full truncate text-[11px] font-semibold leading-4 sm:text-sm" style={{ color: "var(--text-primary)" }}>{cat.name[lang]}</span>
-            </Link>
-          ))}
-          {otherCategory && <Link to={`/category/${otherCategory.id}`} className="glass category-tile animate-fade-up col-span-4 mx-auto flex w-1/2 min-w-0 flex-col items-center gap-1 rounded-2xl px-2 py-3 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-glow)]"><span className="text-xl">{otherCategory.icon}</span><span className="text-xs font-bold" style={{ color: "var(--text-primary)" }}>{otherCategory.name[lang]}</span></Link>}
-        </div>
+        <CategoryNav />
       </section>
 
     </div>

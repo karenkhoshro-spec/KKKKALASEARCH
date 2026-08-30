@@ -14,13 +14,20 @@ const STORAGE_KEY = "kala-search-theme";
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return (saved as Theme) || "light";
+    if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return (saved as Theme) || "light";
+    }
+    return "light";
   });
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem(STORAGE_KEY, theme);
+    if (typeof document !== "undefined") {
+      document.documentElement.setAttribute("data-theme", theme);
+    }
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(STORAGE_KEY, theme);
+    }
   }, [theme]);
 
   const value = useMemo(

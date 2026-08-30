@@ -18,14 +18,13 @@ export default function Header() {
         <div className="glass-strong border-b" style={{ borderColor: "var(--border-soft)" }}>
           <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-3 py-2.5 sm:px-6">
             {/* Nav controls group */}
-            <div className="flex items-center gap-1 sm:gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2.5">
               <button
                 onClick={() => setMenuOpen(true)}
                 aria-label={t("header.menu")}
-                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-white/10"
-                style={{ color: "var(--text-primary)" }}
+                className="ks-crystal-action-btn"
               >
-                <Menu size={19} />
+                <Menu size={18} />
               </button>
               <ThemeToggle />
             </div>
@@ -38,23 +37,23 @@ export default function Header() {
             </div>
 
             {/* Actions group */}
-            <div className="flex items-center justify-end gap-0.5 sm:gap-1.5">
+            <div className="flex items-center justify-end gap-1.5 sm:gap-2.5">
               <Link
                 to="/account"
                 aria-label={t("header.account")}
-                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-white/10"
+                className="ks-crystal-action-btn"
               >
-                <UserRound size={18} style={{ color: "var(--text-primary)" }} />
+                <UserRound size={17} />
               </Link>
               <Link
                 to="/cart"
                 aria-label={t("header.cart")}
-                className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-white/10"
+                className="ks-crystal-action-btn relative"
               >
-                <ShoppingCart size={18} style={{ color: "var(--text-primary)" }} />
+                <ShoppingCart size={17} />
                 {count > 0 && (
                   <span
-                    className="absolute -top-0.5 -end-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[10px] font-bold text-white animate-pop"
+                    className="absolute -top-1 -end-1 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[10px] font-bold text-white animate-pop"
                     style={{ background: "var(--accent-1)" }}
                   >
                     {count}
