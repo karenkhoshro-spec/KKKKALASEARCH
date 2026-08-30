@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { LogOut, PhoneCall, Mail, ShieldCheck, User, PackageSearch, CheckCircle2, ArrowRight, ArrowLeft } from "lucide-react";
+import { useState, useRef } from "react";
+import { LogOut, PhoneCall, Mail, User, PackageSearch, CheckCircle2, ArrowRight, ArrowLeft } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useAccount } from "../context/AccountContext";
 import { useToast } from "../context/ToastContext";
