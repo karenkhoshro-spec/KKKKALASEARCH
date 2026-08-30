@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext";
-import { categories } from "../data/categories";
 import { HorizontalBrandingLogo } from "./BrandingLogo";
 import "./Footer.css";
 
 export default function Footer() {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <footer className="ks-footer mt-16 border-t" style={{ borderColor: "var(--border-soft)" }}>
@@ -19,32 +18,15 @@ export default function Footer() {
           </p>
         </div>
 
-        <div className="grid gap-8 border-t pt-8 sm:grid-cols-3" style={{ borderColor: "var(--border-soft)" }}>
+        <div className="grid gap-8 border-t pt-8 sm:grid-cols-2" style={{ borderColor: "var(--border-soft)" }}>
           <div>
             <h4 className="mb-3 text-sm font-bold" style={{ color: "var(--text-primary)" }}>
               {t("footer.quickLinks")}
             </h4>
             <ul className="flex flex-col gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
               <li><Link to="/" className="ks-footer-link">{t("menu.home")}</Link></li>
-              <li><Link to="/products" className="ks-footer-link">{t("menu.products")}</Link></li>
               <li><Link to="/search" className="ks-footer-link">{t("home.searchCta")}</Link></li>
-              <li><Link to="/cart" className="ks-footer-link">{t("menu.cart")}</Link></li>
-              <li><Link to="/wishlist" className="ks-footer-link">{t("menu.wishlist")}</Link></li>
               <li><Link to="/account" className="ks-footer-link">{t("menu.account")}</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="mb-3 text-sm font-bold" style={{ color: "var(--text-primary)" }}>
-              {t("home.categoriesTitle")}
-            </h4>
-            <ul className="flex flex-col gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
-              {categories.map((cat) => (
-                <li key={cat.id}>
-                  <Link to={`/category/${cat.id}`} className="ks-footer-link">
-                    {cat.name[lang]}
-                  </Link>
-                </li>
-              ))}
             </ul>
           </div>
           <div>

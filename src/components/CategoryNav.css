@@ -31,7 +31,7 @@
   gap: 0.45rem;
   width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
 }
 
 @media (min-width: 480px) {
@@ -153,12 +153,18 @@ html[data-theme="light"] .ks-category-tile:focus-visible {
 }
 
 /* Neon gem plate (dark) / 3D nature plate (light) */
+@keyframes ks-icon-orbit-spin {
+  to { transform: rotate(360deg); }
+}
+
 .ks-icon-3d {
   position: relative;
-  overflow: visible;
+  overflow: hidden;
+  isolation: isolate;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 2.5px;
   border-radius: 1.05rem;
   background:
     radial-gradient(circle at 28% 18%, #7c3aed 0%, transparent 42%),
@@ -283,9 +289,19 @@ html[data-theme="light"] .ks-icon-tone-white .ks-tree-layer { color: #94a3b8; }
 
 /* Light mode icon overrides (Violet / Silver accent) */
 html[data-theme="light"] .ks-category-icon {
-  color: #ffffff;
-  filter: drop-shadow(0 1px 1px rgba(255,255,255,0.7)) drop-shadow(0 2px 3px rgba(15, 23, 42, 0.35));
+  color: #166534;
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.85))
+    drop-shadow(0 3px 4px rgba(15, 23, 42, 0.22));
 }
+html[data-theme="light"] .ks-icon-tone-orange .ks-category-icon { color: #c2410c; }
+html[data-theme="light"] .ks-icon-tone-green .ks-category-icon { color: #15803d; }
+html[data-theme="light"] .ks-icon-tone-blue .ks-category-icon { color: #1d4ed8; }
+html[data-theme="light"] .ks-icon-tone-teal .ks-category-icon { color: #0f766e; }
+html[data-theme="light"] .ks-icon-tone-purple .ks-category-icon { color: #6d28d9; }
+html[data-theme="light"] .ks-icon-tone-navy .ks-category-icon { color: #1e3a8a; }
+html[data-theme="light"] .ks-icon-tone-red .ks-category-icon { color: #be123c; }
+html[data-theme="light"] .ks-icon-tone-white .ks-category-icon { color: #475569; }
 
 html[data-theme="light"] .ks-category-tile:hover .ks-category-icon,
 html[data-theme="light"] .ks-category-tile:focus-visible .ks-category-icon,
