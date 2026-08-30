@@ -16,6 +16,10 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     allowedHosts: true,
+    cors: true,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
   },
   preview: {
     host: "0.0.0.0",

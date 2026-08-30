@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { useBlocker } from "react-router-dom";
 
 type UiLayerContextValue = {
   registerLayer: (close: () => void) => () => void;
@@ -20,23 +19,6 @@ export function UiLayerProvider({ children }: { children: ReactNode }) {
       setLayerCount(layers.current.length);
     };
   }, []);
-
-  const closeTop = useCallback(() => {
-    const top = layers.current[layers.current.length - 1];
-    if (top) {
-      top();
-      return true;
-    }
-    return false;
-  }, []);
-
-  const blocker = useBlocker(({ historyAction }) => historyAction === "POP" && layerCount > 0);
-
-  useEffect(() => {
-    if (blocker.state !== "blocked") return;
-    closeTop();
-    blocker.reset();
-  }, [blocker, closeTop]);
 
   const value = useMemo(() => ({ registerLayer, layerCount }), [registerLayer, layerCount]);
 
