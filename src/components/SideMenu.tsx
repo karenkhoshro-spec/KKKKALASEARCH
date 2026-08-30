@@ -7,7 +7,7 @@ import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
-import Logo from "./Logo";
+import { VerticalBrandingLogo } from "./BrandingLogo";
 import AboutOverlay from "./AboutOverlay";
 
 export default function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -40,11 +40,11 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
           borderInlineEnd: "1px solid var(--border-soft)",
         }}
       >
-        {/* Menu Header */}
-        <div className="flex items-center justify-between border-b px-4 py-3.5" style={{ borderColor: "var(--border-soft)" }}>
-          <div className="glass rounded-2xl px-3 py-1.5" style={{ border: "1px solid var(--border-soft)" }}>
-            <Logo compact />
-          </div>
+        {/* Menu Header with Close Button */}
+        <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--border-soft)" }}>
+          <span className="text-xs font-bold" style={{ color: "var(--text-muted)" }}>
+            {t("menu.title") || "منوی کالا سرچ"}
+          </span>
           <button
             onClick={onClose}
             aria-label={t("menu.close") || "بستن"}
@@ -54,23 +54,16 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
           </button>
         </div>
 
-        {/* Family Feature Section */}
-        <div className="mx-3.5 mt-3.5 overflow-hidden rounded-2xl" style={{ border: "1px solid var(--border-soft)" }}>
-          <div className="relative aspect-[4/3] w-full overflow-hidden">
-            <img
-              src="/images/menu-family.jpg"
-              alt={t("menu.familyCaption")}
-              className="h-full w-full animate-kenburns object-cover"
-            />
-            <div
-              className="absolute inset-0"
-              style={{ background: "linear-gradient(0deg, rgba(10,6,20,0.85) 0%, rgba(10,6,20,0.2) 60%)" }}
-            />
-            <div className="absolute inset-x-0 bottom-0 p-3">
-              <p className="text-xs font-black leading-5 text-white">{t("menu.familyCaption")}</p>
-              <p className="mt-0.5 text-[11px] font-medium leading-4 text-white/85">{t("menu.familySubCaption")}</p>
-            </div>
-          </div>
+        {/* Vertical KalaSearch Branding Card in Hamburger Menu */}
+        <div
+          className="mx-3.5 mt-3.5 glass-strong flex flex-col items-center justify-center rounded-2xl p-4 text-center"
+          style={{
+            border: "1px solid var(--border-soft)",
+            background: "var(--surface-strong)",
+            boxShadow: "0 4px 16px rgba(0, 0, 0, 0.06)",
+          }}
+        >
+          <VerticalBrandingLogo />
         </div>
 
         {/* Uniform Crystal Menu Cards */}

@@ -3,6 +3,7 @@ import { useLanguage } from "../i18n/LanguageContext";
 import { useListContext } from "../context/ListContext";
 import SearchBar from "../components/SearchBar";
 import CategoryNav from "../components/CategoryNav";
+import { HorizontalBrandingLogo } from "../components/BrandingLogo";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -14,9 +15,15 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6">
-      {/* 1. Prominent search hero */}
-      <section className="mb-10 text-center">
-        <p className="animate-fade-up mx-auto mt-2 max-w-xl text-base font-extrabold sm:text-lg" style={{ color: "var(--text-secondary)", animationDelay: "0.05s" }}>
+      {/* 1. Main Homepage Hero: Horizontal Logo + Tagline + Search Box */}
+      <section className="mb-10 flex flex-col items-center text-center">
+        {/* Horizontal KalaSearch Logo */}
+        <div className="mb-3">
+          <HorizontalBrandingLogo showTagline={false} />
+        </div>
+
+        {/* Tagline */}
+        <p className="animate-fade-up mx-auto max-w-xl text-base font-extrabold sm:text-lg" style={{ color: "var(--text-secondary)", animationDelay: "0.05s" }}>
           {(() => {
             const subtitle = t("home.heroSubtitle");
             const marker = "خانگی";
@@ -24,7 +31,9 @@ export default function Home() {
             return after === undefined ? subtitle : <>{before}<span className="mx-1 inline-block text-[1.25em] font-black text-[var(--accent-1)]">{marker}</span>{after}</>;
           })()}
         </p>
-        <div className="mt-6">
+
+        {/* Search Box */}
+        <div className="mt-6 w-full max-w-2xl">
           <SearchBar large />
         </div>
       </section>

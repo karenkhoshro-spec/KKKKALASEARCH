@@ -1,21 +1,61 @@
 import { Atom, Search } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
+import { useTheme } from "../context/ThemeContext";
 
-// Support standard asset path: src/assets/kalasearch-logo.png
-const logoAssets = import.meta.glob<{ default: string }>("../assets/kalasearch-logo.{png,jpg,jpeg,svg,webp,PNG,JPG,SVG,WEBP}", { eager: true });
-const realLogoSrc = Object.values(logoAssets)[0]?.default;
+// Support standard asset paths: src/assets/kalasearch-logo.* and src/assets/branding/*
+const logoAssets = import.meta.glob<{ default: string }>(
+  "../assets/**/*.{png,jpg,jpeg,svg,webp,PNG,JPG,SVG,WEBP}",
+  { eager: true }
+);
+
+function getLogoSrc(theme: "light" | "dark"): string | undefined {
+  const entries = Object.entries(logoAssets);
+  if (entries.length === 0) return undefined;
+
+  // 1. Theme-specific horizontal / general logo
+  const exact = entries.find(([path]) => {
+    const lower = path.toLowerCase();
+    return (lower.includes("horizontal") || lower.includes("kalasearch-logo")) && lower.includes(theme);
+  });
+  if (exact) return exact[1].default;
+
+  // 2. Generic horizontal logo
+  const horizontal = entries.find(([path]) => path.toLowerCase().includes("horizontal"));
+  if (horizontal) return horizontal[1].default;
+
+  // 3. Main logo
+  const main = entries.find(([path]) => path.toLowerCase().includes("kalasearch-logo"));
+  if (main) return main[1].default;
+
+  return entries[0]?.[1]?.default;
+}
+
+function useSafeTheme(): "light" | "dark" {
+  try {
+    const { theme } = useTheme();
+    return theme;
+  } catch {
+    if (typeof document !== "undefined") {
+      const docTheme = document.documentElement.getAttribute("data-theme");
+      if (docTheme === "dark" || docTheme === "light") return docTheme;
+    }
+    return "light";
+  }
+}
 
 export default function Logo({ compact = false }: { compact?: boolean }) {
   const { lang } = useLanguage();
+  const theme = useSafeTheme();
+  const realLogoSrc = getLogoSrc(theme);
   const brandFa = "کالا سرچ";
 
   return (
     <div className="ks-brand-logo flex select-none items-center gap-2" style={{ color: "var(--text-primary)" }}>
-      {/* Real Logo Asset if present in src/assets/kalasearch-logo.png, else original crystal emblem */}
+      {/* Real Logo Asset if present in src/assets/ or src/assets/branding/, else original crystal emblem */}
       {realLogoSrc ? (
         <img
           src={realLogoSrc}
-          alt="KalaSearch"
+          alt="کالا سرچ — KalaSearch"
           className={`shrink-0 object-contain ${compact ? "h-7 w-7" : "h-8 w-8 sm:h-9 sm:w-9"}`}
         />
       ) : (
