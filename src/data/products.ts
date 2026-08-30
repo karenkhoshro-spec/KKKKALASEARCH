@@ -12,6 +12,7 @@ export const productProvider = new LocalCsvProductProvider({
 
 export const products = productProvider.getProducts();
 export const getProductById = (id: string) => productProvider.getProductById(id);
-export const getProductsByCategory = (categoryId: string, subcategoryId?: string) => productProvider.getProducts().filter((product) => product.categoryId === categoryId && (!subcategoryId || product.subcategoryId === subcategoryId));
+export const getProductsByCategory = (categoryId: string, subcategoryId?: string) =>
+  getImportedProductsByCategory(categoryId, subcategoryId);
 export const searchProducts = (query: string, lang: "fa" | "en" | "ar") => productProvider.searchProducts(query, lang);
 export const getOtherSubcategoryCounts = getImportedOtherSubcategoryCounts;

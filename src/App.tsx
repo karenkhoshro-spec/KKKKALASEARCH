@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { ListContextProvider } from "./context/ListContext";
 import { UiLayerProvider } from "./context/UiLayerContext";
@@ -13,17 +13,18 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import LanguageWelcomeModal from "./components/LanguageWelcomeModal";
 import Home from "./pages/Home";
-import ProductsPage from "./pages/ProductsPage";
-import CategoryPage from "./pages/CategoryPage";
-import SearchPage from "./pages/SearchPage";
-import ProductDetails from "./pages/ProductDetails";
-import CartPage from "./pages/CartPage";
-import CheckoutPage from "./pages/CheckoutPage";
-import AccountPage from "./pages/AccountPage";
-import WishlistPage from "./pages/WishlistPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import ImageTestPage from "./pages/ImageTestPage";
 import ErrorBoundary from "./components/ErrorBoundary";
+
+const ProductsPage = lazy(() => import("./pages/ProductsPage"));
+const CategoryPage = lazy(() => import("./pages/CategoryPage"));
+const SearchPage = lazy(() => import("./pages/SearchPage"));
+const ProductDetails = lazy(() => import("./pages/ProductDetails"));
+const CartPage = lazy(() => import("./pages/CartPage"));
+const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
+const AccountPage = lazy(() => import("./pages/AccountPage"));
+const WishlistPage = lazy(() => import("./pages/WishlistPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const ImageTestPage = lazy(() => import("./pages/ImageTestPage"));
 
 function AppShell() {
   const { hasChosenLanguage } = useLanguage();
@@ -78,7 +79,7 @@ function AppShell() {
 
       <Header />
       <main>
-        {!isHome && <div className="min-h-screen" aria-hidden="true"><Home /></div>}
+        {!isHome && <div className="min-h-screen" aria-hidden="true" />}
         <div
           className={
             isHome
@@ -96,19 +97,21 @@ function AppShell() {
             style={isHome ? undefined : { borderColor: "var(--border-strong)" }}
             onClick={isHome ? undefined : (e) => e.stopPropagation()}
           >
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/products" element={<ProductsPage />} />
-              <Route path="/category/:categoryId" element={<CategoryPage />} />
-              <Route path="/search" element={<SearchPage />} />
-              <Route path="/product/:id" element={<ProductDetails />} />
-              <Route path="/wishlist" element={<WishlistPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/account" element={<AccountPage />} />
-              <Route path="/image-test" element={<ImageTestPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
+            <Suspense fallback={<div className="px-4 py-16 text-center text-sm" style={{ color: "var(--text-muted)" }}>…</div>}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/products" element={<ProductsPage />} />
+                <Route path="/category/:categoryId" element={<CategoryPage />} />
+                <Route path="/search" element={<SearchPage />} />
+                <Route path="/product/:id" element={<ProductDetails />} />
+                <Route path="/wishlist" element={<WishlistPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/account" element={<AccountPage />} />
+                <Route path="/image-test" element={<ImageTestPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </Suspense>
           </div>
         </div>
       </main>

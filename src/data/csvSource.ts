@@ -508,8 +508,15 @@ function toVariation(row: ProductSourceRow): ProductVariation {
   };
 }
 
-export const importedProducts: Product[] = Array.from(new Set(mergedRows.map((row) => row.product_id))).map((productId) => {
-  const rows = mergedRows.filter((row) => row.product_id === productId);
+const rowsByProductId = new Map<string, ProductSourceRow[]>();
+for (const row of mergedRows) {
+  const pid = row.product_id;
+  const list = rowsByProductId.get(pid);
+  if (list) list.push(row);
+  else rowsByProductId.set(pid, [row]);
+}
+
+export const importedProducts: Product[] = Array.from(rowsByProductId.entries()).map(([productId, rows]) => {
   const first = rows[0];
   const variations = rows.map(toVariation);
   const sub = otherSubcategory(first.product_name);
@@ -711,7 +718,49 @@ export const productUrlMappingReport = (() => {
   };
 })();
 
-export function getImportedProductById(id: string) { return importedProducts.find((product) => product.id === id); }
-export function getImportedProductsByCategory(categoryId: string, subcategoryId?: string) { return importedProducts.filter((product) => product.categoryId === categoryId && (!subcategoryId || product.subcategoryId === subcategoryId)); }
-export function getImportedOtherSubcategoryCounts() { return importedOtherSubcategories.filter((sub) => importedProducts.some((product) => product.categoryId === "other" && product.subcategoryId === sub.id)).map((sub) => ({ ...sub, count: importedProducts.filter((product) => product.categoryId === "other" && product.subcategoryId === sub.id).length })); }
-export function searchImportedProducts(query: string) { const q = query.trim().toLocaleLowerCase(); if (!q) return []; return importedProducts.filter((p) => [p.name.fa, p.productCode, p.sku, p.categoryId, p.subcategoryId, importedCategories.find((c) => c.id === p.categoryId)?.name.fa, p.description.fa, ...(p.variants ?? []).flatMap((v) => [v.name.fa, v.sku, v.technicalSpec])].filter(Boolean).some((value) => String(value).toLocaleLowerCase().includes(q))); }
+const productById = new Map(importedProducts.map((product) => [product.id, product]));
+const productsByCategoryId = new Map<string, Product[]>();
+for (const product of importedProducts) {
+  const bucket = productsByCategoryId.get(product.categoryId);
+  if (bucket) bucket.push(product);
+  else productsByCategoryId.set(product.categoryId, [product]);
+}
+const categoryNameById = new Map(importedCategories.map((c) => [c.id, c.name.fa]));
+const searchBlobs = importedProducts.map((p) => ({
+  product: p,
+  blob: [
+    p.name.fa,
+    p.productCode,
+    p.sku,
+    p.categoryId,
+    p.subcategoryId,
+    categoryNameById.get(p.categoryId),
+    p.description.fa,
+    ...(p.variants ?? []).flatMap((v) => [v.name.fa, v.sku, v.technicalSpec]),
+  ]
+    .filter(Boolean)
+    .join("\n")
+    .toLocaleLowerCase(),
+}));
+const otherSubcategoryCounts = importedOtherSubcategories
+  .map((sub) => ({
+    ...sub,
+    count: (productsByCategoryId.get("other") ?? []).filter((product) => product.subcategoryId === sub.id).length,
+  }))
+  .filter((sub) => sub.count > 0);
+
+export function getImportedProductById(id: string) {
+  return productById.get(id);
+}
+export function getImportedProductsByCategory(categoryId: string, subcategoryId?: string) {
+  const list = productsByCategoryId.get(categoryId) ?? [];
+  return subcategoryId ? list.filter((product) => product.subcategoryId === subcategoryId) : list;
+}
+export function getImportedOtherSubcategoryCounts() {
+  return otherSubcategoryCounts;
+}
+export function searchImportedProducts(query: string) {
+  const q = query.trim().toLocaleLowerCase();
+  if (!q) return [];
+  return searchBlobs.filter((entry) => entry.blob.includes(q)).map((entry) => entry.product);
+}

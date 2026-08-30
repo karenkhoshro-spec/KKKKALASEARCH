@@ -1,10 +1,11 @@
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext";
 import { categories } from "../data/categories";
 import CategoryIconFrame from "./CategoryIconFrame";
 import "./CategoryNav.css";
 
-export default function CategoryNav() {
+function CategoryNav() {
   const { lang } = useLanguage();
 
   const mainCategories = categories.slice(0, 8);
@@ -15,12 +16,11 @@ export default function CategoryNav() {
   return (
     <nav className="ks-category-container" aria-label="دسته‌بندی‌های کالا سرچ">
       <div className="ks-category-grid-4">
-        {row1.map((cat, index) => (
+        {row1.map((cat) => (
           <Link
             key={cat.id}
             to={`/category/${cat.id}`}
-            className="ks-category-tile animate-fade-up"
-            style={{ animationDelay: `${Math.min(index * 0.03, 0.2)}s` }}
+            className="ks-category-tile"
             aria-label={cat.name[lang]}
           >
             <CategoryIconFrame id={cat.id} size={28} className="h-11 w-11 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
@@ -30,12 +30,11 @@ export default function CategoryNav() {
       </div>
 
       <div className="ks-category-grid-4">
-        {row2.map((cat, index) => (
+        {row2.map((cat) => (
           <Link
             key={cat.id}
             to={`/category/${cat.id}`}
-            className="ks-category-tile animate-fade-up"
-            style={{ animationDelay: `${Math.min((index + 4) * 0.03, 0.25)}s` }}
+            className="ks-category-tile"
             aria-label={cat.name[lang]}
           >
             <CategoryIconFrame id={cat.id} size={28} className="h-11 w-11 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
@@ -48,8 +47,7 @@ export default function CategoryNav() {
         <div className="ks-category-row-other">
           <Link
             to={`/category/${otherCategory.id}`}
-            className="ks-category-tile ks-category-tile-other animate-fade-up"
-            style={{ animationDelay: "0.28s" }}
+            className="ks-category-tile ks-category-tile-other"
             aria-label={otherCategory.name[lang]}
           >
             <CategoryIconFrame id={otherCategory.id} size={28} className="h-11 w-11 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
@@ -60,3 +58,5 @@ export default function CategoryNav() {
     </nav>
   );
 }
+
+export default memo(CategoryNav);
