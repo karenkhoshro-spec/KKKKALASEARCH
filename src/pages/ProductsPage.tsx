@@ -29,7 +29,7 @@ export default function ProductsPage() {
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
       <div className="mb-5 flex items-center justify-between">
         <BackButton to="/" />
-        <h1 className="text-2xl font-bold sm:text-3xl" style={{ color: "var(--text-primary)" }}>
+        <h1 className="ks-page-title" style={{ color: "var(--text-primary)" }}>
           {t("menu.products")}
         </h1>
         <span />
@@ -68,7 +68,7 @@ export default function ProductsPage() {
         </select>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
+      <div className="ks-product-grid grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
         {list.map((p) => (
           <ProductCard key={p.id} product={p} />
         ))}

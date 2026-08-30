@@ -46,15 +46,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
           };
           return next;
         }
+        // Carry verified variant details (color, pack qty, spec, Ashkan URL)
+        // from the catalog so the order document stays complete and truthful.
+        const source = variation ? product.variations?.find((v) => v.id === variation.id) : undefined;
         return [
           ...prev,
           {
             productId: product.id,
             name,
-            image: product.image,
+            image: product.image || product.productImageUrl || "",
             price: resolveCartPrice(product, variation),
             quantity,
             variation,
+            ...(source
+              ? { colorName: source.colorName, packQuantity: source.packQuantity, technicalSpec: source.technicalSpec, url: source.url }
+              : {}),
           },
         ];
       });

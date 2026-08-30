@@ -17,8 +17,8 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   return (
     <form onSubmit={submit} className="relative mx-auto w-full max-w-2xl">
       <div
-        className={`search-shimmer rounded-[20px] p-[2px] transition-all duration-500 ${
-          focused ? "shadow-[var(--shadow-glow)]" : "opacity-90"
+        className={`search-shimmer rounded-[20px] p-[2px] transition-shadow duration-500 ${
+          focused ? "shadow-[var(--shadow-glow)]" : ""
         }`}
       >
         <div
@@ -29,13 +29,16 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
         >
           <Search size={large ? 22 : 18} style={{ color: "var(--accent-1)" }} className={focused ? "animate-pulse" : ""} />
           <input
+            dir="auto"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             placeholder={t("header.searchPlaceholder")}
-            className={`w-full flex-1 bg-transparent outline-none placeholder:opacity-60 ${large ? "text-base sm:text-lg" : "text-sm"}`}
-            style={{ color: "var(--text-primary)" }}
+            aria-label={t("header.searchPlaceholder")}
+            className={`ks-field w-full flex-1 rounded-md border-0 font-bold bg-transparent outline-none ${
+              large ? "text-lg sm:text-xl" : "text-base sm:text-lg"
+            }`}
           />
           <button
             type="submit"

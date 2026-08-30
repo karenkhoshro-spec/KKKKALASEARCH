@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ExternalLink, Minus, Plus, ShoppingCart, CheckCircle2, XCircle, Heart } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -8,6 +8,8 @@ import { useWishlist } from "../context/WishlistContext";
 import { useListContext, listContextToPath } from "../context/ListContext";
 import { getProductById } from "../data/products";
 import { isValidProductUrl } from "../data/csvSource";
+import { markImageLoaded } from "../utils/imageLoadCache";
+import { meaningfulSpec } from "../utils/specFilter";
 import BackButton from "../components/BackButton";
 import "../components/ProductCard.css";
 
@@ -21,8 +23,19 @@ export default function ProductDetails() {
 
   const product = getProductById(id);
   const [quantity, setQuantity] = useState(1);
-  const [variationId, setVariationId] = useState(product?.variations?.[0]?.id);
+  const [variationId, setVariationId] = useState<string | undefined>(product?.variations?.[0]?.id);
   const [showSpecs, setShowSpecs] = useState(false);
+  const [failedImageSrc, setFailedImageSrc] = useState<string | null>(null);
+
+  // Reset transient view state when navigating between products (same route,
+  // different param) so no stale variant/image error bleeds into the next page.
+  useEffect(() => {
+    setQuantity(1);
+    setShowSpecs(false);
+    setFailedImageSrc(null);
+    setVariationId(product?.variations?.[0]?.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   if (!product) {
     return (
@@ -36,23 +49,25 @@ export default function ProductDetails() {
     );
   }
 
-  const selectedVariation = product.variations?.find((v) => v.id === variationId);
+  const selectedVariation = product.variations?.find((v) => v.id === variationId) ?? product.variations?.[0];
   const available = selectedVariation?.inStock ?? product.inStock;
   const activePrice = selectedVariation ? selectedVariation.price : product.price;
 
-  // Product image: priority productImageUrl (from product_url page) > variation image > legacy image
-  const rawActiveImage = selectedVariation?.image || (product as any).productImageUrl || product.image;
-  const [imgError, setImgError] = useState(false);
-  const activeImage = !imgError && rawActiveImage ? rawActiveImage : undefined;
-
-  // Bulk mapping: productUrl via data layer, with validation
+  // Product image: priority productImageUrl (mapped from the product's own Ashkan page)
+  // > variant image > legacy image. Never falls back to an unrelated product's image.
+  const rawActiveImage = selectedVariation?.image || product.productImageUrl || product.image || undefined;
+  const activeImage = rawActiveImage && failedImageSrc !== rawActiveImage && rawActiveImage.trim() ? rawActiveImage : undefined;
+  // Already-decoded images (seen on the list/cart earlier) are reused from the
+  // browser cache instantly — the <link rel=preload> above prevents any wait.
   const rawActiveUrl = selectedVariation?.url || product.productUrl || product.ashkanProductUrl;
   const activeUrl = rawActiveUrl && isValidProductUrl(rawActiveUrl) ? rawActiveUrl.trim() : undefined;
-  const activeSpec = selectedVariation?.technicalSpec || product.description[lang];
+  const activeSpec = meaningfulSpec(selectedVariation?.technicalSpec || product.description[lang]);
+  // Specs shown to customers only when they are real text — bare CSV counts
+  // ("12", "22") are legacy artifacts and never render as floating numbers.
   const allSpecifications = Array.from(new Set([
     ...product.features.map((feature) => feature[lang]),
-    ...(product.variations ?? []).map((variation) => variation.technicalSpec).filter((spec): spec is string => Boolean(spec && spec.trim() && spec.trim() !== "-")),
-  ].map((spec) => spec.trim()).filter(Boolean)));
+    ...(product.variations ?? []).map((variation) => variation.technicalSpec),
+  ].map((spec) => meaningfulSpec(spec)).filter(Boolean)));
   const colorVariations = (product.variations ?? []).filter((v) => v.colorName);
   const uniqueColors = Array.from(new Map(colorVariations.map((v) => [v.colorName, v])).values());
 
@@ -71,21 +86,29 @@ export default function ProductDetails() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+      {/* Prioritize ONLY the currently opened product image (browser dedupes
+          the actual request with the <img> below — no double fetching). */}
+      {activeImage && <link rel="preload" as="image" href={activeImage} fetchPriority="high" />}
+
       <div className="mb-5">
         <BackButton to={backPath} label={t("product.back")} />
       </div>
 
       <div className="grid gap-8 md:grid-cols-2">
         <div className="flex flex-col gap-4">
+          {/* Fixed compact media box → zero layout shift while the image arrives. */}
           <div className="glass product-media h-[min(38vh,320px)] rounded-3xl p-5 sm:h-[360px] sm:p-6 md:h-[420px]">
             {activeImage ? (
               <img
+                key={activeImage}
                 src={activeImage}
                 alt={product.name[lang]}
                 className="h-full w-full object-contain"
-                loading="lazy"
+                loading="eager"
+                fetchPriority="high"
                 decoding="async"
-                onError={() => setImgError(true)}
+                onLoad={() => markImageLoaded(activeImage)}
+                onError={() => setFailedImageSrc(rawActiveImage ?? null)}
               />
             ) : (
               <span className="text-sm" style={{ color: "var(--text-muted)" }}>{t("product.imageUnavailable")}</span>
@@ -94,44 +117,45 @@ export default function ProductDetails() {
           {activeUrl && (
             <div className="flex flex-col gap-2">
               <a href={activeUrl} target="_blank" rel="noopener noreferrer" className="glass inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all hover:scale-[1.02]" style={{ color: "var(--accent-1)" }}><ExternalLink size={15} />{t("product.viewOnAshkan")}</a>
-              <a href={activeUrl} target="_blank" rel="noopener noreferrer" className="ks-product-details-url-cta" aria-label={`مشاهده صفحه کامل محصول ${product.name[lang]}`}>مشاهده صفحه کامل محصول ↗</a>
             </div>
           )}
         </div>
 
         <div className="flex flex-col">
-          <h1 className="text-xl font-extrabold leading-8 sm:text-2xl" style={{ color: "var(--text-primary)" }}>
+          <h1 className="ks-page-title leading-9 sm:leading-10" style={{ color: "var(--text-primary)" }}>
             {product.name[lang]}
           </h1>
 
           <div className="mt-3 flex items-center gap-2">
             {available ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold" style={{ background: "var(--chip-bg)", color: "var(--success)" }}>
+              <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold" style={{ background: "var(--chip-bg)", color: "var(--success)" }}>
                 <CheckCircle2 size={13} />
                 {(selectedVariation?.stockCount ?? product.stockCount) && (selectedVariation?.stockCount ?? product.stockCount)! <= 8 ? t("product.lowStock") : t("product.inStock")}
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold" style={{ background: "var(--chip-bg)", color: "var(--danger)" }}>
+              <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold" style={{ background: "var(--chip-bg)", color: "var(--danger)" }}>
                 <XCircle size={13} />
                 {t("product.outOfStock")}
               </span>
             )}
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-2 text-xs" style={{ color: "var(--text-secondary)" }}>
-            <span>{t("product.productCode")}: {product.productCode ?? "-"}</span>
-            <span>{t("product.sku")}: {selectedVariation?.sku ?? product.sku ?? "-"}</span>
-            <span>{t("product.stockQuantity")}: {selectedVariation?.stockCount ?? product.stockCount ?? "-"}</span>
-            <span>{t("product.packQuantity")}: {selectedVariation?.packQuantity ?? product.packQuantity ?? "-"}</span>
+          <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-1.5 ks-meta-label" style={{ color: "var(--text-secondary)" }}>
+            <span>{t("product.productCode")}: <bdi>{product.productCode ?? "-"}</bdi></span>
+            <span>{t("product.sku")}: <bdi>{selectedVariation?.sku ?? product.sku ?? "-"}</bdi></span>
+            <span>{t("product.stockQuantity")}: <bdi>{selectedVariation?.stockCount ?? product.stockCount ?? "-"}</bdi></span>
+            <span>{t("product.packQuantity")}: <bdi>{selectedVariation?.packQuantity ?? product.packQuantity ?? "-"}</bdi></span>
           </div>
 
           <div className="mt-4 flex items-baseline gap-3">
-            {activePrice !== undefined ? <span className="text-2xl font-extrabold" style={{ color: "var(--accent-1)" }}>{activePrice.toLocaleString()} {t("product.toman")}</span> : <span className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>{t("product.priceUnknown")}</span>}
+            {activePrice !== undefined ? <span className="text-3xl font-extrabold" style={{ color: "var(--accent-1)" }}>{activePrice.toLocaleString()} <span className="text-base font-bold" style={{ color: "var(--text-secondary)" }}>{t("product.toman")}</span></span> : <span className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>{t("product.priceUnknown")}</span>}
           </div>
 
-          <p className="mt-5 text-sm leading-7" style={{ color: "var(--text-secondary)" }}>
-            {activeSpec}
-          </p>
+          {activeSpec && (
+            <p className="mt-5 text-base leading-7" style={{ color: "var(--text-secondary)" }}>
+              {activeSpec}
+            </p>
+          )}
 
           {allSpecifications.length > 0 && (
             <div className="glass mt-5 rounded-2xl p-4">
@@ -154,10 +178,10 @@ export default function ProductDetails() {
 
           {uniqueColors.length > 0 && (
             <div className="mt-5">
-              <h3 className="mb-2 text-sm font-bold" style={{ color: "var(--text-primary)" }}>رنگ</h3>
+              <h3 className="mb-2 text-base font-bold" style={{ color: "var(--text-primary)" }}>رنگ</h3>
               <div className="flex flex-wrap gap-2">
                 {uniqueColors.map((v) => (
-                  <button type="button" key={v.colorName} onClick={() => setVariationId(v.id)} className="flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-all" style={{ borderColor: variationId === v.id ? "var(--accent-1)" : "var(--border-soft)", background: variationId === v.id ? "var(--chip-bg)" : "transparent", color: "var(--text-primary)" }}>
+                  <button type="button" key={v.colorName} onClick={() => setVariationId(v.id)} className="flex items-center gap-2 rounded-xl border px-3 py-2 text-base font-medium transition-all" style={{ borderColor: variationId === v.id ? "var(--accent-1)" : "var(--border-soft)", background: variationId === v.id ? "var(--chip-bg)" : "transparent", color: "var(--text-primary)" }}>
                     <span className="h-3.5 w-3.5 rounded-full border" style={{ background: v.color, borderColor: v.color === "#f8fafc" ? "var(--border-soft)" : v.color }} />{v.colorName}
                   </button>
                 ))}
@@ -166,17 +190,17 @@ export default function ProductDetails() {
           )}
 
           <div className="mt-6 flex items-center gap-4">
-            <span className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+            <span className="text-base font-semibold" style={{ color: "var(--text-primary)" }}>
               {t("product.quantity")}
             </span>
             <div className="glass flex items-center gap-3 rounded-xl px-2 py-1.5">
-              <button onClick={() => setQuantity((q) => Math.max(1, q - 1))} className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-white/10">
+              <button onClick={() => setQuantity((q) => Math.max(1, q - 1))} aria-label="decrease" className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-white/10">
                 <Minus size={14} style={{ color: "var(--text-primary)" }} />
               </button>
-              <span className="w-6 text-center text-sm font-bold" style={{ color: "var(--text-primary)" }}>
+              <span className="w-6 text-center text-base font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>
                 {quantity}
               </span>
-              <button onClick={() => setQuantity((q) => q + 1)} className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-white/10">
+              <button onClick={() => setQuantity((q) => q + 1)} aria-label="increase" className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-white/10">
                 <Plus size={14} style={{ color: "var(--text-primary)" }} />
               </button>
             </div>
@@ -184,12 +208,12 @@ export default function ProductDetails() {
 
           <div className="mt-6 flex items-center gap-3">
             {available ? (
-              <button onClick={handleAddToCart} className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold text-white shadow-[var(--shadow-glow)] transition-transform duration-300 hover:scale-[1.01] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50" style={{ background: "linear-gradient(90deg, var(--accent-2), var(--accent-1))" }}>
+              <button onClick={handleAddToCart} className="flex flex-1 items-center justify-center gap-2 rounded-2xl py-3.5 text-base font-bold text-white shadow-[var(--shadow-glow)] transition-transform duration-300 hover:scale-[1.01] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50" style={{ background: "linear-gradient(90deg, var(--accent-2), var(--accent-1))" }}>
                 <ShoppingCart size={17} />
                 {t("product.addToCart")}
               </button>
             ) : (
-              <button type="button" className="flex flex-1 items-center justify-center rounded-2xl py-3.5 text-sm font-bold text-white" style={{ background: "linear-gradient(90deg, var(--accent-3), var(--accent-2))" }}>
+              <button type="button" className="flex flex-1 items-center justify-center rounded-2xl py-3.5 text-base font-bold text-white" style={{ background: "linear-gradient(90deg, var(--accent-3), var(--accent-2))" }}>
                 {t("product.requestProduction")}
               </button>
             )}

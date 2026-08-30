@@ -48,7 +48,7 @@ export default function AccountPage() {
     <div className="mx-auto max-w-lg px-4 py-6 sm:px-6">
       <div className="mb-5 flex items-center justify-between">
         <BackButton to="/" />
-        <h1 className="text-lg font-bold sm:text-xl" style={{ color: "var(--text-primary)" }}>
+        <h1 className="text-xl font-bold sm:text-2xl" style={{ color: "var(--text-primary)" }}>
           {t("account.title")}
         </h1>
         <span />

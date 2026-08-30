@@ -21,7 +21,7 @@ export default function WishlistPage() {
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
       <div className="mb-5 flex items-center justify-between">
         <BackButton to="/" />
-        <h1 className="text-lg font-bold sm:text-xl" style={{ color: "var(--text-primary)" }}>
+        <h1 className="text-xl font-bold sm:text-2xl" style={{ color: "var(--text-primary)" }}>
           {t("wishlist.title")}
         </h1>
         <span />
@@ -35,7 +35,7 @@ export default function WishlistPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
+        <div className="ks-product-grid grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
           {list.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}

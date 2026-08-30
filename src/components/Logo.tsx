@@ -16,10 +16,10 @@ export default function Logo({ compact = false }: { compact?: boolean }) {
       </span>
       <span className={`flex items-baseline gap-1.5 font-extrabold tracking-tight ${compact ? "text-base" : "text-lg sm:text-xl"}`}>
         {lang === "fa" ? (
-          <span style={{ color: "var(--text-primary)" }}>{brandFa}</span>
+          <span className="ks-brand-wordmark">{brandFa}</span>
         ) : (
           <>
-            <span style={{ color: "var(--text-primary)" }}>KALA</span>
+            <span className="ks-brand-wordmark">KALA</span>
             <span className="font-medium" style={{ color: "var(--text-secondary)" }}>
               {lang === "ar" ? "سيرش" : "SEARCH"}
             </span>
