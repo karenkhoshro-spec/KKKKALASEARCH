@@ -9,6 +9,7 @@ import { useListContext, listContextToPath } from "../context/ListContext";
 import { getProductById } from "../data/products";
 import { isValidProductUrl } from "../data/csvSource";
 import { fullImageChain } from "../data/productImageResolver";
+import { goBack } from "../utils/safeBack";
 import "../components/ProductCard.css";
 
 export default function ProductDetails() {
@@ -55,11 +56,7 @@ export default function ProductDetails() {
   const backPath = listContext.type === "home" ? "/" : listContextToPath(listContext);
 
   const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate(backPath || "/");
-    }
+    goBack(navigate, backPath || "/");
   };
 
   if (!product) {

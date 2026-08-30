@@ -6,6 +6,7 @@ import { useListContext } from "../context/ListContext";
 import { categories } from "../data/categories";
 import { products } from "../data/products";
 import ProductCard from "../components/ProductCard";
+import { goBack } from "../utils/safeBack";
 
 type SortKey = "newest" | "cheapest" | "expensive";
 
@@ -22,11 +23,7 @@ export default function ProductsPage() {
   }, [setListContext]);
 
   const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/");
-    }
+    goBack(navigate);
   };
 
   const list = useMemo(() => {

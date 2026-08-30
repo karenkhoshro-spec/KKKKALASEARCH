@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { ArrowRight, ArrowLeft, Search, Layers, FileCheck, Sparkles, X, ShieldCheck } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import Logo from "./Logo";
+import { useUiLayer } from "../context/UiLayerContext";
 
 interface AboutOverlayProps {
   open: boolean;
@@ -11,6 +12,8 @@ interface AboutOverlayProps {
 export default function AboutOverlay({ open, onClose }: AboutOverlayProps) {
   const { t, dir } = useLanguage();
   const ArrowIcon = dir === "rtl" ? ArrowRight : ArrowLeft;
+
+  useUiLayer(open, onClose);
 
   useEffect(() => {
     if (open) {

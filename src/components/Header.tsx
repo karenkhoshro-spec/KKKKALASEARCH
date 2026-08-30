@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, ShoppingCart, UserRound } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -11,6 +11,7 @@ export default function Header() {
   const { t } = useLanguage();
   const { count } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   return (
     <>
@@ -64,7 +65,7 @@ export default function Header() {
           </div>
         </div>
       </header>
-      <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <SideMenu open={menuOpen} onClose={closeMenu} />
     </>
   );
 }

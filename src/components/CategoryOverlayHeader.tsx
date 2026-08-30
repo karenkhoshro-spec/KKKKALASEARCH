@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
+import { goBack } from "../utils/safeBack";
 import CategoryIcon from "./CategoryIcon";
 import "./CategoryNav.css";
 
@@ -26,13 +27,9 @@ export default function CategoryOverlayHeader({
   const handleBack = () => {
     if (onBack) {
       onBack();
-    } else if (to && to !== "/") {
-      navigate(to);
-    } else if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/");
+      return;
     }
+    goBack(navigate, to || "/");
   };
 
   return (

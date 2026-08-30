@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
+import { goBack } from "../utils/safeBack";
 
 export default function BackButton({ to, label }: { to?: string; label?: string }) {
   const navigate = useNavigate();
@@ -8,13 +9,7 @@ export default function BackButton({ to, label }: { to?: string; label?: string 
   const Icon = dir === "rtl" ? ArrowRight : ArrowLeft;
 
   const handleClick = () => {
-    if (to) {
-      navigate(to);
-    } else if (window.history.state && window.history.state.idx > 0) {
-      navigate(-1);
-    } else {
-      navigate("/");
-    }
+    goBack(navigate, to || "/");
   };
 
   return (

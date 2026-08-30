@@ -4,6 +4,7 @@ import { Sparkles, Search, ArrowRight, ArrowLeft, Tag } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useListContext } from "../context/ListContext";
 import { searchProducts } from "../data/products";
+import { goBack } from "../utils/safeBack";
 import { categories } from "../data/categories";
 import ProductCard from "../components/ProductCard";
 
@@ -31,11 +32,7 @@ export default function SearchPage() {
   );
 
   const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/");
-    }
+    goBack(navigate);
   };
 
   return (

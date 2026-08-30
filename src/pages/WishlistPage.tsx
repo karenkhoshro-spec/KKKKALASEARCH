@@ -5,6 +5,7 @@ import { useListContext } from "../context/ListContext";
 import { useWishlist } from "../context/WishlistContext";
 import { products } from "../data/products";
 import ProductCard from "../components/ProductCard";
+import { goBack } from "../utils/safeBack";
 import { Heart, ArrowRight, ArrowLeft } from "lucide-react";
 
 export default function WishlistPage() {
@@ -20,11 +21,7 @@ export default function WishlistPage() {
   }, [setListContext]);
 
   const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/");
-    }
+    goBack(navigate);
   };
 
   return (

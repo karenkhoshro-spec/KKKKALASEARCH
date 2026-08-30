@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { ListContextProvider } from "./context/ListContext";
+import { UiLayerProvider } from "./context/UiLayerContext";
+import { goBack } from "./utils/safeBack";
 import { LanguageProvider, useLanguage } from "./i18n/LanguageContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ToastProvider } from "./context/ToastContext";
 import { CartProvider } from "./context/CartContext";
 import { AccountProvider } from "./context/AccountContext";
 import { WishlistProvider } from "./context/WishlistContext";
-import { ListContextProvider, useListContext, listContextToPath } from "./context/ListContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import LanguageWelcomeModal from "./components/LanguageWelcomeModal";
@@ -27,11 +29,8 @@ function AppShell() {
   const { hasChosenLanguage } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
-  const { listContext } = useListContext();
   const isHome = location.pathname === "/";
   const [showWelcome, setShowWelcome] = useState(!hasChosenLanguage);
-
-  const backPath = listContext.type === "home" ? "/" : listContextToPath(listContext);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -44,25 +43,16 @@ function AppShell() {
     if (isHome) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (location.pathname.startsWith("/product/")) {
-          navigate(backPath);
-        } else {
-          navigate("/");
-        }
+        goBack(navigate);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isHome, location.pathname, backPath, navigate]);
+  }, [isHome, navigate]);
 
-  // Handle backdrop touch / click outside content panel
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
-      if (location.pathname.startsWith("/product/")) {
-        navigate(backPath);
-      } else {
-        navigate("/");
-      }
+      goBack(navigate);
     }
   };
 
@@ -137,9 +127,11 @@ export default function App() {
               <CartProvider>
                 <ListContextProvider>
                   <BrowserRouter>
-                    <ErrorBoundary>
-                      <AppShell />
-                    </ErrorBoundary>
+                    <UiLayerProvider>
+                      <ErrorBoundary>
+                        <AppShell />
+                      </ErrorBoundary>
+                    </UiLayerProvider>
                   </BrowserRouter>
                 </ListContextProvider>
               </CartProvider>

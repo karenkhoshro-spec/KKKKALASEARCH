@@ -5,6 +5,7 @@ import { useAccount } from "../context/AccountContext";
 import { useToast } from "../context/ToastContext";
 import { normalizeIranLocal, isValidIranLocal, toFullIranPhone } from "../utils/phone";
 import { useNavigate } from "react-router-dom";
+import { goBack } from "../utils/safeBack";
 
 export default function AccountPage() {
   const { t, dir } = useLanguage();
@@ -89,11 +90,7 @@ export default function AccountPage() {
   };
 
   const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/");
-    }
+    goBack(navigate);
   };
 
   return (

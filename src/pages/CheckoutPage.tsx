@@ -8,6 +8,7 @@ import { useToast } from "../context/ToastContext";
 import { generateOrderPdf, downloadBlob } from "../utils/pdf";
 import { deliverOrderToSeller } from "../utils/sellerDelivery";
 import { normalizeIranLocal, isValidIranLocal, toFullIranPhone } from "../utils/phone";
+import { goBack } from "../utils/safeBack";
 
 function generateOrderNumber() {
   const now = new Date();
@@ -126,11 +127,7 @@ export default function CheckoutPage() {
   };
 
   const handleBack = () => {
-    if (window.history.state && window.history.state.idx > 0) {
-      navigate(-1);
-    } else {
-      navigate("/cart");
-    }
+    goBack(navigate, "/cart");
   };
 
   if (result) {

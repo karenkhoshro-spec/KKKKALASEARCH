@@ -1,6 +1,7 @@
 import { useLanguage } from "../i18n/LanguageContext";
 import type { Lang } from "../types";
 import Logo from "./Logo";
+import { useUiLayer } from "../context/UiLayerContext";
 
 const LANG_OPTIONS: { code: Lang; labelKey: string; native: string; flag: string }[] = [
   { code: "fa", labelKey: "welcome.fa", native: "فارسی", flag: "🇮🇷" },
@@ -10,6 +11,7 @@ const LANG_OPTIONS: { code: Lang; labelKey: string; native: string; flag: string
 
 export default function LanguageWelcomeModal({ onDone }: { onDone: () => void }) {
   const { setLang, t, lang } = useLanguage();
+  useUiLayer(true, onDone);
 
   return (
     <div className="fixed inset-0 z-[300] flex items-start justify-center overflow-y-auto bg-black/60 px-4 py-10 backdrop-blur-sm sm:items-center">

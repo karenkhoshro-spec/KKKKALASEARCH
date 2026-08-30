@@ -9,6 +9,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
 import { VerticalBrandingLogo } from "./BrandingLogo";
 import AboutOverlay from "./AboutOverlay";
+import { useUiLayer } from "../context/UiLayerContext";
 
 export default function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t, dir } = useLanguage();
@@ -17,6 +18,8 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
   const { ids: wishlistIds = [] } = useWishlist();
   const [showAboutOverlay, setShowAboutOverlay] = useState(false);
   const closedTransform = dir === "rtl" ? "translateX(100%)" : "translateX(-100%)";
+
+  useUiLayer(open, onClose);
 
   const handleOpenAbout = () => {
     onClose();
@@ -47,6 +50,12 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
             alt={t("home.sliderAlt3") || "مادر و دختر ایرانی"}
             className="mt-4 h-auto w-full max-h-44 rounded-2xl object-cover object-center"
           />
+          <p className="mt-3 text-center text-sm font-bold leading-6" style={{ color: "var(--text-primary)" }}>
+            {t("menu.familyCaption")}
+          </p>
+          <p className="mt-0.5 text-center text-[11px] font-medium leading-5" style={{ color: "var(--text-secondary)" }}>
+            {t("menu.familySubCaption")}
+          </p>
         </div>
 
         {/* Uniform Crystal Menu Cards */}

@@ -3,6 +3,7 @@ import { Minus, Plus, Trash2, ShoppingBag, ShoppingCart, ArrowRight, ArrowLeft }
 import { useLanguage } from "../i18n/LanguageContext";
 import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
+import { goBack } from "../utils/safeBack";
 import { fullImageChain } from "../data/productImageResolver";
 
 export default function CartPage() {
@@ -13,11 +14,7 @@ export default function CartPage() {
   const ArrowIcon = dir === "rtl" ? ArrowRight : ArrowLeft;
 
   const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/");
-    }
+    goBack(navigate);
   };
 
   return (
