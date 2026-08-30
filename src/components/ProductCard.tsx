@@ -74,7 +74,7 @@ function ProductCard({ product, minimal = false }: { product: Product; minimal?:
                     loading="lazy"
                     decoding="async"
                     referrerPolicy="no-referrer"
-                    className={`h-full w-full object-contain transition-transform duration-500 group-hover:scale-105 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+                    className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
                     onLoad={() => setImgLoaded(true)}
                     onError={handleImgError}
                   />
@@ -109,7 +109,7 @@ function ProductCard({ product, minimal = false }: { product: Product; minimal?:
                     loading="lazy"
                     decoding="async"
                     referrerPolicy="no-referrer"
-                    className={`h-full w-full object-contain transition-transform duration-500 group-hover:scale-105 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+                    className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
                     onLoad={() => setImgLoaded(true)}
                     onError={handleImgError}
                   />
