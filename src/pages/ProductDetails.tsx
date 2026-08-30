@@ -157,7 +157,7 @@ export default function ProductDetails() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 md:gap-8">
-        {/* 2. Left Column: Media Box with Product Code & Stock SKU inside the frame (one right, one left) + Ashkan CTA */}
+        {/* 2. Left Column: Media Box with Product Code & Stock SKU inside the frame at the BOTTOM (one right, one left) + Ashkan CTA */}
         <div className="flex flex-col gap-3">
           <div
             className="glass-strong relative flex flex-col justify-between overflow-hidden rounded-3xl p-3.5 sm:p-4"
@@ -167,8 +167,28 @@ export default function ProductDetails() {
               boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08), inset 0 1px 1.5px rgba(255, 255, 255, 0.12)",
             }}
           >
-            {/* Top Info Bar inside Image Box: Right = Product Code, Left = Stock SKU */}
-            <div className="mb-2 flex w-full items-center justify-between gap-2 border-b pb-2 text-xs" style={{ borderColor: "var(--border-soft)" }}>
+            {/* Clean, unobstructed Product Image Area */}
+            <div className="product-media relative flex h-[210px] w-full items-center justify-center overflow-hidden rounded-2xl p-2 sm:h-[250px] md:h-[280px]">
+              {activeImage ? (
+                <img
+                  key={activeImage}
+                  src={activeImage}
+                  alt={product.name[lang]}
+                  className="h-full w-full object-contain"
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  referrerPolicy="no-referrer"
+                  onLoad={() => setImgLoaded(true)}
+                  onError={() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }}
+                />
+              ) : (
+                <span className="text-xs" style={{ color: "var(--text-muted)" }}>{t("product.imageUnavailable")}</span>
+              )}
+            </div>
+
+            {/* Bottom Info Strip inside Image Card: Right = Product Code, Left = Stock SKU */}
+            <div className="mt-3 flex w-full items-center justify-between gap-2 border-t pt-2.5 text-xs" style={{ borderColor: "var(--border-soft)" }}>
               <div
                 className="glass flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs font-bold"
                 style={{
@@ -192,30 +212,10 @@ export default function ProductDetails() {
                 }}
               >
                 <span className="text-[11px] font-semibold" style={{ color: "var(--text-muted)" }}>
-                  {t("product.sku") || "شناسه موجودی"}:
+                  {t("product.sku") || "شناسه کالا"}:
                 </span>
                 <span>{stockSkuVal}</span>
               </div>
-            </div>
-
-            {/* Product Image Area */}
-            <div className="product-media relative flex h-[200px] w-full items-center justify-center overflow-hidden rounded-2xl p-2 sm:h-[240px] md:h-[270px]">
-              {activeImage ? (
-                <img
-                  key={activeImage}
-                  src={activeImage}
-                  alt={product.name[lang]}
-                  className="h-full w-full object-contain"
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
-                  referrerPolicy="no-referrer"
-                  onLoad={() => setImgLoaded(true)}
-                  onError={() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }}
-                />
-              ) : (
-                <span className="text-xs" style={{ color: "var(--text-muted)" }}>{t("product.imageUnavailable")}</span>
-              )}
             </div>
           </div>
 

@@ -36,14 +36,14 @@ export default function CategoryOverlayHeader({
 
   return (
     <div
-      className="mb-6 flex w-full items-center justify-between border-b pb-4 pt-1"
+      className="mb-6 grid w-full grid-cols-[1fr_auto_1fr] items-center gap-2 border-b pb-4 pt-1 sm:gap-4"
       style={{
         borderColor: "var(--border-soft)",
       }}
       dir={dir}
     >
-      {/* Right side in RTL (Left in LTR): High-Contrast Back Button */}
-      <div className="flex shrink-0 items-center justify-start">
+      {/* 1. Right side in RTL (Left in LTR): High-Contrast Back Button */}
+      <div className="flex items-center justify-start">
         <button
           type="button"
           onClick={handleBack}
@@ -55,14 +55,14 @@ export default function CategoryOverlayHeader({
         </button>
       </div>
 
-      {/* Center: Category Title inside Crystal Capsule */}
-      <div className="flex flex-1 items-center justify-center px-2">
+      {/* 2. Exact Midline Center: Category Title inside High-Visibility Crystal Capsule */}
+      <div className="flex items-center justify-center">
         <div
-          className="glass-strong flex max-w-full items-center gap-2 rounded-2xl px-3 py-1.5 sm:px-5 sm:py-2"
+          className="glass-strong flex max-w-full items-center gap-2 rounded-2xl px-3.5 py-1.5 sm:px-6 sm:py-2"
           style={{
-            border: "1.2px solid var(--border-strong)",
+            border: "1.5px solid var(--border-strong)",
             background: "var(--surface-strong)",
-            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.06)",
+            boxShadow: "0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 1.5px rgba(255, 255, 255, 0.15)",
           }}
         >
           <div
@@ -74,21 +74,22 @@ export default function CategoryOverlayHeader({
           >
             <CategoryIcon id={categoryId} size={18} />
           </div>
-          <h1 className="truncate text-xs font-black sm:text-sm md:text-base" style={{ color: "var(--text-primary)" }}>
+          <h1 className="truncate text-xs font-black sm:text-sm md:text-base tracking-tight" style={{ color: "var(--text-primary)" }}>
             {title}
           </h1>
         </div>
       </div>
 
-      {/* Left side in RTL (Right in LTR): Product Count in small Crystal Capsule */}
-      <div className="flex shrink-0 items-center justify-end">
+      {/* 3. Left side in RTL (Right in LTR): Product Count in Crystal Capsule */}
+      <div className="flex items-center justify-end">
         {productCount !== undefined ? (
           <span
-            className="glass rounded-full px-2.5 py-1 text-[11px] font-bold sm:px-3.5 sm:text-xs"
+            className="glass rounded-full px-3 py-1 text-[11px] font-bold sm:px-3.5 sm:text-xs"
             style={{
               background: "var(--chip-bg)",
               color: "var(--accent-1)",
-              border: "1px solid var(--border-soft)",
+              border: "1.2px solid var(--border-soft)",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
             }}
           >
             {productCount} {t("category.productsCount") || "محصول"}
