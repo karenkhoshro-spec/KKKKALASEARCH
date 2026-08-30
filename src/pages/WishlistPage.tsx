@@ -28,34 +28,63 @@ export default function WishlistPage() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6">
-      {/* Unified overlay header with back button on the left */}
+    <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6" dir={dir}>
+      {/* Unified overlay header with Back button on right in RTL */}
       <div
-        className="mb-5 flex w-full items-center justify-between border-b pb-3.5"
-        style={{ borderColor: "var(--border-soft)", direction: "ltr" }}
+        className="mb-5 grid w-full grid-cols-[auto_1fr_auto] items-center gap-2 border-b pb-3.5 pt-1 sm:gap-4"
+        style={{ borderColor: "var(--border-soft)" }}
       >
-        <button
-          type="button"
-          onClick={handleBack}
-          aria-label={t("category.back") || "بازگشت"}
-          className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95"
-          style={{
-            color: "var(--text-primary)",
-            borderColor: "var(--border-strong)",
-            background: "var(--surface-strong)",
-          }}
-        >
-          <ArrowIcon size={16} style={{ color: "var(--accent-1)" }} />
-          <span dir={dir}>{t("category.back") || "بازگشت"}</span>
-        </button>
+        <div className="flex items-center justify-start">
+          <button
+            type="button"
+            onClick={handleBack}
+            aria-label={t("category.back") || "بازگشت"}
+            className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 sm:text-sm cursor-pointer"
+            style={{
+              color: "var(--text-primary)",
+              borderColor: "var(--border-strong)",
+              background: "var(--surface-strong)",
+              boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08)",
+            }}
+          >
+            <ArrowIcon size={16} style={{ color: "var(--accent-1)" }} />
+            <span>{t("category.back") || "بازگشت"}</span>
+          </button>
+        </div>
 
-        <div className="flex items-center gap-2" dir={dir}>
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl" style={{ background: "var(--chip-bg)", color: "var(--accent-3)" }}>
-            <Heart size={18} />
+        <div className="flex items-center justify-center">
+          <div
+            className="glass-strong flex items-center gap-2 rounded-2xl px-3.5 py-1.5 sm:px-4 sm:py-2"
+            style={{
+              border: "1.2px solid var(--border-strong)",
+              background: "var(--surface-strong)",
+              boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
+            }}
+          >
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg" style={{ background: "var(--chip-bg)", color: "var(--accent-3)" }}>
+              <Heart size={16} />
+            </div>
+            <h1 className="truncate text-xs font-black sm:text-sm md:text-base" style={{ color: "var(--text-primary)" }}>
+              {t("wishlist.title")}
+            </h1>
           </div>
-          <h1 className="text-base font-extrabold sm:text-lg" style={{ color: "var(--text-primary)" }}>
-            {t("wishlist.title")}
-          </h1>
+        </div>
+
+        <div className="flex items-center justify-end">
+          {list.length > 0 ? (
+            <span
+              className="glass rounded-full px-2.5 py-1 text-[11px] font-bold sm:px-3 sm:text-xs"
+              style={{
+                background: "var(--chip-bg)",
+                color: "var(--accent-3)",
+                border: "1px solid var(--border-soft)",
+              }}
+            >
+              {list.length} {t("category.productsCount") || "محصول"}
+            </span>
+          ) : (
+            <div className="w-4" />
+          )}
         </div>
       </div>
 
