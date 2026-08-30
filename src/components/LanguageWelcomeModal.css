@@ -1,0 +1,28 @@
+.ks-welcome-scrim {
+  background: rgba(15, 10, 25, 0.45);
+}
+
+html[data-theme="light"] .ks-welcome-scrim {
+  background: rgba(248, 245, 238, 0.55);
+}
+
+.ks-welcome-card {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+  overflow: visible;
+}
+
+html[data-theme="light"] .ks-welcome-card {
+  background: #fffcf7;
+  border-color: rgba(203, 213, 225, 0.7);
+}
+
+html[data-theme="dark"] .ks-welcome-card {
+  background: rgba(18, 10, 32, 0.92);
+  border-color: rgba(192, 132, 252, 0.28);
+}
+
+.ks-welcome-lang {
+  box-shadow: none;
+}

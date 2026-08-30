@@ -15,27 +15,24 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6">
-      {/* 1. Main Homepage Hero: Horizontal Logo + Tagline + Search Box */}
-      <section className="mb-10 flex flex-col items-center text-center">
-        {/* Horizontal KalaSearch Logo */}
-        <div className="mb-4">
+      <section className="mb-10 flex flex-col items-center overflow-visible text-center">
+        <div className="mb-4 overflow-visible">
           <HorizontalBrandingLogo showTagline={false} />
         </div>
 
         <h2
-          className="mt-2 text-lg font-black tracking-tight sm:text-xl"
+          className="mt-2 max-w-xl text-lg font-medium tracking-tight sm:text-xl"
           style={{ color: "var(--text-primary)" }}
         >
-          {t("home.smartSearch")}
+          {t("home.bestPlasticsLead")}{" "}
+          <strong className="font-bold">{t("home.bestPlasticsAccent")}</strong>
         </h2>
 
-        {/* Search Box */}
         <div className="mt-3 w-full max-w-2xl">
           <SearchBar large />
         </div>
       </section>
 
-      {/* 2. Primary Categories Grid */}
       <section className="mb-14">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-2xl font-black sm:text-3xl" style={{ color: "var(--text-primary)" }}>
@@ -44,7 +41,6 @@ export default function Home() {
         </div>
         <CategoryNav />
       </section>
-
     </div>
   );
 }

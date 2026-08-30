@@ -153,19 +153,22 @@ html[data-theme="light"] .ks-category-tile:focus-visible {
 /* Neon gem plate (dark) / 3D nature plate (light) */
 .ks-icon-3d {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 1.05rem;
-  background: radial-gradient(circle at 30% 18%, #2e1064 0%, #0b0618 70%);
+  background:
+    radial-gradient(circle at 28% 18%, #7c3aed 0%, transparent 42%),
+    radial-gradient(circle at 78% 88%, #4c1d95 0%, #0b0618 70%);
   border: 1.5px solid #c084fc;
   box-shadow:
     0 0 0 1px rgba(88, 28, 135, 0.7),
-    0 0 14px rgba(168, 85, 247, 0.55),
-    0 0 28px rgba(124, 58, 237, 0.28),
-    inset 0 1px 1px rgba(255, 255, 255, 0.28),
-    inset 0 -8px 12px rgba(59, 7, 100, 0.45);
+    0 8px 16px rgba(76, 29, 149, 0.45),
+    0 0 18px rgba(168, 85, 247, 0.55),
+    0 0 32px rgba(124, 58, 237, 0.28),
+    inset 0 1px 1px rgba(255, 255, 255, 0.32),
+    inset 0 -10px 14px rgba(59, 7, 100, 0.5);
   transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
 
@@ -198,7 +201,7 @@ html[data-theme="light"] .ks-category-tile:focus-visible {
 
 .ks-category-tile:hover .ks-icon-3d,
 .ks-other-sub-card:hover .ks-icon-3d {
-  transform: scale(1.06);
+  transform: scale(1.05) translateY(-1px);
   box-shadow:
     0 0 0 1px rgba(216, 180, 254, 0.8),
     0 0 22px rgba(192, 132, 252, 0.75),
@@ -206,11 +209,14 @@ html[data-theme="light"] .ks-category-tile:focus-visible {
 }
 
 html[data-theme="light"] .ks-icon-3d {
-  background: linear-gradient(180deg, #ffffff 0%, #f4f1ea 100%);
-  border: 1px solid rgba(226, 232, 240, 0.95);
+  background:
+    radial-gradient(circle at 30% 20%, #ffffff 0%, transparent 45%),
+    linear-gradient(165deg, #f7fffb 0%, #e8f7ec 48%, #d8efe0 100%);
+  border: 1px solid rgba(167, 243, 208, 0.85);
   box-shadow:
-    0 8px 16px rgba(15, 23, 42, 0.08),
-    inset 0 1px 2px rgba(255, 255, 255, 1);
+    0 10px 18px rgba(22, 101, 52, 0.12),
+    0 2px 0 rgba(255, 255, 255, 0.9) inset,
+    0 -8px 12px rgba(22, 163, 74, 0.08) inset;
 }
 
 html[data-theme="light"] .ks-tree-layer {
@@ -218,7 +224,38 @@ html[data-theme="light"] .ks-tree-layer {
   color: #22c55e;
 }
 
-html[data-theme="light"] .ks-icon-tone-orange { color: #f97316; }
+html[data-theme="light"] .ks-icon-tone-orange {
+  background: radial-gradient(circle at 30% 18%, #fff7ed 0%, #ffedd5 40%, #fdba74 100%);
+  border-color: rgba(251, 146, 60, 0.7);
+}
+html[data-theme="light"] .ks-icon-tone-green {
+  background: radial-gradient(circle at 30% 18%, #f0fdf4 0%, #dcfce7 40%, #86efac 100%);
+  border-color: rgba(74, 222, 128, 0.75);
+}
+html[data-theme="light"] .ks-icon-tone-blue {
+  background: radial-gradient(circle at 30% 18%, #eff6ff 0%, #dbeafe 40%, #93c5fd 100%);
+  border-color: rgba(96, 165, 250, 0.75);
+}
+html[data-theme="light"] .ks-icon-tone-teal {
+  background: radial-gradient(circle at 30% 18%, #f0fdfa 0%, #ccfbf1 40%, #5eead4 100%);
+  border-color: rgba(45, 212, 191, 0.7);
+}
+html[data-theme="light"] .ks-icon-tone-purple {
+  background: radial-gradient(circle at 30% 18%, #faf5ff 0%, #ede9fe 40%, #c4b5fd 100%);
+  border-color: rgba(167, 139, 250, 0.7);
+}
+html[data-theme="light"] .ks-icon-tone-navy {
+  background: radial-gradient(circle at 30% 18%, #eff6ff 0%, #dbeafe 40%, #60a5fa 100%);
+  border-color: rgba(59, 130, 246, 0.7);
+}
+html[data-theme="light"] .ks-icon-tone-red {
+  background: radial-gradient(circle at 30% 18%, #fff1f2 0%, #ffe4e6 40%, #fda4af 100%);
+  border-color: rgba(251, 113, 133, 0.7);
+}
+html[data-theme="light"] .ks-icon-tone-white {
+  background: radial-gradient(circle at 30% 18%, #ffffff 0%, #f8fafc 50%, #e2e8f0 100%);
+  border-color: rgba(203, 213, 225, 0.9);
+}
 html[data-theme="light"] .ks-icon-tone-orange .ks-tree-layer { color: #f97316; }
 html[data-theme="light"] .ks-icon-tone-green .ks-tree-layer { color: #16a34a; }
 html[data-theme="light"] .ks-icon-tone-blue .ks-tree-layer { color: #2563eb; }
@@ -226,7 +263,7 @@ html[data-theme="light"] .ks-icon-tone-teal .ks-tree-layer { color: #0f766e; }
 html[data-theme="light"] .ks-icon-tone-purple .ks-tree-layer { color: #7c3aed; }
 html[data-theme="light"] .ks-icon-tone-navy .ks-tree-layer { color: #1d4ed8; }
 html[data-theme="light"] .ks-icon-tone-red .ks-tree-layer { color: #dc2626; }
-html[data-theme="light"] .ks-icon-tone-white .ks-tree-layer { color: #cbd5e1; }
+html[data-theme="light"] .ks-icon-tone-white .ks-tree-layer { color: #94a3b8; }
 
 .ks-category-icon {
   display: inline-block;

@@ -2,16 +2,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.55rem;
+  gap: 0.65rem;
   background: transparent;
   border: 0;
   box-shadow: none;
-  padding: 0;
+  padding: 0.15rem 0.25rem;
+  overflow: visible;
+  isolation: isolate;
+  min-height: 56px;
 }
 
 .ks-real-brand--vertical {
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.45rem;
 }
 
 .ks-real-bag,
@@ -22,39 +25,52 @@
   box-shadow: none;
   object-fit: contain;
   object-position: center;
+  overflow: visible;
+  flex-shrink: 0;
 }
 
 .ks-real-brand--horizontal .ks-real-bag {
-  height: 52px;
+  height: 58px;
   width: auto;
-  max-width: 72px;
+  max-width: 78px;
 }
 
 .ks-real-brand--horizontal .ks-real-name {
-  height: 36px;
+  height: 40px;
   width: auto;
-  max-width: min(260px, 58vw);
+  max-width: min(280px, 62vw);
 }
 
 .ks-real-brand--vertical .ks-real-bag {
-  height: 72px;
+  height: 76px;
   width: auto;
-  max-width: 88px;
+  max-width: 92px;
 }
 
 .ks-real-brand--vertical .ks-real-name {
-  height: 34px;
+  height: 36px;
   width: auto;
-  max-width: 210px;
+  max-width: 220px;
 }
 
 @media (min-width: 640px) {
   .ks-real-brand--horizontal .ks-real-bag {
-    height: 64px;
-    max-width: 88px;
+    height: 68px;
+    max-width: 92px;
   }
   .ks-real-brand--horizontal .ks-real-name {
-    height: 44px;
-    max-width: 320px;
+    height: 48px;
+    max-width: 340px;
+  }
+}
+
+@media (max-width: 390px) {
+  .ks-real-brand--horizontal .ks-real-bag {
+    height: 48px;
+    max-width: 64px;
+  }
+  .ks-real-brand--horizontal .ks-real-name {
+    height: 32px;
+    max-width: 58vw;
   }
 }

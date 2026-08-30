@@ -1,12 +1,13 @@
 import { useLanguage } from "../i18n/LanguageContext";
 import type { Lang } from "../types";
-import Logo from "./Logo";
+import { HorizontalBrandingLogo } from "./BrandingLogo";
 import { useUiLayer } from "../context/UiLayerContext";
+import "./LanguageWelcomeModal.css";
 
-const LANG_OPTIONS: { code: Lang; labelKey: string; native: string; flag: string }[] = [
-  { code: "fa", labelKey: "welcome.fa", native: "فارسی", flag: "🇮🇷" },
-  { code: "en", labelKey: "welcome.en", native: "English", flag: "🇬🇧" },
-  { code: "ar", labelKey: "welcome.ar", native: "العربية", flag: "🇸🇦" },
+const LANG_OPTIONS: { code: Lang; native: string }[] = [
+  { code: "fa", native: "فارسی" },
+  { code: "en", native: "English" },
+  { code: "ar", native: "العربية" },
 ];
 
 export default function LanguageWelcomeModal({ onDone }: { onDone: () => void }) {
@@ -14,15 +15,11 @@ export default function LanguageWelcomeModal({ onDone }: { onDone: () => void })
   useUiLayer(true, onDone);
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-start justify-center overflow-y-auto bg-black/60 px-4 py-10 backdrop-blur-sm sm:items-center">
-      <div className="animate-pop glass-strong relative w-full max-w-md overflow-hidden rounded-3xl p-6 shadow-[var(--shadow-glow)] sm:p-8">
-        <div className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full opacity-40 animate-glow-pulse" style={{ background: "var(--accent-1)" }} />
-        <div className="pointer-events-none absolute -bottom-20 -left-10 h-48 w-48 rounded-full opacity-30 animate-glow-pulse" style={{ background: "var(--accent-3)" }} />
-
+    <div className="ks-welcome-scrim fixed inset-0 z-[300] flex items-start justify-center overflow-y-auto px-4 py-10 sm:items-center">
+      <div className="ks-welcome-card animate-pop relative w-full max-w-md rounded-3xl p-6 sm:p-8">
         <div className="relative flex flex-col items-center text-center">
-          {/* Centered KalaSearch Logo and Styled Brand Name */}
-          <div className="mb-3 scale-110 flex items-center justify-center">
-            <Logo />
+          <div className="mb-3 flex items-center justify-center overflow-visible">
+            <HorizontalBrandingLogo showTagline={false} />
           </div>
 
           <h2 className="mt-2 text-xl font-bold" style={{ color: "var(--text-primary)" }}>
@@ -40,22 +37,19 @@ export default function LanguageWelcomeModal({ onDone }: { onDone: () => void })
                   setLang(opt.code);
                   onDone();
                 }}
-                className={`flex flex-col items-center gap-1 rounded-2xl border px-3 py-3 text-sm font-semibold transition-all duration-300 ${
-                  lang === opt.code ? "scale-[1.03]" : "opacity-80 hover:opacity-100"
+                className={`ks-welcome-lang rounded-2xl border px-3 py-3 text-sm font-semibold transition-all duration-300 ${
+                  lang === opt.code ? "scale-[1.03]" : "opacity-90 hover:opacity-100"
                 }`}
                 style={{
                   borderColor: lang === opt.code ? "var(--accent-1)" : "var(--border-soft)",
-                  background: lang === opt.code ? "var(--chip-bg)" : "var(--surface)",
+                  background: "var(--surface)",
                   color: "var(--text-primary)",
-                  boxShadow: lang === opt.code ? "var(--shadow-glow)" : "none",
                 }}
               >
-                <span className="text-2xl" aria-hidden="true">{opt.flag}</span>
                 <span>{opt.native}</span>
               </button>
             ))}
           </div>
-
         </div>
       </div>
     </div>

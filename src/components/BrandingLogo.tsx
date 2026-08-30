@@ -42,8 +42,8 @@ function RealBrand({
 
   return (
     <div className={`ks-real-brand ks-real-brand--${layout} ${className}`}>
-      <img src={bag} alt="" className="ks-real-bag" draggable={false} />
       <img src={nameSrc} alt={alt} className="ks-real-name" draggable={false} />
+      <img src={bag} alt="" className="ks-real-bag" draggable={false} />
     </div>
   );
 }
