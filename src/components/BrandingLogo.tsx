@@ -1,4 +1,3 @@
-import { useLanguage } from "../i18n/LanguageContext";
 import { useTheme } from "../context/ThemeContext";
 import "./BrandingLogo.css";
 
@@ -9,10 +8,6 @@ const BAG = {
 const NAME_FA = {
   light: "/images/branding/kalasearch-name-fa-light.png",
   dark: "/images/branding/kalasearch-name-fa-dark.png",
-};
-const NAME_EN = {
-  light: "/images/branding/kalasearch-name-en-light.png",
-  dark: "/images/branding/kalasearch-name-en-dark.png",
 };
 
 function useSafeTheme(): "light" | "dark" {
@@ -37,10 +32,9 @@ function RealBrand({
   compact?: boolean;
 }) {
   const theme = useSafeTheme();
-  const { lang } = useLanguage();
   const bag = BAG[theme];
-  const nameSrc = lang === "en" ? NAME_EN[theme] : NAME_FA[theme];
-  const alt = lang === "en" ? "KalaSearch" : "کالا سرچ";
+  const nameSrc = NAME_FA[theme];
+  const alt = "کالا سرچ";
 
   return (
     <div

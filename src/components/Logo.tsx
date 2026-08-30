@@ -1,5 +1,4 @@
 import { Atom, Search } from "lucide-react";
-import { useLanguage } from "../i18n/LanguageContext";
 import { useTheme } from "../context/ThemeContext";
 
 // Support standard asset paths: src/assets/kalasearch-logo.* and src/assets/branding/*
@@ -44,7 +43,6 @@ function useSafeTheme(): "light" | "dark" {
 }
 
 export default function Logo({ compact = false }: { compact?: boolean }) {
-  const { lang } = useLanguage();
   const theme = useSafeTheme();
   const realLogoSrc = getLogoSrc(theme);
   const brandFa = "کالا سرچ";
@@ -75,7 +73,7 @@ export default function Logo({ compact = false }: { compact?: boolean }) {
       {/* Styled KalaSearch Brand Typography */}
       <div className="flex items-center gap-1.5">
         <span className={`ks-brand-title font-black tracking-tight ${compact ? "text-sm sm:text-base" : "text-base sm:text-lg lg:text-xl"}`}>
-          {lang === "fa" ? brandFa : lang === "ar" ? "كالا سيرش" : "KalaSearch"}
+          {brandFa}
         </span>
         <Search size={compact ? 13 : 15} className="shrink-0 ks-logo-search-gem" strokeWidth={2.5} />
       </div>

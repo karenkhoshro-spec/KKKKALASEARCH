@@ -274,17 +274,49 @@
    Warm cream/white crystal, soft green and orange refraction, high contrast
    ========================================================================== */
 
+@keyframes ks-day-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 html[data-theme="light"] .ks-search-wrapper {
-  background: linear-gradient(
-    135deg,
-    rgba(47, 125, 80, 0.4) 0%,
-    rgba(233, 130, 50, 0.3) 35%,
-    rgba(168, 85, 247, 0.3) 70%,
-    rgba(47, 125, 80, 0.45) 100%
-  );
+  overflow: hidden;
+  background: #ffffff;
   box-shadow:
     0 0 20px rgba(47, 125, 80, 0.12),
     0 4px 18px rgba(38, 51, 44, 0.06);
+}
+
+html[data-theme="light"] .ks-search-wrapper::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  width: 220%;
+  height: 220%;
+  translate: -50% -50%;
+  background: conic-gradient(
+    from 0deg,
+    #2f7d50 0deg,
+    #86efac 55deg,
+    #e98232 110deg,
+    #fbbf24 165deg,
+    #7c3aed 220deg,
+    #38bdf8 280deg,
+    #2f7d50 360deg
+  );
+  animation: ks-day-orbit 3.6s linear infinite;
+}
+
+html[data-theme="light"] .ks-search-wrapper.is-focused::before {
+  animation-duration: 2.2s;
+}
+
+html[data-theme="light"] .ks-search-inner {
+  position: relative;
+  z-index: 1;
 }
 
 html[data-theme="light"] .ks-search-wrapper.is-focused {

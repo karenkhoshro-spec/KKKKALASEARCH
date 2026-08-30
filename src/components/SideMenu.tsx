@@ -7,9 +7,10 @@ import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
-import { VerticalBrandingLogo } from "./BrandingLogo";
+import Logo from "./Logo";
 import AboutOverlay from "./AboutOverlay";
 import { useUiLayer } from "../context/UiLayerContext";
+import "./SideMenu.css";
 
 export default function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t, dir } = useLanguage();
@@ -44,18 +45,17 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
         }}
       >
         <div className="flex flex-col items-center px-4 pt-5 pb-3">
-          <VerticalBrandingLogo />
-          <img
-            src="/images/menu-family.jpg"
-            alt={t("home.sliderAlt3") || "مادر و دختر ایرانی"}
-            className="mt-4 h-auto w-full max-h-44 rounded-2xl object-cover object-center"
-          />
-          <p className="mt-3 text-center text-sm font-bold leading-6" style={{ color: "var(--text-primary)" }}>
-            {t("menu.familyCaption")}
-          </p>
-          <p className="mt-0.5 text-center text-[11px] font-medium leading-5" style={{ color: "var(--text-secondary)" }}>
-            {t("menu.familySubCaption")}
-          </p>
+          <div className="ks-menu-brand-frame">
+            <Logo />
+          </div>
+          <div className="ks-menu-family mt-4 w-full">
+            <img
+              src="/images/menu-family.jpg"
+              alt={t("home.sliderAlt3") || "مادر و دختر ایرانی"}
+              className="h-auto w-full max-h-44 rounded-2xl object-cover object-center"
+            />
+            <p className="ks-menu-family-caption">تنوع گسترده محصولات پلاستیکی خانگی و آشپزخانه</p>
+          </div>
         </div>
 
         {/* Uniform Crystal Menu Cards */}
