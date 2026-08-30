@@ -55,10 +55,10 @@ export default function ProductDetails() {
   const backPath = listContext.type === "home" ? "/" : listContextToPath(listContext);
 
   const handleBack = () => {
-    if (window.history.state && window.history.state.idx > 0) {
+    if (window.history.length > 1) {
       navigate(-1);
     } else {
-      navigate(backPath);
+      navigate(backPath || "/");
     }
   };
 
@@ -80,11 +80,25 @@ export default function ProductDetails() {
   // Strict Ashkan URL resolution matching product / variant
   const rawActiveUrl = selectedVariation?.url || product.productUrl || product.ashkanProductUrl;
   const activeUrl = rawActiveUrl && isValidProductUrl(rawActiveUrl) ? rawActiveUrl.trim() : undefined;
-  const activeSpec = selectedVariation?.technicalSpec || product.description[lang];
+
+  // Move pack quantity and genuine specs inside full specifications list; filter out stray numbers
+  const activePackQty = selectedVariation?.packQuantity ?? product.packQuantity;
   const allSpecifications = Array.from(new Set([
+    ...(activePackQty && String(activePackQty).trim() && String(activePackQty).trim() !== "-"
+      ? [`تعداد در بسته: ${activePackQty}`]
+      : []),
     ...product.features.map((feature) => feature[lang]),
-    ...(product.variations ?? []).map((variation) => variation.technicalSpec).filter((spec): spec is string => Boolean(spec && spec.trim() && spec.trim() !== "-")),
+    ...(product.variations ?? [])
+      .map((variation) => variation.technicalSpec)
+      .filter((spec): spec is string => Boolean(
+        spec &&
+        spec.trim() &&
+        spec.trim() !== "-" &&
+        !/^\d+$/.test(spec.trim()) &&
+        spec.trim() !== "اشکان اشکان"
+      )),
   ].map((spec) => spec.trim()).filter(Boolean)));
+
   const colorVariations = (product.variations ?? []).filter((v) => v.colorName);
   const uniqueColors = Array.from(new Map(colorVariations.map((v) => [v.colorName, v])).values());
 
@@ -115,12 +129,15 @@ export default function ProductDetails() {
     showToast(t("notifications.addedToCart") || "به سبد خرید اضافه شد", "success");
   };
 
+  const productCodeVal = product.productCode ?? product.id ?? "-";
+  const stockSkuVal = selectedVariation?.sku ?? product.sku ?? "-";
+
   return (
     <div className="mx-auto max-w-5xl px-3.5 py-4 sm:px-6">
       {activeImage && (
         <link rel="preload" as="image" href={activeImage} fetchPriority="high" referrerPolicy="no-referrer" />
       )}
-      {/* 1. Standard Header: Clean Back button, zero redundant chips above image */}
+      {/* 1. Header: High-contrast Colored Crystal Back Button */}
       <div
         className="mb-5 flex w-full items-center justify-between border-b pb-3.5 pt-1"
         style={{ borderColor: "var(--border-soft)" }}
@@ -131,41 +148,78 @@ export default function ProductDetails() {
             type="button"
             onClick={handleBack}
             aria-label={t("category.back") || "بازگشت"}
-            className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 sm:text-sm cursor-pointer"
-            style={{
-              color: "var(--text-primary)",
-              borderColor: "var(--border-strong)",
-              background: "var(--surface-strong)",
-              boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08)",
-            }}
+            className="ks-back-button"
           >
-            <ArrowIcon size={16} style={{ color: "var(--accent-1)" }} />
+            <ArrowIcon size={16} />
             <span>{t("category.back") || "بازگشت"}</span>
           </button>
         </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 md:gap-8">
-        {/* 2. Product Media Area + Ashkan CTA Directly Below */}
+        {/* 2. Left Column: Media Box with Product Code & Stock SKU inside the frame (one right, one left) + Ashkan CTA */}
         <div className="flex flex-col gap-3">
-          <div className="glass product-media relative flex h-[220px] w-full items-center justify-center overflow-hidden rounded-3xl p-3 sm:h-[260px] sm:p-4 md:h-[300px]">
-            {activeImage ? (
-              <img
-                key={activeImage}
-                src={activeImage}
-                alt={product.name[lang]}
-                className="h-full w-full object-contain"
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                referrerPolicy="no-referrer"
-                onLoad={() => setImgLoaded(true)}
-                onError={() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }}
-              />
-            ) : (
-              <span className="text-xs" style={{ color: "var(--text-muted)" }}>{t("product.imageUnavailable")}</span>
-            )}
+          <div
+            className="glass-strong relative flex flex-col justify-between overflow-hidden rounded-3xl p-3.5 sm:p-4"
+            style={{
+              border: "1.2px solid var(--border-strong)",
+              background: "var(--surface-strong)",
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08), inset 0 1px 1.5px rgba(255, 255, 255, 0.12)",
+            }}
+          >
+            {/* Top Info Bar inside Image Box: Right = Product Code, Left = Stock SKU */}
+            <div className="mb-2 flex w-full items-center justify-between gap-2 border-b pb-2 text-xs" style={{ borderColor: "var(--border-soft)" }}>
+              <div
+                className="glass flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs font-bold"
+                style={{
+                  background: "var(--surface)",
+                  borderColor: "var(--border-soft)",
+                  color: "var(--text-primary)",
+                }}
+              >
+                <span className="text-[11px] font-semibold" style={{ color: "var(--text-muted)" }}>
+                  {t("product.productCode") || "کد محصول"}:
+                </span>
+                <span>{productCodeVal}</span>
+              </div>
+
+              <div
+                className="glass flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs font-bold"
+                style={{
+                  background: "var(--surface)",
+                  borderColor: "var(--border-soft)",
+                  color: "var(--text-primary)",
+                }}
+              >
+                <span className="text-[11px] font-semibold" style={{ color: "var(--text-muted)" }}>
+                  {t("product.sku") || "شناسه موجودی"}:
+                </span>
+                <span>{stockSkuVal}</span>
+              </div>
+            </div>
+
+            {/* Product Image Area */}
+            <div className="product-media relative flex h-[200px] w-full items-center justify-center overflow-hidden rounded-2xl p-2 sm:h-[240px] md:h-[270px]">
+              {activeImage ? (
+                <img
+                  key={activeImage}
+                  src={activeImage}
+                  alt={product.name[lang]}
+                  className="h-full w-full object-contain"
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  referrerPolicy="no-referrer"
+                  onLoad={() => setImgLoaded(true)}
+                  onError={() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }}
+                />
+              ) : (
+                <span className="text-xs" style={{ color: "var(--text-muted)" }}>{t("product.imageUnavailable")}</span>
+              )}
+            </div>
           </div>
+
+          {/* Ashkan Plastic External Link CTA */}
           {activeUrl && (
             <a
               href={activeUrl}
@@ -180,7 +234,7 @@ export default function ProductDetails() {
           )}
         </div>
 
-        {/* 3. Product Details Information */}
+        {/* 3. Right Column: Product Details Information */}
         <div className="flex flex-col gap-4">
           {/* Main Product Summary Crystal Card */}
           <div
@@ -231,57 +285,6 @@ export default function ProductDetails() {
               </div>
             </div>
 
-            {/* Product Metadata Grid: Product Code, Stock ID (SKU), Pack Quantity */}
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-2.5 pt-2 border-t" style={{ borderColor: "var(--border-soft)" }}>
-              {/* Product Code */}
-              <div
-                className="glass flex items-center justify-between rounded-xl px-3 py-2 sm:flex-col sm:items-start sm:gap-1"
-                style={{
-                  background: "var(--surface)",
-                  borderColor: "var(--border-soft)",
-                }}
-              >
-                <span className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
-                  {t("product.productCode") || "کد محصول"}
-                </span>
-                <span className="text-sm font-black" style={{ color: "var(--text-primary)" }}>
-                  {product.productCode ?? product.id ?? "-"}
-                </span>
-              </div>
-
-              {/* Stock ID / SKU */}
-              <div
-                className="glass flex items-center justify-between rounded-xl px-3 py-2 sm:flex-col sm:items-start sm:gap-1"
-                style={{
-                  background: "var(--surface)",
-                  borderColor: "var(--border-soft)",
-                }}
-              >
-                <span className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
-                  {t("product.sku") || "شناسه موجودی"}
-                </span>
-                <span className="text-sm font-black" style={{ color: "var(--text-primary)" }}>
-                  {selectedVariation?.sku ?? product.sku ?? "-"}
-                </span>
-              </div>
-
-              {/* Pack Quantity */}
-              <div
-                className="glass flex items-center justify-between rounded-xl px-3 py-2 sm:flex-col sm:items-start sm:gap-1"
-                style={{
-                  background: "var(--surface)",
-                  borderColor: "var(--border-soft)",
-                }}
-              >
-                <span className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
-                  {t("product.packQuantity") || "تعداد در بسته"}
-                </span>
-                <span className="text-sm font-black" style={{ color: "var(--text-primary)" }}>
-                  {selectedVariation?.packQuantity ?? product.packQuantity ?? "-"}
-                </span>
-              </div>
-            </div>
-
             {/* Price Row inside Summary Card */}
             <div className="flex items-baseline justify-between pt-2 border-t" style={{ borderColor: "var(--border-soft)" }}>
               <span className="text-xs font-semibold sm:text-sm" style={{ color: "var(--text-secondary)" }}>
@@ -303,14 +306,7 @@ export default function ProductDetails() {
             </div>
           </div>
 
-          {/* Active Specification / Description */}
-          {activeSpec && activeSpec !== "-" && (
-            <p className="text-xs leading-6 sm:text-sm sm:leading-7" style={{ color: "var(--text-secondary)" }}>
-              {activeSpec}
-            </p>
-          )}
-
-          {/* Technical Specifications Accordion */}
+          {/* Technical Specifications Accordion (Contains Pack Quantity and Real Specifications) */}
           {allSpecifications.length > 0 && (
             <div className="glass rounded-2xl p-3.5" style={{ border: "1px solid var(--border-soft)" }}>
               <button
@@ -320,7 +316,7 @@ export default function ProductDetails() {
                 aria-expanded={showSpecs}
               >
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xs font-bold sm:text-sm" style={{ color: "var(--text-primary)" }}>{t("product.specTitle") || "مشخصات فنی محصول"}</h3>
+                  <h3 className="text-xs font-bold sm:text-sm" style={{ color: "var(--text-primary)" }}>{t("product.specTitle") || "مشخصات کامل"}</h3>
                   <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ background: "var(--chip-bg)", color: "var(--accent-1)" }}>
                     {allSpecifications.length}
                   </span>

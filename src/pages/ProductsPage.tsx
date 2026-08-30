@@ -22,7 +22,7 @@ export default function ProductsPage() {
   }, [setListContext]);
 
   const handleBack = () => {
-    if (window.history.state && window.history.state.idx > 0) {
+    if (window.history.length > 1) {
       navigate(-1);
     } else {
       navigate("/");
@@ -48,15 +48,9 @@ export default function ProductsPage() {
             type="button"
             onClick={handleBack}
             aria-label={t("category.back") || "بازگشت"}
-            className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 sm:px-4 sm:py-2 sm:text-sm cursor-pointer"
-            style={{
-              color: "var(--text-primary)",
-              borderColor: "var(--border-strong)",
-              background: "var(--surface-strong)",
-              boxShadow: "inset 0 1px 1.5px rgba(255, 255, 255, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08)",
-            }}
+            className="ks-back-button"
           >
-            <ArrowIcon size={16} style={{ color: "var(--accent-1)" }} />
+            <ArrowIcon size={16} />
             <span>{t("category.back") || "بازگشت"}</span>
           </button>
         </div>

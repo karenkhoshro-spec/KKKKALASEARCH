@@ -98,7 +98,7 @@ describe("UI & UX System Polish & Validation Suite", () => {
     expect(html).toContain("مشاهده محصول در سایت اشکان پلاستیک");
     expect(html).toContain("کد محصول");
     expect(html).toContain("شناسه موجودی");
-    expect(html).toContain("تعداد در بسته");
+    expect(html).toContain("مشخصات کامل");
     expect(html).toContain("افزودن به سبد خرید");
     expect(html).toContain("0"); // initial quantity is 0
   });
@@ -124,7 +124,7 @@ describe("UI & UX System Polish & Validation Suite", () => {
 
     expect(html).toContain("کد محصول");
     expect(html).toContain("شناسه موجودی");
-    expect(html).toContain("تعداد در بسته");
+    expect(html).toContain("مشخصات کامل");
     expect(html).toContain("مشاهده محصول در سایت اشکان پلاستیک");
   });
 
@@ -195,7 +195,6 @@ describe("UI & UX System Polish & Validation Suite", () => {
     expect(html).toContain("موجود در انبار");
     expect(html).toContain("کد محصول");
     expect(html).toContain("شناسه موجودی");
-    expect(html).toContain("تعداد در بسته");
     expect(html).toContain("54,000");
     expect(html).toContain("تومان");
     expect(html).toContain("مشاهده محصول در سایت اشکان پلاستیک");

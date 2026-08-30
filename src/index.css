@@ -527,3 +527,68 @@ html[data-theme="light"] .ks-logo-search-gem {
   color: #e98232;
   filter: drop-shadow(0 0 5px rgba(233, 130, 50, 0.4));
 }
+
+/* ==========================================================================
+   High-Contrast Crystal Back Button (All Views)
+   ========================================================================== */
+.ks-back-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 9999px;
+  padding: 0.45rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: radial-gradient(circle at 35% 25%, rgba(168, 85, 247, 0.35) 0%, rgba(26, 13, 52, 0.95) 75%);
+  border: 1.5px solid rgba(192, 132, 252, 0.45);
+  box-shadow:
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.35),
+    0 0 12px rgba(168, 85, 247, 0.3);
+  color: #f5f3ff;
+}
+
+@media (min-width: 640px) {
+  .ks-back-button {
+    padding: 0.55rem 1.2rem;
+    font-size: 0.92rem;
+  }
+}
+
+.ks-back-button:hover {
+  transform: scale(1.05);
+  border-color: rgba(192, 132, 252, 0.75);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.5),
+    0 0 18px rgba(168, 85, 247, 0.55);
+}
+
+.ks-back-button:active {
+  transform: scale(0.95);
+}
+
+html[data-theme="light"] .ks-back-button {
+  background: radial-gradient(circle at 30% 20%, #ffffff 0%, #fff8ec 60%, #f4e8d3 100%);
+  border: 1.5px solid rgba(47, 125, 80, 0.45);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 1),
+    inset 0 -1px 2px rgba(233, 130, 50, 0.15),
+    0 2px 8px rgba(38, 51, 44, 0.08),
+    0 0 12px rgba(47, 125, 80, 0.18);
+  color: #17241e;
+}
+
+html[data-theme="light"] .ks-back-button:hover {
+  transform: scale(1.05);
+  border-color: rgba(47, 125, 80, 0.75);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 1),
+    0 4px 14px rgba(38, 51, 44, 0.12),
+    0 0 16px rgba(233, 130, 50, 0.25);
+  color: #143d26;
+}

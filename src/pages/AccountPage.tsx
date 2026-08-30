@@ -89,7 +89,7 @@ export default function AccountPage() {
   };
 
   const handleBack = () => {
-    if (window.history.state && window.history.state.idx > 0) {
+    if (window.history.length > 1) {
       navigate(-1);
     } else {
       navigate("/");
@@ -107,14 +107,9 @@ export default function AccountPage() {
           type="button"
           onClick={handleBack}
           aria-label={t("category.back") || "بازگشت"}
-          className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95"
-          style={{
-            color: "var(--text-primary)",
-            borderColor: "var(--border-strong)",
-            background: "var(--surface-strong)",
-          }}
+          className="ks-back-button"
         >
-          <ArrowIcon size={16} style={{ color: "var(--accent-1)" }} />
+          <ArrowIcon size={16} />
           <span dir={dir}>{t("category.back") || "بازگشت"}</span>
         </button>
 
