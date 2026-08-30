@@ -173,13 +173,7 @@ html[data-theme="light"] .ks-category-tile:focus-visible {
 }
 
 .ks-tree-layer {
-  display: none;
-  position: absolute;
-  inset: 6%;
-  width: 88%;
-  height: 88%;
-  pointer-events: none;
-  z-index: 0;
+  display: none !important;
 }
 
 .ks-tree-trunk {
@@ -220,8 +214,7 @@ html[data-theme="light"] .ks-icon-3d {
 }
 
 html[data-theme="light"] .ks-tree-layer {
-  display: block;
-  color: #22c55e;
+  display: none !important;
 }
 
 html[data-theme="light"] .ks-icon-tone-orange {

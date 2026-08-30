@@ -3,7 +3,6 @@ import { useLanguage } from "../i18n/LanguageContext";
 import { useListContext } from "../context/ListContext";
 import SearchBar from "../components/SearchBar";
 import CategoryNav from "../components/CategoryNav";
-import { HorizontalBrandingLogo } from "../components/BrandingLogo";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -16,10 +15,6 @@ export default function Home() {
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6">
       <section className="mb-10 flex flex-col items-center overflow-visible text-center">
-        <div className="mb-4 overflow-visible">
-          <HorizontalBrandingLogo showTagline={false} />
-        </div>
-
         <h2
           className="mt-2 max-w-xl text-lg font-medium tracking-tight sm:text-xl"
           style={{ color: "var(--text-primary)" }}

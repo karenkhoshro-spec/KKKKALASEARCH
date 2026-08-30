@@ -18,7 +18,7 @@ export default function Header() {
     <>
       <header className="ks-site-header sticky top-0 z-[120] w-full transition-shadow duration-300">
         <div className="glass-strong border-b" style={{ borderColor: "var(--border-soft)" }}>
-          <div className="ks-site-header-inner mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-3 py-2 sm:px-6">
+          <div className="ks-site-header-inner mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-3 py-2.5 sm:px-6">
             {/* Nav controls group */}
             <div className="flex items-center gap-1.5 sm:gap-2.5">
               <button
