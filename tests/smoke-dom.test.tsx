@@ -45,7 +45,7 @@ describe("KalaSearch UI smoke (DOM runtime)", () => {
   it("renders the homepage: search hero, 9 category tiles, no quick-access shortcut cards", () => {
     const input = host.querySelector("input");
     expect(input?.getAttribute("placeholder")).toBe("دنبال چه کالایی می‌گردید؟");
-    expect(host.querySelectorAll("a.category-tile").length).toBe(9);
+    expect(host.querySelectorAll("a.ks-category-tile").length).toBe(9);
     expect(host.textContent).not.toContain("سایر دسته‌بندی‌ها");
     // No misleading backend wording on any screen
     expect(host.textContent).not.toContain("سرویس ارسال به فروشنده هنوز به بک‌اند متصل نشده");
@@ -78,8 +78,11 @@ describe("KalaSearch UI smoke (DOM runtime)", () => {
     expect(spotlight?.textContent).toContain("آبکش و سبد و کاسه");
     expect(spotlight?.textContent).toContain("جاصابونی");
 
-    await clickLink(host, "a.ks-spotlight-card");
-    expect(window.location.pathname).toBe("/category/powder-sponge-holder");
+    await act(async () => {
+      firstSpotlight!.dispatchEvent(new window.MouseEvent("click", { bubbles: true, cancelable: true }));
+    });
+    await flush();
+    expect(window.location.pathname).toBe("/category/other");
     const productLink = host.querySelector('a[href^="/product/"]') as HTMLAnchorElement;
     expect(productLink).toBeTruthy();
     await act(async () => {
@@ -113,13 +116,18 @@ describe("KalaSearch UI smoke (DOM runtime)", () => {
   });
 
   it("checkout requires the address before an order can be confirmed", async () => {
-    // add a product to the cart first: search → open product → add
-    await clickLink(host, 'a[href="/category/other"]');
+    // add a product to the cart first: category → open product → select → add
+    await clickLink(host, 'a[href="/category/zanbil"]');
     const productLink = host.querySelector('a[href^="/product/"]') as HTMLAnchorElement;
     await act(async () => {
       productLink.dispatchEvent(new window.MouseEvent("click", { bubbles: true, cancelable: true }));
     });
     await flush();
+    const colorHeading = [...host.querySelectorAll("h3")].find((h) => h.textContent?.trim() === "رنگ");
+    const colorButton = colorHeading?.parentElement?.querySelector("button");
+    if (colorButton) await act(async () => { colorButton.dispatchEvent(new window.MouseEvent("click", { bubbles: true })); });
+    const increase = host.querySelector('button[aria-label="increase"]');
+    await act(async () => { increase!.dispatchEvent(new window.MouseEvent("click", { bubbles: true })); });
     const addButton = [...host.querySelectorAll("button")].find((b) => b.textContent?.includes("افزودن به سبد خرید"));
     expect(addButton).toBeTruthy();
     await act(async () => { addButton!.dispatchEvent(new window.MouseEvent("click", { bubbles: true })); });

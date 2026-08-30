@@ -212,7 +212,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-6 sm:px-6">
-      <div className="mb-5 flex items-center justify-between gap-2">
+      <div className="mb-5 flex items-center justify-between gap-2" style={{ direction: "ltr" }}>
         <BackButton to="/cart" label={t("checkout.backToCart")} />
         <h1 className="text-lg font-bold sm:text-xl" style={{ color: "var(--text-primary)" }}>
           {t("checkout.title")}

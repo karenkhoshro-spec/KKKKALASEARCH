@@ -1,5 +1,4 @@
 import productCsv from "../../KalaSearch_Products_Import.csv?raw";
-import categoryCsv from "../../KalaSearch_Categories.csv?raw";
 import ashkanCsv from "../../KalaSearch_Ashkan_Links.csv?raw";
 import inventoryCsv from "../../kala_search_inventory.csv?raw";
 import type { Category, LocalizedText, Product, ProductVariation } from "../types";
@@ -28,7 +27,6 @@ function parseCsv(input: string): ProductSourceRow[] {
 const productsRows = parseCsv(productCsv);
 const ashkanRows = parseCsv(ashkanCsv);
 const inventoryRows = parseCsv(inventoryCsv);
-const categoryRows = parseCsv(categoryCsv);
 
 export const normalizePersian = (value: string) => value.normalize("NFKC").replace(/[يى]/g, "ی").replace(/[ك]/g, "ک").replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))).replace(/[\u200c\u200f\u200e]/g, "").replace(/[^\p{L}\p{N}]+/gu, "").toLocaleLowerCase();
 
@@ -420,15 +418,22 @@ const mergedRows: ProductSourceRow[] = productsRows.map((source) => {
   };
 });
 
-const categoryNames = categoryRows.sort((a, b) => Number(a.sort_order) - Number(b.sort_order)).map((row) => row.category_name).filter(Boolean);
-const primaryNames = categoryNames.length >= 8 ? categoryNames.slice(0, 8).concat("سایر") : ["سبد خرید", "سبد پیکنیک", "چهار پایه", "جا پودری/اسکاجی", "سبد میوه و سبزی", "آبکش و سبد و کاسه", "فریزری", "جاصابونی", "سایر"];
+// Display taxonomy intentionally follows the approved homepage order. CSV rows
+// remain untouched; these matchers only decide where each existing product is shown.
+const primaryNames = [
+  "سبد خرید", "سبد پیکنیک", "چهار پایه", "زنبیل",
+  "سبد میوه و سبزی", "لگن و وان", "پارچ و لیوان", "فریزری", "سایر",
+];
 const primaryMatchers: [string, string[]][] = [
   ["shopping-basket", ["سبد خرید"]], ["picnic-basket", ["پیک نیک", "پیکنیک"]], ["stool", ["چهار پایه", "چهارپایه"]],
-  ["powder-sponge-holder", ["پودری", "اسکاج", "اسکاچ"]], ["fruit-vegetable-basket", ["میوه", "سبزی"]],
-  ["colander-bowl", ["آبکش", "کاسه", "سبد سینک"]], ["freezer", ["فریزری", "فریزری"]], ["soap-dish", ["صابونی"]],
+  ["zanbil", ["زنبیل"]], ["fruit-vegetable-basket", ["میوه", "سبزی"]], ["basin-bathtub", ["لگن", "وان"]],
+  ["pitcher-glass", ["پارچ", "لیوان"]], ["freezer", ["فریزری"]],
 ];
 const otherRules: [string, string, string[]][] = [
-  ["spice", "جا ادویه", ["ادویه"]], ["pitcher-glass", "پارچ و لیوان", ["پارچ", "لیوان"]], ["juicer", "آبمیوه گیری", ["آبمیوه گیری", "آبمیوه"]],
+  ["powder-sponge-holder", "جا پودری/اسکاجی", ["پودری", "اسکاج", "اسکاچ"]],
+  ["colander-bowl", "آبکش و سبد و کاسه", ["آبکش", "کاسه", "سبد سینک"]],
+  ["soap-dish", "جاصابونی", ["صابونی"]],
+  ["spice", "جا ادویه", ["ادویه"]], ["juicer", "آبمیوه گیری", ["آبمیوه گیری", "آبمیوه"]],
   ["ice-holder", "جا یخی", ["جایخی", "جا یخی"]], ["butter-holder", "جا کره‌ای", ["جا کره ای", "جا کره‌ای"]], ["spoon-holder", "جا قاشقی", ["جا قاشقی", "جاقاشقی"]],
   ["bucket", "سطل", ["سطل", "درب سطل"]], ["basin-bathtub", "لگن و وان", ["لگن", "وان"]], ["plant-saucer", "زیر گلدان", ["زیر گلدان"]], ["flower-pot", "گلدان", ["گلدان"]],
   ["shopping-basket-other", "زنبیل", ["زنبیل"]], ["oval-basket", "سبد بیضی", ["سبد بیضی"]], ["janani", "جانانی", ["جانانی"]], ["organizer", "سبد و نظم‌دهنده", ["نظم دهنده", "نظم‌دهنده", "باکس", "جعبه نظم", "جعبه همه کاره", "فایل", "لوازم التحریر"]],

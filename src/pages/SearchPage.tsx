@@ -22,7 +22,7 @@ export default function SearchPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-      <div className="mb-5 flex items-center justify-between">
+      <div className="mb-5 flex items-center justify-between" style={{ direction: "ltr" }}>
         <BackButton to="/" label={t("search.back")} />
         <span />
       </div>

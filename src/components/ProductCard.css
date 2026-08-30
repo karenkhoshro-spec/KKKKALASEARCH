@@ -4,11 +4,83 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-radius: 1rem;
-  transition: transform 300ms ease, box-shadow 300ms ease;
+  border-radius: 1.15rem;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08);
+  transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 300ms ease;
+  /* Perf: offscreen cards in large grids skip layout/paint work */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 460px;
 }
+
 .ks-product-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(168, 85, 247, 0.35);
+  box-shadow: 0 10px 28px rgba(168, 85, 247, 0.16), inset 0 1px 1.5px rgba(255, 255, 255, 0.14);
+}
+
+html[data-theme="light"] .ks-product-card {
+  background: #ffffff;
+  border: 1.2px solid rgba(203, 213, 225, 0.75);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+html[data-theme="light"] .ks-product-card:hover {
+  border-color: rgba(147, 51, 234, 0.35);
+  box-shadow: 0 8px 24px rgba(148, 163, 184, 0.14), inset 0 1px 2px rgba(255, 255, 255, 1);
+}
+
+/* Minimal Diamond Crystal text cards for Category & Search */
+.ks-product-card.is-minimal {
+  min-height: 4.5rem;
+  justify-content: center;
+  align-items: center;
+  padding: 0.9rem 0.85rem;
+  background: var(--surface);
+  border: 1.2px solid var(--border-soft);
+  box-shadow: inset 0 1px 1.5px rgba(255, 255, 255, 0.08);
+}
+
+.ks-product-card.is-minimal:hover {
   transform: translateY(-2px);
+  border-color: rgba(168, 85, 247, 0.45);
+  box-shadow: 0 6px 20px var(--shadow-glow), inset 0 1px 2px rgba(255, 255, 255, 0.14);
+}
+
+.ks-product-card.is-minimal:active {
+  transform: scale(0.97);
+}
+
+html[data-theme="light"] .ks-product-card.is-minimal {
+  background: #ffffff;
+  border: 1.2px solid rgba(203, 213, 225, 0.8);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
+}
+
+html[data-theme="light"] .ks-product-card.is-minimal:hover {
+  background: #ffffff;
+  border-color: rgba(147, 51, 234, 0.4);
+  box-shadow: 0 6px 18px rgba(148, 163, 184, 0.15), inset 0 1px 2px rgba(255, 255, 255, 1);
+}
+
+/* Frame for products inside the subcategory panel (Other page).
+   Solid surface (no nested backdrop-blur) and full rendering —
+   prevents the initial weird/jumping box when the panel opens. */
+.ks-subcategory-frame {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 1.15rem;
+  overflow: hidden;
+  contain: paint;
+}
+.ks-subcategory-frame .ks-product-card {
+  content-visibility: visible;
+  contain-intrinsic-size: auto;
+  animation: none;
+  box-shadow: none;
 }
 
 .ks-product-image-wrapper {
@@ -73,7 +145,7 @@
 }
 
 html[data-theme="light"] .ks-product-image-overlay {
-  background: linear-gradient(to top, rgba(28, 18, 48, 0.45) 0%, rgba(28, 18, 48, 0.12) 35%, transparent 70%);
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.35) 0%, rgba(15, 23, 42, 0.08) 35%, transparent 70%);
 }
 
 .ks-product-image-link:hover .ks-product-image-overlay,
@@ -107,8 +179,8 @@ html[data-theme="light"] .ks-product-image-overlay {
 
 html[data-theme="light"] .ks-product-image-cta {
   background: rgba(255, 255, 255, 0.96);
-  color: #1c1230;
-  box-shadow: 0 4px 16px rgba(76, 29, 149, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+  color: #1e1b4b;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
 }
 
 .ks-product-image-link:hover .ks-product-image-cta,
@@ -215,6 +287,39 @@ html[dir="ltr"] .ks-product-image-link:hover .ks-product-image-arrow {
 }
 
 .ks-product-content-link:focus-visible {
+  outline: 2px solid var(--accent-1);
+  outline-offset: 2px;
+}
+
+/* Product details CTA small */
+.ks-product-details-url-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  background: var(--chip-bg);
+  color: var(--accent-1);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid var(--border-soft);
+  transition: transform 200ms ease, background 200ms ease, border-color 200ms ease;
+}
+
+.ks-product-details-url-cta:hover {
+  transform: translateY(-1px);
+  background: rgba(168, 85, 247, 0.18);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+html[data-theme="light"] .ks-product-details-url-cta:hover {
+  background: rgba(147, 51, 234, 0.12);
+  border-color: rgba(147, 51, 234, 0.25);
+}
+
+.ks-product-details-url-cta:focus-visible {
   outline: 2px solid var(--accent-1);
   outline-offset: 2px;
 }

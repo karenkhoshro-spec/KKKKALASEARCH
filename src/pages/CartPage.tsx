@@ -13,7 +13,7 @@ export default function CartPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
-      <div className="mb-5 flex items-center justify-between">
+      <div className="mb-5 flex items-center justify-between" style={{ direction: "ltr" }}>
         <BackButton to="/" />
         <h1 className="text-xl font-bold sm:text-2xl" style={{ color: "var(--text-primary)" }}>
           {t("cart.title")}

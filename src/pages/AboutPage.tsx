@@ -13,7 +13,7 @@ export default function AboutPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-6 sm:px-6">
-      <div className="mb-5 flex items-center justify-between gap-2">
+      <div className="mb-5 flex items-center justify-between gap-2" style={{ direction: "ltr" }}>
         <BackButton to="/" label={t("search.back")} />
         <h1 className="ks-page-title" style={{ color: "var(--text-primary)" }}>
           {t("about.title")}

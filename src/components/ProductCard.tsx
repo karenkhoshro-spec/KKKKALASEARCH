@@ -56,7 +56,7 @@ function ProductCardBase({ product, minimal = false }: { product: Product; minim
   );
 
   return (
-    <div className={`ks-product-card group animate-fade-up relative flex flex-col overflow-hidden rounded-2xl transition-transform duration-300 hover:-translate-y-1 ${minimal ? "p-3" : ""}`}>
+    <div className={`ks-product-card group animate-fade-up relative flex flex-col overflow-hidden rounded-2xl transition-transform duration-300 hover:-translate-y-1 ${minimal ? "is-minimal p-3" : ""}`}>
       {!minimal && (
         <div className="ks-product-image-wrapper">
           {productUrl ? (

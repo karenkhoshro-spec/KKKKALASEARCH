@@ -45,7 +45,7 @@ describe("KalaSearch data safety invariants", () => {
   it("search stays a product-results experience and finds زنبیل products by name", () => {
     const results = searchProducts("زنبیل", "fa");
     expect(results.length).toBeGreaterThan(0);
-    expect(results.every((product) => JSON.stringify(product).includes("زنبیل") || product.subcategoryId === "shopping-basket-other")).toBe(true);
-    expect(getProductsByCategory("other", "shopping-basket-other").length).toBeGreaterThan(0);
+    expect(results.every((product) => JSON.stringify(product).includes("زنبیل") || product.categoryId === "zanbil")).toBe(true);
+    expect(getProductsByCategory("zanbil").length).toBeGreaterThan(0);
   });
 });

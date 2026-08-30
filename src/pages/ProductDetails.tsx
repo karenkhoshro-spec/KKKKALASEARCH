@@ -22,18 +22,20 @@ export default function ProductDetails() {
   const { listContext } = useListContext();
 
   const product = getProductById(id);
-  const [quantity, setQuantity] = useState(1);
-  const [variationId, setVariationId] = useState<string | undefined>(product?.variations?.[0]?.id);
+  const requiresColorSelection = product?.variations?.some((variation) => !!variation.colorName) ?? false;
+  const defaultVariationId = requiresColorSelection ? undefined : product?.variations?.[0]?.id;
+  const [quantity, setQuantity] = useState(0);
+  const [variationId, setVariationId] = useState<string | undefined>(defaultVariationId);
   const [showSpecs, setShowSpecs] = useState(false);
   const [failedImageSrc, setFailedImageSrc] = useState<string | null>(null);
 
   // Reset transient view state when navigating between products (same route,
   // different param) so no stale variant/image error bleeds into the next page.
   useEffect(() => {
-    setQuantity(1);
+    setQuantity(0);
     setShowSpecs(false);
     setFailedImageSrc(null);
-    setVariationId(product?.variations?.[0]?.id);
+    setVariationId(defaultVariationId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -49,7 +51,7 @@ export default function ProductDetails() {
     );
   }
 
-  const selectedVariation = product.variations?.find((v) => v.id === variationId) ?? product.variations?.[0];
+  const selectedVariation = product.variations?.find((v) => v.id === variationId) ?? (requiresColorSelection ? undefined : product.variations?.[0]);
   const available = selectedVariation?.inStock ?? product.inStock;
   const activePrice = selectedVariation ? selectedVariation.price : product.price;
 
@@ -71,7 +73,20 @@ export default function ProductDetails() {
   const colorVariations = (product.variations ?? []).filter((v) => v.colorName);
   const uniqueColors = Array.from(new Map(colorVariations.map((v) => [v.colorName, v])).values());
 
+  const validateSelection = () => {
+    if (quantity < 1) {
+      showToast(t("product.quantityRequired"), "error");
+      return false;
+    }
+    if (uniqueColors.length > 0 && !variationId) {
+      showToast(t("product.colorRequired"), "error");
+      return false;
+    }
+    return true;
+  };
+
   const handleAddToCart = () => {
+    if (!validateSelection()) return;
     addItem(
       product,
       product.name[lang],
@@ -194,7 +209,7 @@ export default function ProductDetails() {
               {t("product.quantity")}
             </span>
             <div className="glass flex items-center gap-3 rounded-xl px-2 py-1.5">
-              <button onClick={() => setQuantity((q) => Math.max(1, q - 1))} aria-label="decrease" className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-white/10">
+              <button onClick={() => setQuantity((q) => Math.max(0, q - 1))} aria-label="decrease" className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-white/10">
                 <Minus size={14} style={{ color: "var(--text-primary)" }} />
               </button>
               <span className="w-6 text-center text-base font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>
@@ -213,7 +228,7 @@ export default function ProductDetails() {
                 {t("product.addToCart")}
               </button>
             ) : (
-              <button type="button" className="flex flex-1 items-center justify-center rounded-2xl py-3.5 text-base font-bold text-white" style={{ background: "linear-gradient(90deg, var(--accent-3), var(--accent-2))" }}>
+              <button type="button" onClick={() => { if (validateSelection()) showToast(t("checkout.deliveryPreparing"), "info"); }} className="flex flex-1 items-center justify-center rounded-2xl py-3.5 text-base font-bold text-white" style={{ background: "linear-gradient(90deg, var(--accent-3), var(--accent-2))" }}>
                 {t("product.requestProduction")}
               </button>
             )}
