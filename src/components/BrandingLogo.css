@@ -1,0 +1,63 @@
+.ks-real-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0.2rem 0;
+  overflow: visible;
+  height: auto;
+  max-width: 75vw;
+}
+
+.ks-real-brand--vertical {
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ks-real-bag,
+.ks-real-name {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  flex: 0 1 auto;
+}
+
+.ks-real-brand--horizontal .ks-real-name {
+  max-width: min(280px, 58vw);
+}
+
+.ks-real-brand--horizontal .ks-real-bag {
+  max-width: min(88px, 22vw);
+}
+
+.ks-real-brand--compact {
+  max-width: min(240px, 48vw);
+  padding: 0;
+  gap: 0.4rem;
+}
+
+.ks-real-brand--compact .ks-real-name {
+  max-width: min(160px, 34vw);
+}
+
+.ks-real-brand--compact .ks-real-bag {
+  max-width: min(48px, 12vw);
+}
+
+.ks-hero-brand,
+.ks-footer-brand,
+.ks-site-header-brand,
+.ks-site-header,
+.ks-site-header .glass-strong {
+  overflow: visible;
+}

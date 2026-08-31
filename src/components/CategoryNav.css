@@ -1,0 +1,357 @@
+/* ==========================================================================
+   KalaSearch - Category Navigation (Crystal Glassmorphism System)
+   Two Rows × 4 Primary Items + Centered "Other" Final Category
+   ========================================================================== */
+
+.ks-category-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .ks-category-container {
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ks-category-container {
+    gap: 1rem;
+  }
+}
+
+/* 4 Primary Items Per Row */
+.ks-category-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.45rem;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+@media (min-width: 480px) {
+  .ks-category-grid-4 {
+    gap: 0.65rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .ks-category-grid-4 {
+    gap: 0.85rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ks-category-grid-4 {
+    gap: 1.15rem;
+  }
+}
+
+/* Row for Centered "Other" Tile */
+.ks-category-row-other {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.ks-category-tile-other {
+  width: calc(100% / 4 - 0.45rem);
+  min-width: 76px;
+  max-width: 170px;
+}
+
+@media (min-width: 640px) {
+  .ks-category-tile-other {
+    min-width: 110px;
+    max-width: 200px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ks-category-tile-other {
+    min-width: 130px;
+    max-width: 220px;
+  }
+}
+
+/* Crystal Glassmorphism Tile Card */
+.ks-category-tile {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 1rem;
+  background: var(--surface);
+  border: 1.2px solid var(--border-soft);
+  box-shadow: inset 0 1px 1.5px rgba(255, 255, 255, 0.08);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  user-select: none;
+  min-width: 0;
+  width: 100%;
+  padding: 0.38rem 0.22rem;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+@media (min-width: 640px) {
+  .ks-category-tile {
+    border-radius: 1.25rem;
+    padding: 0.55rem 0.35rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ks-category-tile {
+    border-radius: 1.4rem;
+    padding: 0.7rem 0.45rem;
+  }
+}
+
+/* Hover & Focus (Dark Mode: Purple Crystal glow) */
+.ks-category-tile:hover,
+.ks-category-tile:focus-visible {
+  background: var(--surface-strong);
+  border-color: rgba(168, 85, 247, 0.45);
+  box-shadow: 0 8px 24px var(--shadow-glow), inset 0 1px 2px rgba(255, 255, 255, 0.16);
+  transform: translateY(-3px);
+}
+
+.ks-category-tile:active {
+  transform: scale(0.97);
+}
+
+/* Light Mode Tile (Polished White Diamond Crystal & Silver) */
+html[data-theme="light"] .ks-category-tile {
+  background: #ffffff;
+  border: 1.2px solid rgba(203, 213, 225, 0.8);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04), inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
+}
+
+html[data-theme="light"] .ks-category-tile:hover,
+html[data-theme="light"] .ks-category-tile:focus-visible {
+  background: #ffffff;
+  border-color: rgba(147, 51, 234, 0.4);
+  box-shadow: 0 8px 24px rgba(148, 163, 184, 0.16), 0 0 16px rgba(168, 85, 247, 0.12), inset 0 1px 2px rgba(255, 255, 255, 1);
+}
+
+/* Icon Sizing & Glow */
+.ks-category-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.3rem;
+  flex-shrink: 0;
+}
+
+/* Neon gem plate (dark) / 3D nature plate (light) */
+@keyframes ks-icon-orbit-spin {
+  to { transform: rotate(360deg); }
+}
+
+.ks-icon-3d {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5px;
+  border-radius: 1.05rem;
+  background:
+    radial-gradient(circle at 28% 18%, #7c3aed 0%, transparent 42%),
+    radial-gradient(circle at 78% 88%, #4c1d95 0%, #0b0618 70%);
+  border: 1.5px solid #c084fc;
+  box-shadow:
+    0 0 0 1px rgba(88, 28, 135, 0.7),
+    0 8px 16px rgba(76, 29, 149, 0.45),
+    0 0 18px rgba(168, 85, 247, 0.55),
+    0 0 32px rgba(124, 58, 237, 0.28),
+    inset 0 1px 1px rgba(255, 255, 255, 0.32),
+    inset 0 -10px 14px rgba(59, 7, 100, 0.5);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.ks-tree-layer {
+  display: none !important;
+}
+
+.ks-tree-trunk {
+  fill: none;
+  stroke: #6b4f2a;
+  stroke-width: 3.4;
+  stroke-linecap: round;
+}
+
+.ks-canopy {
+  fill: currentColor;
+  opacity: 0.92;
+}
+
+.ks-canopy-b,
+.ks-canopy-c {
+  opacity: 0.78;
+}
+
+.ks-category-tile:hover .ks-icon-3d,
+.ks-other-sub-card:hover .ks-icon-3d {
+  transform: scale(1.05) translateY(-1px);
+  box-shadow:
+    0 0 0 1px rgba(216, 180, 254, 0.8),
+    0 0 22px rgba(192, 132, 252, 0.75),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+html[data-theme="light"] .ks-icon-3d {
+  background:
+    radial-gradient(circle at 30% 20%, #ffffff 0%, transparent 45%),
+    linear-gradient(165deg, #f7fffb 0%, #e8f7ec 48%, #d8efe0 100%);
+  border: 1px solid rgba(167, 243, 208, 0.85);
+  box-shadow:
+    0 10px 18px rgba(22, 101, 52, 0.12),
+    0 2px 0 rgba(255, 255, 255, 0.9) inset,
+    0 -8px 12px rgba(22, 163, 74, 0.08) inset;
+}
+
+html[data-theme="light"] .ks-tree-layer {
+  display: none !important;
+}
+
+html[data-theme="light"] .ks-icon-tone-orange {
+  background: radial-gradient(circle at 30% 18%, #fff7ed 0%, #ffedd5 40%, #fdba74 100%);
+  border-color: rgba(251, 146, 60, 0.7);
+}
+html[data-theme="light"] .ks-icon-tone-green {
+  background: radial-gradient(circle at 30% 18%, #f0fdf4 0%, #dcfce7 40%, #86efac 100%);
+  border-color: rgba(74, 222, 128, 0.75);
+}
+html[data-theme="light"] .ks-icon-tone-blue {
+  background: radial-gradient(circle at 30% 18%, #eff6ff 0%, #dbeafe 40%, #93c5fd 100%);
+  border-color: rgba(96, 165, 250, 0.75);
+}
+html[data-theme="light"] .ks-icon-tone-teal {
+  background: radial-gradient(circle at 30% 18%, #f0fdfa 0%, #ccfbf1 40%, #5eead4 100%);
+  border-color: rgba(45, 212, 191, 0.7);
+}
+html[data-theme="light"] .ks-icon-tone-purple {
+  background: radial-gradient(circle at 30% 18%, #faf5ff 0%, #ede9fe 40%, #c4b5fd 100%);
+  border-color: rgba(167, 139, 250, 0.7);
+}
+html[data-theme="light"] .ks-icon-tone-navy {
+  background: radial-gradient(circle at 30% 18%, #eff6ff 0%, #dbeafe 40%, #60a5fa 100%);
+  border-color: rgba(59, 130, 246, 0.7);
+}
+html[data-theme="light"] .ks-icon-tone-red {
+  background: radial-gradient(circle at 30% 18%, #fff1f2 0%, #ffe4e6 40%, #fda4af 100%);
+  border-color: rgba(251, 113, 133, 0.7);
+}
+html[data-theme="light"] .ks-icon-tone-white {
+  background: radial-gradient(circle at 30% 18%, #ffffff 0%, #f8fafc 50%, #e2e8f0 100%);
+  border-color: rgba(203, 213, 225, 0.9);
+}
+html[data-theme="light"] .ks-icon-tone-orange .ks-tree-layer { color: #f97316; }
+html[data-theme="light"] .ks-icon-tone-green .ks-tree-layer { color: #16a34a; }
+html[data-theme="light"] .ks-icon-tone-blue .ks-tree-layer { color: #2563eb; }
+html[data-theme="light"] .ks-icon-tone-teal .ks-tree-layer { color: #0f766e; }
+html[data-theme="light"] .ks-icon-tone-purple .ks-tree-layer { color: #7c3aed; }
+html[data-theme="light"] .ks-icon-tone-navy .ks-tree-layer { color: #1d4ed8; }
+html[data-theme="light"] .ks-icon-tone-red .ks-tree-layer { color: #dc2626; }
+html[data-theme="light"] .ks-icon-tone-white .ks-tree-layer { color: #94a3b8; }
+
+.ks-category-icon {
+  display: inline-block;
+  color: #e9d5ff;
+  filter:
+    drop-shadow(0 0 4px rgba(192, 132, 252, 0.95))
+    drop-shadow(0 2px 6px rgba(76, 29, 149, 0.65));
+  transition: transform 0.25s ease, filter 0.25s ease, color 0.25s ease;
+  will-change: transform, filter;
+  max-width: 100%;
+  max-height: 100%;
+  stroke-width: 1.7;
+}
+
+.ks-category-tile:hover .ks-category-icon,
+.ks-category-tile:focus-visible .ks-category-icon,
+.subcategory-tile:hover .ks-category-icon,
+.subcategory-tile[aria-pressed="true"] .ks-category-icon {
+  filter: drop-shadow(0 0 8px var(--accent-glow)) drop-shadow(0 0 16px var(--accent-glow));
+  transform: scale(1.08);
+}
+
+/* Light mode icon overrides (Violet / Silver accent) */
+html[data-theme="light"] .ks-category-icon {
+  color: #166534;
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.85))
+    drop-shadow(0 3px 4px rgba(15, 23, 42, 0.22));
+}
+html[data-theme="light"] .ks-icon-tone-orange .ks-category-icon { color: #c2410c; }
+html[data-theme="light"] .ks-icon-tone-green .ks-category-icon { color: #15803d; }
+html[data-theme="light"] .ks-icon-tone-blue .ks-category-icon { color: #1d4ed8; }
+html[data-theme="light"] .ks-icon-tone-teal .ks-category-icon { color: #0f766e; }
+html[data-theme="light"] .ks-icon-tone-purple .ks-category-icon { color: #6d28d9; }
+html[data-theme="light"] .ks-icon-tone-navy .ks-category-icon { color: #1e3a8a; }
+html[data-theme="light"] .ks-icon-tone-red .ks-category-icon { color: #be123c; }
+html[data-theme="light"] .ks-icon-tone-white .ks-category-icon { color: #475569; }
+
+html[data-theme="light"] .ks-category-tile:hover .ks-category-icon,
+html[data-theme="light"] .ks-category-tile:focus-visible .ks-category-icon,
+html[data-theme="light"] .subcategory-tile:hover .ks-category-icon,
+html[data-theme="light"] .subcategory-tile[aria-pressed="true"] .ks-category-icon {
+  color: #6d28d9;
+  filter: drop-shadow(0 0 6px rgba(124, 58, 237, 0.45));
+}
+
+/* Category Label */
+.ks-category-label {
+  display: block;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--text-primary);
+  margin-top: 0.2rem;
+}
+
+@media (min-width: 360px) {
+  .ks-category-label {
+    font-size: 11px;
+  }
+}
+
+@media (min-width: 480px) {
+  .ks-category-label {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 768px) {
+  .ks-category-label {
+    font-size: 12.5px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ks-category-label {
+    font-size: 15.5px;
+  }
+}
+
+/* Subcategory tile active state */
+.subcategory-tile[aria-pressed="true"] {
+  border-color: var(--accent-1) !important;
+  box-shadow: 0 0 0 2px var(--accent-1), 0 0 18px var(--accent-glow) !important;
+}
