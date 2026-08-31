@@ -705,8 +705,8 @@ html[data-theme="light"] .ks-brand-en {
 }
 .ks-theme-track {
   position: relative;
-  width: 3.35rem;
-  height: 1.7rem;
+  width: 3.55rem;
+  height: 1.85rem;
   border-radius: 9999px;
   display: inline-flex;
   align-items: center;
@@ -732,13 +732,13 @@ html[data-theme="light"] .ks-brand-en {
   z-index: 1;
   opacity: 0.55;
 }
-.ks-theme-track.is-day .ks-theme-sun { color: #c2410c; opacity: 0.9; }
-.ks-theme-track.is-night .ks-theme-moon { color: #e9d5ff; opacity: 0.9; }
+.ks-theme-track.is-day .ks-theme-sun { color: #ea580c; opacity: 1; }
+.ks-theme-track.is-night .ks-theme-moon { color: #f5f3ff; opacity: 1; }
 .ks-theme-knob {
   position: absolute;
   top: 2px;
-  width: 1.4rem;
-  height: 1.4rem;
+  width: 1.55rem;
+  height: 1.55rem;
   border-radius: 9999px;
   display: flex;
   align-items: center;

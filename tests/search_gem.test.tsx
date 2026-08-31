@@ -27,7 +27,7 @@ describe("KalaSearch Search UI — Purple Gemstone & Crystal Glassmorphism", () 
     expect(html).toContain("ks-gem-facet-cut");
   });
 
-  it("renders SearchPage with standardized 3-column crystal header, category indicator, and name-only product cards", () => {
+  it("renders SearchPage with overlay header, category indicator, and catalog image cards", () => {
     const html = renderToString(
       <MemoryRouter initialEntries={["/search?q=لگن"]}>
         <LanguageProvider>
@@ -41,8 +41,10 @@ describe("KalaSearch Search UI — Purple Gemstone & Crystal Glassmorphism", () 
     expect(html).toContain("بازگشت");
     expect(html).toContain('href="/category/basin-bathtub"');
     expect(html).toContain("مشاهده دسته کامل");
-    expect(html).toContain("is-minimal");
-    expect(html).not.toContain("قیمت نامشخص");
+    expect(html).toContain("ks-category-product-grid");
+    expect(html).toContain("ks-product-card");
+    expect(html).toContain("ks-product-image-wrapper");
+    expect(html).not.toContain("is-minimal");
   });
 
   it("preserves search functionality and product search matching", () => {

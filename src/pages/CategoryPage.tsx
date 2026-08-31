@@ -75,7 +75,7 @@ export default function CategoryPage() {
           ) : (
             <div className="ks-category-product-grid">
               {list.map((p) => (
-                <ProductCard key={p.id} product={p} />
+                <ProductCard key={p.id} product={p} hidePrice />
               ))}
             </div>
           )}

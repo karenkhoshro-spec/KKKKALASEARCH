@@ -92,7 +92,6 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* 3. Search Results: Name-Only Diamond Crystal Cards */}
       {results.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <Sparkles size={32} className="mb-2 text-violet-400 opacity-60" />
@@ -101,9 +100,9 @@ export default function SearchPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 md:grid-cols-4">
+        <div className="ks-category-product-grid">
           {results.map((p) => (
-            <ProductCard key={p.id} product={p} minimal />
+            <ProductCard key={p.id} product={p} hidePrice />
           ))}
         </div>
       )}

@@ -160,11 +160,13 @@ describe("UI & UX System Polish & Validation Suite", () => {
     const cartHtml = renderToString(
       <MemoryRouter>
         <LanguageProvider>
-          <CartProvider>
-            <ToastProvider>
-              <CartPage />
-            </ToastProvider>
-          </CartProvider>
+          <AccountProvider>
+            <CartProvider>
+              <ToastProvider>
+                <CartPage />
+              </ToastProvider>
+            </CartProvider>
+          </AccountProvider>
         </LanguageProvider>
       </MemoryRouter>
     );

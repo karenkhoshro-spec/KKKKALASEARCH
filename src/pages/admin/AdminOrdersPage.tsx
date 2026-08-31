@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { LogOut, PackageSearch } from "lucide-react";
+import { Eye, FileDown, LogOut, PackageSearch } from "lucide-react";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import { fetchAdminOrders, patchOrderStatus, ORDER_STATUSES, type StoredOrder, type OrderStatus } from "../../utils/ordersApi";
+import { downloadStoredOrderPdf, orderPdfLabels, viewStoredOrderPdf } from "../../utils/orderPdf";
 
 export default function AdminOrdersPage() {
   const { t, dir, lang } = useLanguage();
@@ -12,6 +13,7 @@ export default function AdminOrdersPage() {
   const [query, setQuery] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [busyPdf, setBusyPdf] = useState("");
 
   useEffect(() => {
     if (!token) return;
@@ -24,7 +26,7 @@ export default function AdminOrdersPage() {
     const q = query.trim().toLowerCase();
     if (!q) return orders;
     return orders.filter((order) => {
-      const blob = `${order.orderNumber} ${order.customer.name} ${order.customer.phone} ${order.customer.city} ${order.customer.province}`.toLowerCase();
+      const blob = `${order.orderNumber} ${order.customer.name} ${order.customer.phone} ${order.customer.email || ""} ${order.customer.city} ${order.customer.province}`.toLowerCase();
       return blob.includes(q);
     });
   }, [orders, query]);
@@ -42,6 +44,36 @@ export default function AdminOrdersPage() {
       return new Date(iso).toLocaleString(lang === "fa" ? "fa-IR" : lang === "ar" ? "ar-EG" : "en-US");
     } catch {
       return iso;
+    }
+  };
+
+  const pdfOpts = () => ({
+    dir,
+    currency: t("cart.toman"),
+    labels: orderPdfLabels(t),
+  });
+
+  const handleViewPdf = async (order: StoredOrder) => {
+    setBusyPdf(order.orderNumber);
+    try {
+      const { dir: pdfDir, currency, labels } = pdfOpts();
+      await viewStoredOrderPdf(order, pdfDir, currency, labels);
+    } catch {
+      setError(t("errors.generic"));
+    } finally {
+      setBusyPdf("");
+    }
+  };
+
+  const handleDownloadPdf = async (order: StoredOrder) => {
+    setBusyPdf(order.orderNumber);
+    try {
+      const { dir: pdfDir, currency, labels } = pdfOpts();
+      await downloadStoredOrderPdf(order, pdfDir, currency, labels);
+    } catch {
+      setError(t("errors.generic"));
+    } finally {
+      setBusyPdf("");
     }
   };
 
@@ -88,11 +120,14 @@ export default function AdminOrdersPage() {
                     <div className="grid gap-1 text-xs sm:grid-cols-2" style={{ color: "var(--text-secondary)" }}>
                       <span>{t("checkout.fullName")}: {order.customer.name}</span>
                       <span dir="ltr">{t("checkout.phone")}: {order.customer.phone}</span>
+                      {order.customer.email ? <span dir="ltr">{t("checkout.email")}: {order.customer.email}</span> : null}
                       <span>{t("checkout.province")}: {order.customer.province}</span>
                       <span>{t("checkout.city")}: {order.customer.city}</span>
                       <span className="sm:col-span-2">{t("checkout.address")}: {order.customer.address}</span>
                       <span>{t("checkout.postalCode")}: {order.customer.postalCode}</span>
                       <span>{t("checkout.date")}: {dateLabel(order.createdAt)}</span>
+                      <span>{t("checkout.paymentStatus")}: {t(`payment.${order.paymentStatus}`)}</span>
+                      <span>{t("admin.status")}: {t(`status.${order.status}`)}</span>
                       {order.customer.notes ? <span className="sm:col-span-2">{t("checkout.notes")}: {order.customer.notes}</span> : null}
                     </div>
 
@@ -108,6 +143,29 @@ export default function AdminOrdersPage() {
                       ))}
                     </select>
 
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        disabled={busyPdf === order.orderNumber}
+                        onClick={() => handleViewPdf(order)}
+                        className="glass flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold"
+                        style={{ color: "var(--text-primary)" }}
+                      >
+                        <Eye size={14} />
+                        {t("admin.viewPdf")}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={busyPdf === order.orderNumber}
+                        onClick={() => handleDownloadPdf(order)}
+                        className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-white"
+                        style={{ background: "linear-gradient(90deg, var(--accent-2), var(--accent-1))" }}
+                      >
+                        <FileDown size={14} />
+                        {t("admin.downloadPdf")}
+                      </button>
+                    </div>
+
                     <div className="flex flex-col gap-2">
                       {order.items.map((item, index) => (
                         <div key={`${item.sku}-${index}`} className="flex items-center gap-3 rounded-xl p-2" style={{ background: "var(--chip-bg)" }}>
@@ -119,10 +177,15 @@ export default function AdminOrdersPage() {
                             )}
                           </div>
                           <div className="min-w-0 flex-1 text-xs" style={{ color: "var(--text-primary)" }}>
-                            <p className="truncate font-bold">{item.model}</p>
+                            <p className="truncate font-bold">{item.name || item.model}</p>
                             <p style={{ color: "var(--text-muted)" }}>{t("product.productCode")}: {item.productCode || "-"}</p>
                             <p style={{ color: "var(--text-muted)" }}>{t("product.sku")}: {item.sku || "-"}</p>
                             <p>{item.variation || item.color}</p>
+                            <p className="font-semibold">
+                              {t("cart.price")}: {(item.unitPrice ?? item.price).toLocaleString()} {t("cart.toman")}
+                              {" · "}
+                              {t("cart.lineTotal")}: {item.lineTotal.toLocaleString()} {t("cart.toman")}
+                            </p>
                           </div>
                           <span className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-black text-white" style={{ background: "var(--accent-1)" }}>
                             {item.quantity}
@@ -130,6 +193,9 @@ export default function AdminOrdersPage() {
                         </div>
                       ))}
                     </div>
+                    <p className="text-end text-sm font-black" style={{ color: "var(--accent-1)" }}>
+                      {t("cart.total")}: {order.total.toLocaleString()} {t("cart.toman")}
+                    </p>
                   </div>
                 )}
               </div>

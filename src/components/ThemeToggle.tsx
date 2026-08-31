@@ -17,10 +17,10 @@ export default function ThemeToggle({ showLabel = false }: { showLabel?: boolean
       className={`ks-theme-control ${showLabel ? "ks-theme-control-labeled ks-menu-purple-btn" : ""}`}
     >
       <span className={`ks-theme-track ${isDark ? "is-night" : "is-day"}`} aria-hidden="true">
-        <Sun size={12} className="ks-theme-sun" />
-        <Moon size={12} className="ks-theme-moon" />
+        <Sun size={14} className="ks-theme-sun" fill="currentColor" />
+        <Moon size={14} className="ks-theme-moon" fill="currentColor" />
         <span className="ks-theme-knob">
-          {isDark ? <Moon size={13} /> : <Sun size={13} />}
+          {isDark ? <Moon size={16} fill="currentColor" /> : <Sun size={16} fill="currentColor" />}
         </span>
       </span>
       {showLabel && (

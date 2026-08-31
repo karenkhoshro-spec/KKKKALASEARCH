@@ -4,6 +4,7 @@ import path from "path";
 import { readOrders, writeOrders } from "./orderStore.mjs";
 
 export const ORDER_STATUSES = ["registered", "preparing", "ready_pickup", "shipping", "delivered"];
+export const PAYMENT_STATUSES = ["unpaid"];
 
 function loadDotEnv() {
   try {
@@ -101,16 +102,53 @@ function generateOrderNumber(existing) {
   return `KS-${day}-${Date.now().toString(36).toUpperCase()}`;
 }
 
+function publicItem(item) {
+  const unitPrice = Number(item.unitPrice ?? item.price) || 0;
+  const quantity = Math.max(1, Number(item.quantity) || 1);
+  const name = String(item.name || item.model || "");
+  return {
+    productId: String(item.productId || ""),
+    productCode: String(item.productCode || ""),
+    sku: String(item.sku || ""),
+    name,
+    model: String(item.model || name),
+    variation: String(item.variation || ""),
+    color: String(item.color || ""),
+    quantity,
+    image: String(item.image || ""),
+    unitPrice,
+    price: unitPrice,
+    lineTotal: Number(item.lineTotal) || unitPrice * quantity,
+  };
+}
+
 function publicOrder(order) {
   if (!order) return null;
+  const orderNumber = order.orderNumber;
   return {
-    orderNumber: order.orderNumber,
+    orderNumber,
     createdAt: order.createdAt,
     status: order.status,
     statusUpdatedAt: order.statusUpdatedAt,
-    customer: { ...order.customer },
-    items: order.items,
+    paymentStatus: order.paymentStatus || "unpaid",
+    customer: {
+      name: order.customer?.name || "",
+      phone: order.customer?.phone || "",
+      email: order.customer?.email || "",
+      province: order.customer?.province || "",
+      city: order.customer?.city || "",
+      address: order.customer?.address || "",
+      postalCode: order.customer?.postalCode || "",
+      notes: order.customer?.notes || "",
+    },
+    items: Array.isArray(order.items) ? order.items.map(publicItem) : [],
     total: order.total,
+    document: order.document || {
+      kind: "proforma",
+      filename: `${orderNumber}.pdf`,
+      generatedAt: order.createdAt,
+      available: true,
+    },
   };
 }
 
@@ -123,6 +161,7 @@ export function createOrder(payload) {
   const address = String(customer.address || "").trim();
   const postalCode = String(customer.postalCode || "").replace(/\D/g, "");
   const notes = String(customer.notes || "").trim();
+  const email = String(customer.email || "").trim();
   const items = Array.isArray(payload?.items) ? payload.items : [];
 
   if (!name) return { ok: false, status: 400, error: "name_required" };
@@ -131,30 +170,29 @@ export function createOrder(payload) {
   if (!city) return { ok: false, status: 400, error: "city_required" };
   if (!address) return { ok: false, status: 400, error: "address_required" };
   if (postalCode.length !== 10) return { ok: false, status: 400, error: "invalid_postal_code" };
+  if (email && !email.includes("@")) return { ok: false, status: 400, error: "invalid_email" };
   if (items.length === 0) return { ok: false, status: 400, error: "items_required" };
 
-  const normalizedItems = items.map((item) => ({
-    productId: String(item.productId || ""),
-    productCode: String(item.productCode || ""),
-    sku: String(item.sku || ""),
-    model: String(item.model || item.name || ""),
-    variation: String(item.variation || ""),
-    color: String(item.color || ""),
-    quantity: Math.max(1, Number(item.quantity) || 1),
-    image: String(item.image || ""),
-    price: Number(item.price) || 0,
-  }));
-
+  const normalizedItems = items.map((item) => publicItem(item));
   const total = Number(payload?.total);
-  const computed = normalizedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const computed = normalizedItems.reduce((sum, item) => sum + item.lineTotal, 0);
   const orders = readOrders();
+  const createdAt = new Date().toISOString();
+  const orderNumber = generateOrderNumber(orders);
   const order = {
-    orderNumber: generateOrderNumber(orders),
-    createdAt: new Date().toISOString(),
+    orderNumber,
+    createdAt,
     status: "registered",
-    customer: { name, phone, province, city, address, postalCode, notes },
+    paymentStatus: "unpaid",
+    customer: { name, phone, email, province, city, address, postalCode, notes },
     items: normalizedItems,
     total: Number.isFinite(total) ? total : computed,
+    document: {
+      kind: "proforma",
+      filename: `${orderNumber}.pdf`,
+      generatedAt: createdAt,
+      available: true,
+    },
   };
   orders.unshift(order);
   writeOrders(orders);

@@ -314,8 +314,14 @@ export default function AccountPage() {
             ) : (
               <div className="flex flex-col gap-2">
                 {(remoteOrders.length > 0
-                  ? remoteOrders.map((o) => ({ orderNumber: o.orderNumber, date: o.createdAt, total: o.total, status: o.status }))
-                  : orders
+                  ? remoteOrders.map((o) => ({
+                      orderNumber: o.orderNumber,
+                      date: o.createdAt,
+                      total: o.total,
+                      status: o.status,
+                      paymentStatus: o.paymentStatus,
+                    }))
+                  : orders.map((o) => ({ ...o, paymentStatus: undefined as string | undefined }))
                 ).map((o) => (
                   <div key={o.orderNumber} className="flex flex-col gap-1 rounded-xl px-3 py-2 text-xs" style={{ background: "var(--chip-bg)" }}>
                     <div className="flex items-center justify-between">
@@ -326,6 +332,11 @@ export default function AccountPage() {
                       <span style={{ color: "var(--text-muted)" }}>{o.date}</span>
                       {"status" in o && o.status ? <span className="font-bold" style={{ color: "var(--accent-1)" }}>{t(`status.${o.status}`)}</span> : null}
                     </div>
+                    {o.paymentStatus ? (
+                      <p style={{ color: "var(--text-secondary)" }}>
+                        {t("checkout.paymentStatus")}: {t(`payment.${o.paymentStatus}`)}
+                      </p>
+                    ) : null}
                   </div>
                 ))}
               </div>

@@ -6,10 +6,11 @@ import { useCart } from "../context/CartContext";
 import { useAccount } from "../context/AccountContext";
 import { useToast } from "../context/ToastContext";
 import { generateOrderPdf, downloadBlob } from "../utils/pdf";
+import { orderPdfLabels, storedOrderToPdfData } from "../utils/orderPdf";
 import { deliverOrderToSeller } from "../utils/sellerDelivery";
 import { normalizeIranLocal, isValidIranLocal, toFullIranPhone } from "../utils/phone";
 import { goBack } from "../utils/safeBack";
-import { buildOrderItems, createRemoteOrder } from "../utils/ordersApi";
+import { buildOrderItems, createRemoteOrder, type PaymentStatus } from "../utils/ordersApi";
 import OverlayHeader from "../components/OverlayHeader";
 
 export default function CheckoutPage() {
@@ -19,7 +20,6 @@ export default function CheckoutPage() {
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-
   const [fullName, setFullName] = useState(account?.name ?? "");
   const [phoneLocal, setPhoneLocal] = useState("");
   const [province, setProvince] = useState("");
@@ -27,13 +27,16 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [notes, setNotes] = useState("");
-  const [errors, setErrors] = useState<{ name?: string; phone?: string; address?: string; province?: string; city?: string; postalCode?: string }>({});
+  const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState<{ name?: string; phone?: string; address?: string; province?: string; city?: string; postalCode?: string; email?: string }>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{
     orderNumber: string;
     date: string;
     pdfBlob: Blob;
     sent: boolean;
+    paymentStatus: PaymentStatus;
+    status: string;
   } | null>(null);
 
   if (items.length === 0 && !result) {
@@ -57,6 +60,7 @@ export default function CheckoutPage() {
       showToast(t("checkout.required"), "error");
     }
     if (!/^\d{10}$/.test(postalCode.replace(/\D/g, ""))) nextErrors.postalCode = t("checkout.invalidPostal");
+    if (email.trim() && !email.includes("@")) nextErrors.email = t("checkout.invalidEmail");
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -74,6 +78,7 @@ export default function CheckoutPage() {
         customer: {
           name: fullName.trim(),
           phone: fullPhone,
+          email: email.trim() || undefined,
           province: province.trim(),
           city: city.trim(),
           address: address.trim(),
@@ -84,39 +89,9 @@ export default function CheckoutPage() {
         total,
       });
       const orderNumber = remote.orderNumber;
-
-      const pdfBlob = await generateOrderPdf({
-        orderNumber,
-        date,
-        customerName: fullName.trim(),
-        phone: fullPhone,
-        address: `${province.trim()}، ${city.trim()}، ${address.trim()}، ${postalCode.replace(/\D/g, "")}`,
-        notes: notes.trim() || undefined,
-        items: items.map((it) => ({
-          name: it.name,
-          variation: it.variation?.name,
-          sku: it.variation?.sku,
-          quantity: it.quantity,
-          price: it.price,
-        })),
-        total,
-        currencyLabel: t("cart.toman") || "تومان",
-        dir,
-        labels: {
-          title: t("checkout.title") || "صورتحساب و سفارش کالا",
-          orderNumber: t("checkout.orderNumber") || "شماره سفارش",
-          date: t("checkout.date") || "تاریخ",
-          customer: t("checkout.fullName") || "نام مشتری",
-          phone: t("checkout.phone") || "تلفن",
-          notes: t("checkout.notes") || "یادداشت‌ها",
-          product: t("cart.product") || "نام کالا",
-          variation: t("product.variation") || "رنگ / تنوع",
-          quantity: t("cart.quantity") || "تعداد",
-          price: t("cart.price") || "قیمت واحد",
-          lineTotal: t("cart.total") || "جمع کل",
-          total: t("cart.total") || "مبلغ کل",
-        },
-      });
+      const pdfBlob = await generateOrderPdf(
+        storedOrderToPdfData(remote, dir, t("cart.toman") || "تومان", orderPdfLabels(t)),
+      );
 
       const delivery = await deliverOrderToSeller(pdfBlob, {
         orderNumber,
@@ -129,10 +104,17 @@ export default function CheckoutPage() {
       });
 
       addOrder({ orderNumber, date, total, itemsCount: items.reduce((s, i) => s + i.quantity, 0), status: remote.status });
-      downloadBlob(pdfBlob, `${orderNumber}.pdf`);
+      downloadBlob(pdfBlob, remote.document?.filename || `${orderNumber}.pdf`);
       showToast(t("notifications.pdfGenerated") || "فایل PDF سفارش تولید شد", "success");
 
-      setResult({ orderNumber, date, pdfBlob, sent: delivery.sent });
+      setResult({
+        orderNumber,
+        date,
+        pdfBlob,
+        sent: delivery.sent,
+        paymentStatus: remote.paymentStatus,
+        status: remote.status,
+      });
       clearCart();
     } catch {
       showToast(t("errors.generic") || "خطا در تولید سفارش", "error");
@@ -164,6 +146,14 @@ export default function CheckoutPage() {
             <div className="flex justify-between py-1">
               <span style={{ color: "var(--text-muted)" }}>{t("checkout.date")}</span>
               <span className="font-bold">{result.date}</span>
+            </div>
+            <div className="flex justify-between py-1">
+              <span style={{ color: "var(--text-muted)" }}>{t("admin.status")}</span>
+              <span className="font-bold">{t(`status.${result.status}`)}</span>
+            </div>
+            <div className="flex justify-between py-1">
+              <span style={{ color: "var(--text-muted)" }}>{t("checkout.paymentStatus")}</span>
+              <span className="font-bold">{t(`payment.${result.paymentStatus}`)}</span>
             </div>
           </div>
 
@@ -238,6 +228,22 @@ export default function CheckoutPage() {
             />
           </div>
           {errors.phone && <p className="mt-1 text-xs" style={{ color: "var(--danger)" }}>{errors.phone}</p>}
+        </div>
+
+        <div>
+          <label className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
+            {t("checkout.email")}
+          </label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="name@example.com"
+            dir="ltr"
+            className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-violet-500"
+            style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
+          />
+          {errors.email && <p className="mt-1 text-xs" style={{ color: "var(--danger)" }}>{errors.email}</p>}
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">

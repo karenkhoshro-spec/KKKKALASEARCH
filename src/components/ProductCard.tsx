@@ -29,7 +29,7 @@ function getProductImageUrl(product: Product): string | undefined {
   return trimmed;
 }
 
-function ProductCard({ product, minimal = false }: { product: Product; minimal?: boolean }) {
+function ProductCard({ product, minimal = false, hidePrice = false }: { product: Product; minimal?: boolean; hidePrice?: boolean }) {
   const { lang, t } = useLanguage();
   const productUrl = getProductUrl(product);
   const hasValidUrl = !!productUrl;
@@ -110,7 +110,7 @@ function ProductCard({ product, minimal = false }: { product: Product; minimal?:
         <h3 className={`line-clamp-2 ${minimal ? "text-sm font-extrabold leading-6 sm:text-base" : "text-sm font-extrabold leading-6 sm:text-base"}`} style={{ color: "var(--text-primary)" }}>
           {product.name[lang]}
         </h3>
-        {!minimal && (
+        {!minimal && !hidePrice && (
           <div className="mt-1 text-xs font-bold sm:text-sm" style={{ color: product.price !== undefined ? "var(--accent-1)" : "var(--text-muted)" }}>
             {product.price !== undefined ? `${product.price.toLocaleString()} ${t("product.toman")}` : t("product.priceUnknown")}
           </div>

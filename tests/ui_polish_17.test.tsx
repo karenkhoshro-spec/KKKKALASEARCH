@@ -19,7 +19,6 @@ import { CartProvider } from "../src/context/CartContext";
 import { ToastProvider } from "../src/context/ToastContext";
 import { WishlistProvider } from "../src/context/WishlistContext";
 import { AdminAuthProvider } from "../src/context/AdminAuthContext";
-import { CONTACT_NUMBERS } from "../src/data/contact";
 import { qtyForVariation, setQtyForVariation } from "../src/utils/variationQuantity";
 
 function shell(node: ReactNode, path = "/") {
@@ -101,12 +100,10 @@ describe("17-item UI polish", () => {
     expect(html).not.toContain("is-minimal");
   });
 
-  it("reuses the same contact numbers in footer and keeps real App routes", () => {
+  it("keeps footer quick links and removes the contact column", () => {
     const html = shell(<Footer />);
-    for (const number of CONTACT_NUMBERS) {
-      expect(html).toContain(number.display);
-      expect(html).toContain(number.href);
-    }
+    expect(html).not.toContain("اطلاعات تماس");
+    expect(html).not.toContain("tel:");
     expect(html).toContain('href="/"');
     expect(html).toContain('href="/products"');
     expect(html).toContain('href="/search"');
@@ -151,9 +148,21 @@ describe("17-item UI polish", () => {
     expect(html).not.toContain("ADMIN_PASSWORD");
   });
 
-  it("renders cart page overlay header", () => {
+  it("renders cart page overlay header and your-orders panel", () => {
     const html = shell(<CartPage />);
     expect(html).toContain("ks-overlay-header");
     expect(html).toContain("سبد خرید");
+    expect(html).toContain("سفارشات شما");
+  });
+
+  it("hides price on category product cards", () => {
+    const html = shell(
+      <Routes>
+        <Route path="/category/:categoryId" element={<CategoryPage />} />
+      </Routes>,
+      "/category/shopping-basket",
+    );
+    expect(html).toContain("ks-product-card");
+    expect(html).not.toContain("قیمت موجود نیست");
   });
 });

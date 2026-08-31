@@ -7,6 +7,7 @@ import { goBack } from "../utils/safeBack";
 import { fullImageChain } from "../data/productImageResolver";
 import { getProductById } from "../data/products";
 import OverlayHeader from "../components/OverlayHeader";
+import CustomerOrdersPanel from "../components/CustomerOrdersPanel";
 
 export default function CartPage() {
   const { t, lang } = useLanguage();
@@ -57,6 +58,8 @@ export default function CartPage() {
         }
       />
 
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
+      <div>
       {items.length === 0 ? (
         <div className="flex flex-col items-center gap-4 py-20 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl" style={{ background: "var(--chip-bg)", color: "var(--text-muted)" }}>
@@ -207,6 +210,9 @@ export default function CartPage() {
           </div>
         </>
       )}
+      </div>
+      <CustomerOrdersPanel />
+      </div>
     </div>
   );
 }
