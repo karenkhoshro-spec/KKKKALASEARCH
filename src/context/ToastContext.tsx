@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { CheckCircle2, X, Info, AlertTriangle } from "lucide-react";
+import { CheckCircle2, Info, AlertTriangle } from "lucide-react";
 
 interface ToastItem {
   id: number;
@@ -27,6 +27,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const dismiss = (id: number) => setToasts((prev) => prev.filter((t) => t.id !== id));
+  void dismiss; // toasts auto-dismiss; intentionally NO decorative × close button
 
   const value = useMemo(() => ({ showToast }), [showToast]);
 
@@ -46,13 +47,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               {toast.type === "error" && <AlertTriangle size={20} style={{ color: "var(--danger)" }} />}
             </span>
             <p className="flex-1 text-sm leading-6">{toast.message}</p>
-            <button
-              onClick={() => dismiss(toast.id)}
-              className="shrink-0 opacity-60 transition hover:opacity-100"
-              aria-label="close"
-            >
-              <X size={16} />
-            </button>
           </div>
         ))}
       </div>

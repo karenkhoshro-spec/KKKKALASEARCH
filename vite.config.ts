@@ -16,4 +16,13 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+  server: {
+    // Dev proxy: the SPA calls /api/... and vite forwards to the KalaSearch API server.
+    proxy: {
+      "/api": {
+        target: process.env.KS_API_TARGET || "http://127.0.0.1:8787",
+        changeOrigin: true,
+      },
+    },
+  },
 });

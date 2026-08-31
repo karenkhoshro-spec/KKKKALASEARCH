@@ -7,6 +7,10 @@ interface CartContextValue {
   addItem: (product: Product, name: string, quantity: number, variation?: CartVariation) => void;
   removeItem: (productId: string, variationId?: string) => void;
   updateQuantity: (productId: string, quantity: number, variationId?: string) => void;
+  /** Sets the exact quantity of a line; qty <= 0 removes the line entirely. */
+  setQuantity: (productId: string, variationId: string | undefined, quantity: number) => void;
+  /** How many units of (productId + variation) are currently in the cart. */
+  qtyInCart: (productId: string, variationId?: string) => number;
   clearCart: () => void;
   total: number;
   count: number;
@@ -24,6 +28,14 @@ function loadCart(): CartItem[] {
   }
 }
 
+/**
+ * Cart line identity: productId + variation.id (+ color/selection stored on
+ * the line). The same product in two different colors is TWO lines.
+ */
+function sameLine(item: CartItem, productId: string, variationId?: string) {
+  return item.productId === productId && (item.variation?.id ?? undefined) === variationId;
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(loadCart);
 
@@ -34,9 +46,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const addItem = useCallback(
     (product: Product, name: string, quantity: number, variation?: CartVariation) => {
       setItems((prev) => {
-        const existingIdx = prev.findIndex(
-          (it) => it.productId === product.id && it.variation?.id === variation?.id
-        );
+        const existingIdx = prev.findIndex((it) => sameLine(it, product.id, variation?.id));
         if (existingIdx >= 0) {
           const next = [...prev];
           next[existingIdx] = {
@@ -53,6 +63,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
             image: product.image,
             price: product.price,
             quantity,
+            productCode: product.productCode,
+            sku: product.sku,
+            model: product.model,
             variation,
           },
         ];
@@ -62,18 +75,32 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 
   const removeItem = useCallback((productId: string, variationId?: string) => {
-    setItems((prev) => prev.filter((it) => !(it.productId === productId && it.variation?.id === variationId)));
+    setItems((prev) => prev.filter((it) => !sameLine(it, productId, variationId)));
   }, []);
 
   const updateQuantity = useCallback((productId: string, quantity: number, variationId?: string) => {
     setItems((prev) =>
       prev.map((it) =>
-        it.productId === productId && it.variation?.id === variationId
-          ? { ...it, quantity: Math.max(1, quantity) }
-          : it
+        sameLine(it, productId, variationId) ? { ...it, quantity: Math.max(1, quantity) } : it
       )
     );
   }, []);
+
+  const setQuantity = useCallback((productId: string, variationId: string | undefined, quantity: number) => {
+    setItems((prev) =>
+      quantity <= 0
+        ? prev.filter((it) => !sameLine(it, productId, variationId))
+        : prev.map((it) => (sameLine(it, productId, variationId) ? { ...it, quantity } : it))
+    );
+  }, []);
+
+  const qtyInCart = useCallback(
+    (productId: string, variationId?: string) => {
+      const line = items.find((it) => sameLine(it, productId, variationId));
+      return line ? line.quantity : 0;
+    },
+    [items]
+  );
 
   const clearCart = useCallback(() => setItems([]), []);
 
@@ -81,8 +108,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const count = useMemo(() => items.reduce((sum, it) => sum + it.quantity, 0), [items]);
 
   const value = useMemo(
-    () => ({ items, addItem, removeItem, updateQuantity, clearCart, total, count }),
-    [items, addItem, removeItem, updateQuantity, clearCart, total, count]
+    () => ({ items, addItem, removeItem, updateQuantity, setQuantity, qtyInCart, clearCart, total, count }),
+    [items, addItem, removeItem, updateQuantity, setQuantity, qtyInCart, clearCart, total, count]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

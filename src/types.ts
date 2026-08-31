@@ -15,6 +15,12 @@ export interface ProductVariation {
 export interface Product {
   id: string;
   slug: string;
+  /** Seller-facing product code (shown in cart / orders / PDF). */
+  productCode: string;
+  /** Stock keeping unit (SKU). */
+  sku: string;
+  /** Optional model name/number of the product. */
+  model?: string;
   name: LocalizedText;
   description: LocalizedText;
   features: LocalizedText[];
@@ -43,6 +49,8 @@ export interface Category {
 export interface CartVariation {
   id: string;
   name: string;
+  /** Hex color of the chosen color variant, when the variation is a color. */
+  color?: string;
 }
 
 export interface CartItem {
@@ -51,6 +59,10 @@ export interface CartItem {
   image: string;
   price: number;
   quantity: number;
+  /** Cart line identity = productId + variation.id (+ color/selection stored on the line). */
+  productCode?: string;
+  sku?: string;
+  model?: string;
   variation?: CartVariation;
 }
 

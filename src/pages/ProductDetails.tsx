@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ExternalLink, Minus, Plus, ShoppingCart, CheckCircle2, XCircle, Heart } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -13,14 +13,18 @@ import BackButton from "../components/BackButton";
 export default function ProductDetails() {
   const { id = "" } = useParams();
   const { t, lang } = useLanguage();
-  const { addItem } = useCart();
+  const { addItem, qtyInCart, setQuantity } = useCart();
   const { showToast } = useToast();
   const { isSaved, toggle } = useWishlist();
   const { listContext } = useListContext();
 
   const product = getProductById(id);
-  const [quantity, setQuantity] = useState(1);
   const [variationId, setVariationId] = useState(product?.variations?.[0]?.id);
+
+  // When navigating to a different product, reset the color/variation selection.
+  useEffect(() => {
+    setVariationId(product?.variations?.[0]?.id);
+  }, [product?.id, product?.variations]);
 
   const related = useMemo(
     () => (product ? getProductsByCategory(product.categoryId).filter((p) => p.id !== product.id).slice(0, 4) : []),
@@ -40,13 +44,18 @@ export default function ProductDetails() {
   }
 
   const selectedVariation = product.variations?.find((v) => v.id === variationId);
+  // Quantity is bound to the CART, per productId + variation/color selection.
+  // Switching White → Red shows RED's own count (0 when not yet chosen).
+  const cartQty = qtyInCart(product.id, selectedVariation?.id);
 
   const handleAddToCart = () => {
     addItem(
       product,
       product.name[lang],
-      quantity,
-      selectedVariation ? { id: selectedVariation.id, name: selectedVariation.name[lang] } : undefined
+      1,
+      selectedVariation
+        ? { id: selectedVariation.id, name: selectedVariation.name[lang], color: selectedVariation.color }
+        : undefined
     );
     showToast(t("notifications.addedToCart"), "success");
     // Stay on the current product page — do NOT navigate away automatically.
@@ -69,6 +78,32 @@ export default function ProductDetails() {
           <h1 className="text-xl font-extrabold leading-8 sm:text-2xl" style={{ color: "var(--text-primary)" }}>
             {product.name[lang]}
           </h1>
+
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span
+              className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide"
+              style={{ background: "var(--chip-bg)", color: "var(--text-secondary)" }}
+              dir="ltr"
+            >
+              {t("product.code")}: {product.productCode}
+            </span>
+            <span
+              className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide"
+              style={{ background: "var(--chip-bg)", color: "var(--text-secondary)" }}
+              dir="ltr"
+            >
+              SKU: {product.sku}
+            </span>
+            {product.model && (
+              <span
+                className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide"
+                style={{ background: "var(--chip-bg)", color: "var(--text-secondary)" }}
+                dir="ltr"
+              >
+                {t("product.model")}: {product.model}
+              </span>
+            )}
+          </div>
 
           <div className="mt-3 flex items-center gap-2">
             {product.inStock ? (
@@ -121,40 +156,72 @@ export default function ProductDetails() {
                 {t("product.variation")}
               </h3>
               <div className="flex flex-wrap gap-2">
-                {product.variations.map((v) => (
-                  <button
-                    key={v.id}
-                    onClick={() => setVariationId(v.id)}
-                    className="flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-all"
-                    style={{
-                      borderColor: variationId === v.id ? "var(--accent-1)" : "var(--border-soft)",
-                      background: variationId === v.id ? "var(--chip-bg)" : "transparent",
-                      color: "var(--text-primary)",
-                    }}
-                  >
-                    {v.color && <span className="h-3 w-3 rounded-full" style={{ background: v.color }} />}
-                    {v.name[lang]}
-                  </button>
-                ))}
+                {product.variations.map((v) => {
+                  const vQty = qtyInCart(product.id, v.id);
+                  return (
+                    <button
+                      key={v.id}
+                      onClick={() => setVariationId(v.id)}
+                      className="relative flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-all"
+                      style={{
+                        borderColor: variationId === v.id ? "var(--accent-1)" : "var(--border-soft)",
+                        background: variationId === v.id ? "var(--chip-bg)" : "transparent",
+                        color: "var(--text-primary)",
+                      }}
+                    >
+                      {v.color && (
+                        <span
+                          className="h-3 w-3 rounded-full"
+                          style={{ background: v.color, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.35)" }}
+                        />
+                      )}
+                      {v.name[lang]}
+                      {vQty > 0 && (
+                        <span
+                          className="ms-1 flex h-5 min-w-[20px] items-center justify-center rounded-full px-1 text-[11px] font-bold text-white"
+                          style={{ background: "var(--accent-1)" }}
+                        >
+                          {vQty}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
 
+          {/* Quantity stepper bound to the cart line of THIS productId + variation/color.
+              An unselected color shows `- 0 +` (independent per color). */}
           <div className="mt-6 flex items-center gap-4">
             <span className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
               {t("product.quantity")}
             </span>
             <div className="glass flex items-center gap-3 rounded-xl px-2 py-1.5">
-              <button onClick={() => setQuantity((q) => Math.max(1, q - 1))} className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-white/10">
+              <button
+                onClick={() => setQuantity(product.id, selectedVariation?.id, cartQty - 1)}
+                disabled={cartQty <= 0}
+                aria-label="decrease"
+                className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+              >
                 <Minus size={14} style={{ color: "var(--text-primary)" }} />
               </button>
-              <span className="w-6 text-center text-sm font-bold" style={{ color: "var(--text-primary)" }}>
-                {quantity}
+              <span className="w-6 text-center text-sm font-bold" style={{ color: "var(--text-primary)" }} aria-live="polite">
+                {cartQty}
               </span>
-              <button onClick={() => setQuantity((q) => q + 1)} className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-white/10">
+              <button
+                onClick={handleAddToCart}
+                aria-label="increase"
+                className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-white/10"
+              >
                 <Plus size={14} style={{ color: "var(--text-primary)" }} />
               </button>
             </div>
+            {cartQty === 0 && (
+              <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+                {t("product.notSelectedYet")}
+              </span>
+            )}
           </div>
 
           <div className="mt-6 flex items-center gap-3">

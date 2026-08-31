@@ -1,0 +1,85 @@
+{
+  "orders": [
+    {
+      "id": "ord_mthax3dm_14433f",
+      "orderNumber": "KS-20260831-0002",
+      "createdAt": "2026-08-31T13:56:03.034Z",
+      "status": "registered",
+      "paymentStatus": "unpaid",
+      "lang": "fa",
+      "customer": {
+        "name": "Ali Test",
+        "mobile": "9354445566",
+        "mobileFull": "+989354445566"
+      },
+      "items": [
+        {
+          "productId": "p11",
+          "name": "سطل زباله پدالی",
+          "productCode": "KS-111",
+          "sku": "ASH-2011",
+          "quantity": 1,
+          "unitPrice": 310000,
+          "lineTotal": 310000
+        }
+      ],
+      "total": 310000
+    },
+    {
+      "id": "ord_mthawx1z_3502d1",
+      "orderNumber": "KS-20260831-0001",
+      "createdAt": "2026-08-31T13:55:54.839Z",
+      "status": "preparing",
+      "paymentStatus": "unpaid",
+      "lang": "fa",
+      "customer": {
+        "name": "مریم тестی",
+        "mobile": "9121112233",
+        "mobileFull": "+989121112233",
+        "address": "اصفهان، خیابان چهارباغ، پلاک ۵",
+        "province": "اصفهان",
+        "city": "اصفهان",
+        "postal": "8158813111",
+        "notes": "لطفا بعد از ساعت ۱۷ تماس بگیرید"
+      },
+      "items": [
+        {
+          "productId": "p1",
+          "name": "ست ظروف نگهداری غذا شفاف ۵ تکه",
+          "productCode": "KS-101",
+          "sku": "ASH-2001",
+          "model": "Ashkan Storage 5P",
+          "image": "/images/product-storage-set.jpg",
+          "variationId": "white",
+          "variationName": "سفید",
+          "color": "#f8fafc",
+          "quantity": 2,
+          "unitPrice": 285000,
+          "lineTotal": 570000
+        },
+        {
+          "productId": "p1",
+          "name": "ست ظروف نگهداری غذا شفاف ۵ تکه",
+          "productCode": "KS-101",
+          "sku": "ASH-2001",
+          "model": "Ashkan Storage 5P",
+          "image": "/images/product-storage-set.jpg",
+          "variationId": "red",
+          "variationName": "قرمز",
+          "color": "#ef4444",
+          "quantity": 1,
+          "unitPrice": 285000,
+          "lineTotal": 285000
+        }
+      ],
+      "total": 855000,
+      "statusHistory": [
+        {
+          "status": "preparing",
+          "at": "2026-08-31T13:56:08.609Z",
+          "by": "Karen"
+        }
+      ]
+    }
+  ]
+}

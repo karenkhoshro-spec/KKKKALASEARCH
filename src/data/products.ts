@@ -11,6 +11,9 @@ export const products: Product[] = [
   {
     id: "p1",
     slug: "clear-storage-container-set",
+    productCode: "KS-101",
+    sku: "ASH-2001",
+    model: "Ashkan Storage 5P",
     name: { fa: "ست ظروف نگهداری غذا شفاف ۵ تکه", en: "Clear Food Storage Container Set (5pcs)", ar: "طقم أواني حفظ الطعام الشفافة (5 قطع)" },
     description: {
       fa: "ست ۵ تکه ظروف نگهداری غذا از جنس پلاستیک درجه یک، مقاوم در برابر نشتی و مناسب برای یخچال و فریزر.",
@@ -37,6 +40,9 @@ export const products: Product[] = [
   {
     id: "p2",
     slug: "color-storage-container-set",
+    productCode: "KS-102",
+    sku: "ASH-2002",
+    model: "Ashkan Storage 7P",
     name: { fa: "ست ظروف نگهداری غذا رنگی ۷ تکه", en: "Colorful Food Storage Set (7pcs)", ar: "طقم أواني حفظ ملونة (7 قطع)" },
     description: {
       fa: "ست ۷ تکه با رنگ‌بندی شاد، مناسب برای سازماندهی یخچال و کابینت آشپزخانه.",
@@ -57,6 +63,9 @@ export const products: Product[] = [
   {
     id: "p3",
     slug: "wheeled-laundry-basket",
+    productCode: "KS-103",
+    sku: "ASH-2003",
+    model: "Ashkan Laundry W40",
     name: { fa: "سبد لباس چرخدار بزرگ", en: "Large Wheeled Laundry Basket", ar: "سلة غسيل كبيرة بعجلات" },
     description: {
       fa: "سبد لباس با ظرفیت بالا و چرخ‌های نرم برای جابجایی راحت در خانه.",
@@ -81,6 +90,9 @@ export const products: Product[] = [
   {
     id: "p4",
     slug: "foldable-laundry-basket",
+    productCode: "KS-104",
+    sku: "ASH-2004",
+    model: "Ashkan Laundry Fold",
     name: { fa: "سبد لباس تاشو مسافرتی", en: "Foldable Travel Laundry Basket", ar: "سلة غسيل قابلة للطي" },
     description: {
       fa: "سبد لباس تاشو و سبک، مناسب برای فضاهای کوچک و مسافرت.",
@@ -101,6 +113,9 @@ export const products: Product[] = [
   {
     id: "p5",
     slug: "bucket-set-3pcs",
+    productCode: "KS-105",
+    sku: "ASH-2005",
+    model: "Ashkan Bucket 3S",
     name: { fa: "ست سطل رخت‌شویی ۳ سایز", en: "3-Size Laundry Bucket Set", ar: "طقم دلاء غسيل 3 مقاسات" },
     description: {
       fa: "سه سطل با اندازه‌های مختلف برای شست‌وشو، خیساندن و حمل آب.",
@@ -121,6 +136,9 @@ export const products: Product[] = [
   {
     id: "p6",
     slug: "bathroom-bucket-dipper",
+    productCode: "KS-106",
+    sku: "ASH-2006",
+    model: "Ashkan Bath Duo",
     name: { fa: "سطل و دلو حمام", en: "Bathroom Bucket & Dipper Set", ar: "طقم دلو الحمام" },
     description: {
       fa: "ست سطل و دلو حمام با طراحی مقاوم و رنگ‌بندی متنوع.",
@@ -140,6 +158,9 @@ export const products: Product[] = [
   {
     id: "p7",
     slug: "kitchen-spice-organizer",
+    productCode: "KS-107",
+    sku: "ASH-2007",
+    model: "Ashkan Rack 2T",
     name: { fa: "جا ادویه و ارگانایزر آشپزخانه", en: "Kitchen Spice Organizer Rack", ar: "منظم التوابل للمطبخ" },
     description: {
       fa: "قفسه چند طبقه برای نظم دادن به ادویه‌جات و وسایل کوچک آشپزخانه.",
@@ -160,6 +181,9 @@ export const products: Product[] = [
   {
     id: "p8",
     slug: "rolling-spice-cart",
+    productCode: "KS-108",
+    sku: "ASH-2008",
+    model: "Ashkan Cart 3T",
     name: { fa: "قفسه ادویه چرخدار ۳ طبقه", en: "3-Tier Rolling Spice Cart", ar: "عربة توابل متحركة 3 طبقات" },
     description: {
       fa: "قفسه چرخدار سه طبقه، مناسب برای آشپزخانه‌های کوچک و بزرگ.",
@@ -181,6 +205,9 @@ export const products: Product[] = [
   {
     id: "p9",
     slug: "hanger-set-12pcs",
+    productCode: "KS-109",
+    sku: "ASH-2009",
+    model: "Ashkan Hanger 12X",
     name: { fa: "ست چوب لباسی ۱۲ عددی", en: "12-Piece Hanger Set", ar: "طقم شماعات 12 قطعة" },
     description: {
       fa: "ست ۱۲ عددی چوب لباسی مقاوم و ضد لغزش برای انواع لباس.",
@@ -205,6 +232,9 @@ export const products: Product[] = [
   {
     id: "p10",
     slug: "coat-hanger-heavy-duty",
+    productCode: "KS-110",
+    sku: "ASH-2010",
+    model: "Ashkan Coat Pro",
     name: { fa: "چوب لباسی مخصوص کت و پالتو", en: "Heavy-Duty Coat Hanger", ar: "شماعة معطف قوية" },
     description: {
       fa: "چوب لباسی تقویت‌شده مخصوص کت و پالتوهای سنگین.",
@@ -225,6 +255,9 @@ export const products: Product[] = [
   {
     id: "p11",
     slug: "pedal-trash-bin-15l",
+    productCode: "KS-111",
+    sku: "ASH-2011",
+    model: "Ashkan Pedal 15L",
     name: { fa: "سطل زباله پدالی ۱۵ لیتری", en: "15L Pedal Trash Bin", ar: "سلة مهملات دواسة 15 لتر" },
     description: {
       fa: "سطل زباله پدالی با درب بی‌صدا و طراحی شیک برای آشپزخانه.",
@@ -245,6 +278,9 @@ export const products: Product[] = [
   {
     id: "p12",
     slug: "dual-compartment-trash-bin",
+    productCode: "KS-112",
+    sku: "ASH-2012",
+    model: "Ashkan Duo 2C",
     name: { fa: "سطل زباله دو طبقه تفکیک زباله", en: "Dual-Compartment Recycling Bin", ar: "سلة مهملات مزدوجة لفرز النفايات" },
     description: {
       fa: "سطل زباله دو بخشی برای تفکیک زباله تر و خشک به‌طور همزمان.",

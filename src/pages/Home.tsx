@@ -26,7 +26,7 @@ export default function Home() {
       </section>
 
       {/* 12. Prominent search hero */}
-      <section className="mb-12 text-center">
+      <section className="mb-16 text-center sm:mb-20">
         <h1 className="animate-fade-up text-2xl font-extrabold leading-tight sm:text-3xl md:text-4xl" style={{ color: "var(--text-primary)" }}>
           {t("home.heroTitle")}
         </h1>
@@ -44,15 +44,16 @@ export default function Home() {
             {t("home.categoriesTitle")}
           </h2>
         </div>
-        <div className="grid grid-cols-3 gap-3 sm:grid-cols-6 sm:gap-4">
+        {/* Category grid — slightly smaller cards/icons, breathing room after the search hero */}
+        <div className="grid grid-cols-3 gap-3.5 sm:grid-cols-6 sm:gap-4">
           {categories.map((cat) => (
             <Link
               key={cat.id}
               to={`/category/${cat.id}`}
-              className="glass animate-fade-up flex flex-col items-center gap-2 rounded-2xl px-2 py-4 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-glow)]"
+              className="ks-ring glass animate-fade-up flex flex-col items-center gap-2 rounded-2xl px-2 py-3 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-glow)]"
             >
-              <span className="text-2xl">{cat.icon}</span>
-              <span className="text-xs font-semibold leading-4 sm:text-sm" style={{ color: "var(--text-primary)" }}>
+              <span className="ks-icon-orb h-9 w-9 text-base sm:h-10 sm:w-10 sm:text-lg">{cat.icon}</span>
+              <span className="text-[11px] font-semibold leading-4 sm:text-xs" style={{ color: "var(--text-primary)" }}>
                 {cat.name[lang]}
               </span>
             </Link>

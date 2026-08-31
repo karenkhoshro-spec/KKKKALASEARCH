@@ -1,12 +1,20 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { X, Home, Grid3x3, Package, Heart, ShoppingCart, User, Info, Phone } from "lucide-react";
+import { X, Home, Grid3x3, Package, Heart, ShoppingCart, User, Info, Phone, ShieldCheck } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
+import Logo from "./Logo";
+import { useOverlayBackClose } from "../utils/overlayHistory";
 
 export default function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t, dir } = useLanguage();
+  const [contactOpen, setContactOpen] = useState(false);
   const closedTransform = dir === "rtl" ? "translateX(100%)" : "translateX(-100%)";
+
+  // Android/mobile back gesture closes the overlay first — never exits the SPA.
+  useOverlayBackClose(open, onClose);
+  useOverlayBackClose(contactOpen, () => setContactOpen(false));
 
   const links = [
     { to: "/", label: t("menu.home"), icon: Home },
@@ -27,6 +35,7 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
       <aside
         className="glass-strong fixed inset-y-0 start-0 z-[160] flex w-[85%] max-w-xs flex-col overflow-y-auto transition-transform duration-300 ease-out"
         style={{ transform: open ? "translateX(0)" : closedTransform }}
+        aria-hidden={!open}
       >
         <div className="flex items-center justify-between px-4 pt-4">
           <h2 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
@@ -84,10 +93,24 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
             <Info size={17} style={{ color: "var(--accent-1)" }} />
             {t("menu.about")}
           </div>
-          <div className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+          {/* Contact lives HERE (menu) — not at the bottom of the site */}
+          <button
+            onClick={() => setContactOpen(true)}
+            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-start text-sm font-medium transition-colors hover:bg-white/10"
+            style={{ color: "var(--text-primary)" }}
+          >
             <Phone size={17} style={{ color: "var(--accent-1)" }} />
             {t("menu.contact")}
-          </div>
+          </button>
+          <Link
+            to="/admin"
+            onClick={onClose}
+            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:bg-white/10"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            <ShieldCheck size={17} style={{ color: "var(--accent-1)" }} />
+            {t("menu.admin")}
+          </Link>
         </div>
 
         <div className="mt-4 flex flex-col gap-3 border-t px-4 py-4" style={{ borderColor: "var(--border-soft)" }}>
@@ -112,6 +135,44 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
           <span>Kala Search © {new Date().getFullYear()}</span>
         </div>
       </aside>
+
+      {/* Contact glass overlay — the only place contact info is shown */}
+      {contactOpen && (
+        <div
+          className="fixed inset-0 z-[210] flex items-center justify-center bg-black/55 px-4 backdrop-blur-sm"
+          onClick={() => setContactOpen(false)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="glass-strong animate-pop relative w-full max-w-sm rounded-3xl p-6 text-center shadow-[var(--shadow-glow)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl" style={{ background: "var(--chip-bg)" }}>
+              <Phone size={26} style={{ color: "var(--accent-1)" }} />
+            </div>
+            <h3 className="text-base font-bold" style={{ color: "var(--text-primary)" }}>
+              {t("footer.contact")}
+            </h3>
+            <p className="mt-2 text-sm leading-6" style={{ color: "var(--text-secondary)" }}>
+              {t("contact.body")}
+            </p>
+            <div className="mt-4 flex flex-col items-center gap-2">
+              <Logo compact />
+              <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                {t("contact.brandLine")}
+              </p>
+            </div>
+            <button
+              onClick={() => setContactOpen(false)}
+              className="glass mt-5 w-full rounded-2xl py-3 text-sm font-bold transition-transform hover:scale-[1.02] active:scale-95"
+              style={{ color: "var(--text-primary)" }}
+            >
+              {t("common.close")}
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -3,6 +3,7 @@ import { Globe2, Sparkles } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import type { Lang } from "../types";
 import Logo from "./Logo";
+import { useOverlayBackClose } from "../utils/overlayHistory";
 
 const LANG_OPTIONS: { code: Lang; labelKey: string; native: string }[] = [
   { code: "fa", labelKey: "welcome.fa", native: "فارسی" },
@@ -13,6 +14,9 @@ const LANG_OPTIONS: { code: Lang; labelKey: string; native: string }[] = [
 export default function LanguageWelcomeModal({ onDone }: { onDone: () => void }) {
   const { setLang, t, lang } = useLanguage();
   const [selected, setSelected] = useState<Lang>(lang);
+
+  // Mobile back gesture closes the language overlay instead of leaving the site.
+  useOverlayBackClose(true, onDone);
 
   return (
     <div className="fixed inset-0 z-[300] flex items-start justify-center overflow-y-auto bg-black/60 px-4 py-10 backdrop-blur-sm sm:items-center">
