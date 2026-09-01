@@ -158,8 +158,29 @@ describe("BEB5 category and search cards", () => {
     const card = read("src/components/ProductCard.tsx");
     const noImageBranch = card.slice(card.indexOf("if (noImage)"), card.indexOf("export default memo(ProductCard)"));
     expect(noImageBranch).toContain("ks-product-card-icon");
-    expect(noImageBranch).toContain("product.productCode");
+    // BEB5 final: neither the product code nor the stock status may be rendered
+    // by a card — on any surface.
+    expect(noImageBranch).not.toContain("product.productCode");
+    expect(noImageBranch).not.toContain("product.outOfStock");
     expect(noImageBranch).not.toContain("<img");
+    const wholeCard = read("src/components/ProductCard.tsx");
+    expect(wholeCard).not.toContain("product.outOfStock");
+    expect(wholeCard).not.toContain("product.productCode");
+  });
+
+  it("renders no availability badge on the image-card surfaces either", () => {
+    const html = shell(<ProductsPage />, "/products");
+    expect(html).toContain("ks-product-card");
+    expect(html).not.toContain("ناموجود");
+    expect(html).not.toContain("موجود در انبار");
+    expect(html).not.toContain("کد محصول");
+  });
+
+  it("keeps the product code and the availability status on Product Details", () => {
+    const details = read("src/pages/ProductDetails.tsx");
+    expect(details).toContain("product.productCode");
+    expect(details).toContain("t(\"product.productCode\")");
+    expect(details).toContain("product.outOfStock");
   });
 
   it("renders long lists in pages with an explicit counter", () => {

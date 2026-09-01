@@ -298,6 +298,52 @@ for (const mode of ["desktop", "mobile"]) {
     fs.writeFileSync(path.join(OUT, "image-requests.json"), JSON.stringify({ requests: page.imageRequests, imgs: imgReport }, null, 2));
   }
 
+  /* 2b. BEB5 final: a product card never shows the product code or the stock
+        status — those live on Product Details only. Checked on every surface
+        that renders cards, at this viewport (desktop and mobile both run). */
+  const cardAudit = await page.evaluate(() => {
+    const cards = [...document.querySelectorAll(".ks-category-product-grid .ks-product-card")];
+    const texts = cards.map((c) => c.textContent.replace(/\s+/g, " ").trim());
+    return {
+      cards: cards.length,
+      code: texts.filter((t) => /کد محصول|شناسه موجودی|productCode/i.test(t)).length,
+      stock: texts.filter((t) => /ناموجود|موجود در انبار|out of stock|in stock/i.test(t)).length,
+      sample: texts[0]?.slice(0, 60) ?? "",
+    };
+  });
+  check(`[${tag}] /products cards carry no product code and no stock status`, cardAudit.cards > 0 && cardAudit.code === 0 && cardAudit.stock === 0, `${cardAudit.cards} cards, code=${cardAudit.code}, stock=${cardAudit.stock} — e.g. "${cardAudit.sample}"`);
+
+  // and the same on two real category screens reached through the tiles
+  await goto(page, "/");
+  const catHrefs = await page.evaluate(() => [...new Set([...document.querySelectorAll(".ks-category-tile[href]")].map((a) => a.getAttribute("href")))].slice(0, 2));
+  for (const href of catHrefs) {
+    await goto(page, href);
+    const c = await page.evaluate(() => {
+      const grid = document.querySelector(".ks-category-product-grid");
+      const cards = [...(grid?.querySelectorAll(".ks-product-card") ?? [])];
+      const texts = cards.map((x) => x.textContent.replace(/\s+/g, " ").trim());
+      return {
+        cards: cards.length,
+        imgs: grid ? grid.querySelectorAll("img").length : -1,
+        icon: cards.filter((x) => x.querySelector(".ks-product-card-icon")).length,
+        code: texts.filter((t) => /کد محصول|شناسه موجودی/i.test(t)).length,
+        stock: texts.filter((t) => /ناموجود|موجود در انبار/i.test(t)).length,
+        heights: [...new Set(cards.map((x) => Math.round(x.getBoundingClientRect().height)))],
+      };
+    });
+    const label = `[${tag}] ${href.replace("/category/", "")} card contract`;
+    check(`${label}: name + icon only, no photo`, c.cards > 0 && c.imgs === 0 && c.icon === c.cards, `${c.cards} cards, img=${c.imgs}, icon=${c.icon}`);
+    check(`${label}: no code, no availability`, c.code === 0 && c.stock === 0, `code=${c.code}, stock=${c.stock}`);
+    check(`${label}: even card boxes (no leftover gap)`, c.heights.length <= 1, `heights ${c.heights.join("/")}`);
+  }
+  // Product Details must still carry both facts
+  await goto(page, "/product/6015010");
+  const detailAudit = await page.evaluate(() => {
+    const t = document.body.textContent.replace(/\s+/g, " ");
+    return { code: /کد محصول/.test(t), stock: /ناموجود|موجود در انبار/.test(t), sku: /شناسه موجودی/.test(t) };
+  });
+  check(`[${tag}] Product Details still shows code + availability`, detailAudit.code && detailAudit.stock, JSON.stringify(detailAudit));
+
   /* ------------------------------------------------- 3. sun / moon toggle */
   for (const theme of ["day", "night"]) {
     await goto(page, "/");

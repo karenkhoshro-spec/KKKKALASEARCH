@@ -10,13 +10,14 @@ import "./ProductCard.css";
  * Catalog card.
  *
  * Two presentations, deliberately:
- *  - `noImage` (category + search screens): the product photo must NOT appear
- *    there — the real mapped image belongs to Product Details (and to the cart /
- *    order lines). The card keeps what identifies the product: name, code,
- *    availability, price when allowed, and the category icon.
+ *  - `noImage` (category + search screens): nothing but the category icon and
+ *    the product name (plus price where the surface allows it). The product
+ *    photo, the "کد محصول" line and any availability badge are intentionally
+ *    absent from cards — BEB5 final edit: those belong to Product Details only.
  *  - default (all-products / wishlist): the real mapped image, requested
  *    through the shared fallback memory so the same asset is never downloaded
- *    three times across surfaces.
+ *    three times across surfaces — again with no availability badge, so every
+ *    card surface behaves the same way.
  *
  * Nothing is ever faked: when the product has no real mapping the card shows
  * the honest "no image" label and no request is made.
@@ -92,9 +93,10 @@ function ProductCard({
     </div>
   );
 
-  const code = product.productCode ?? product.sku ?? product.id;
-  // only reserve a second row when there is something to say there
-  const showInfoRow = (!hidePrice && product.price !== undefined) || !product.inStock;
+  // Cards never show the product code or the stock status: those are Product
+  // Details information. A second row is reserved only when there is a price.
+  const priceText = product.price !== undefined ? product.price.toLocaleString("fa-IR") : "";
+  const showPrice = !hidePrice && priceText !== "";
 
   if (noImage) {
     return (
@@ -114,24 +116,9 @@ function ProductCard({
           <span className="line-clamp-2 text-[13px] font-extrabold leading-5 sm:text-sm" style={{ color: "var(--text-primary)" }}>
             {name}
           </span>
-          <span className="mt-0.5 block truncate text-[11px] font-semibold" style={{ color: "var(--text-muted)" }}>
-            {t("product.productCode")}: <span dir="ltr">{code}</span>
-          </span>
-          {showInfoRow ? (
-            <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
-              {!hidePrice && product.price !== undefined ? (
-                <span className="text-[11px] font-bold sm:text-xs" style={{ color: "var(--accent-1)" }}>
-                  {product.price.toLocaleString("fa-IR")} {t("product.toman")}
-                </span>
-              ) : null}
-              {!product.inStock ? (
-                <span
-                  className="rounded-full px-2 py-0.5 text-[10px] font-black"
-                  style={{ background: "rgba(239,68,68,0.14)", color: "#b91c1c", border: "1px solid rgba(239,68,68,0.4)" }}
-                >
-                  {t("product.outOfStock")}
-                </span>
-              ) : null}
+          {showPrice ? (
+            <span className="mt-0.5 block text-[11px] font-bold sm:text-xs" style={{ color: "var(--accent-1)" }}>
+              {priceText} {t("product.toman")}
             </span>
           ) : null}
         </span>
@@ -157,11 +144,6 @@ function ProductCard({
           <div className="mt-1 text-xs font-bold sm:text-sm" style={{ color: product.price !== undefined ? "var(--accent-1)" : "var(--text-muted)" }}>
             {product.price !== undefined ? `${product.price.toLocaleString()} ${t("product.toman")}` : t("product.priceUnknown")}
           </div>
-        )}
-        {!minimal && !product.inStock && (
-          <span className="mt-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold" style={{ background: "var(--chip-bg)", color: "var(--danger)" }}>
-            {t("product.outOfStock")}
-          </span>
         )}
       </Link>
     </div>

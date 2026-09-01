@@ -96,11 +96,14 @@ describe("17-item UI polish", () => {
     );
     expect(html).toContain("ks-category-product-grid");
     expect(html).toContain("ks-product-card");
-    // BEB5: the real product photo belongs to Product Details only. Category
-    // cards carry identity (name + code) and the category icon — never an <img>.
+    // BEB5 final: category cards carry the product name and the category icon
+    // and nothing else — no photo, no "کد محصول", no availability status. Those
+    // two facts belong to Product Details only.
     expect(html).toContain("ks-product-card--no-image");
     expect(html).toContain("ks-product-card-icon");
-    expect(html).toContain("کد محصول");
+    expect(html).not.toContain("کد محصول");
+    expect(html).not.toContain("ناموجود");
+    expect(html).not.toContain("موجود در انبار");
     expect(html).not.toContain("ks-product-image-wrapper");
     expect(html).not.toMatch(/<img/);
     expect(html).not.toContain("is-minimal");

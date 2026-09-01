@@ -132,9 +132,36 @@ const num = (text) => {
   return digits ? Number(digits) : NaN;
 };
 
-async function newPage(browser) {
+/**
+ * Audit the product cards of whatever list screen is currently open.
+ * BEB5 final contract: a card carries the category icon + the product name and
+ * nothing else — no product photo, no "کد محصول", no availability status. Those
+ * two facts belong to Product Details only.
+ */
+async function auditCards(pg) {
+  return pg.evaluate(() => {
+    const grid = document.querySelector(".ks-category-product-grid");
+    const cards = [...(grid?.querySelectorAll(".ks-product-card") ?? [])];
+    const texts = cards.map((c) => c.textContent.replace(/\s+/g, " ").trim());
+    const count = (re) => texts.filter((t) => re.test(t)).length;
+    return {
+      cards: cards.length,
+      images: grid ? grid.querySelectorAll("img").length : -1,
+      withIcon: cards.filter((c) => c.querySelector(".ks-product-card-icon")).length,
+      withName: texts.filter((t) => t.length > 2).length,
+      withCode: count(/کد محصول|شناسه موجودی|productCode/i),
+      withStock: count(/ناموجود|موجود در انبار|out of stock|in stock/i),
+      gridImgs: grid ? [...grid.querySelectorAll("img")].length : -1,
+      sample: texts[0]?.slice(0, 80) ?? "",
+      tallest: Math.max(0, ...cards.map((c) => Math.round(c.getBoundingClientRect().height))),
+      shortest: Math.min(9999, ...cards.map((c) => Math.round(c.getBoundingClientRect().height))),
+    };
+  });
+}
+
+async function newPage(browser, viewport = { width: 1280, height: 900, deviceScaleFactor: 2 }) {
   const page = await browser.newPage();
-  await page.setViewport({ width: 1280, height: 900, deviceScaleFactor: 2 });
+  await page.setViewport(viewport);
   const remote = [];
   await page.setRequestInterception(true);
   page.on("request", (req) => {
@@ -190,24 +217,41 @@ const browser = await launch();
 console.log(`\nKalaSearch E2E journey — ${await browser.version()}\n  target: ${BASE}\n  shots : ${OUT}\n`);
 const page = await newPage(browser);
 
-/* 1. category screen: identity only, never a product photo */
-await go(page, "/category/shopping-basket");
-const category = await page.evaluate(() => {
-  const grid = document.querySelector(".ks-category-product-grid");
-  const cards = [...(grid?.querySelectorAll(".ks-product-card") ?? [])];
-  return {
-    cards: cards.length,
-    images: grid ? grid.querySelectorAll("img").length : -1,
-    withIcon: cards.filter((c) => c.querySelector(".ks-product-card-icon")).length,
-    withCode: cards.filter((c) => c.textContent.includes("کد محصول")).length,
-    sample: cards[0]?.textContent?.replace(/\s+/g, " ").trim().slice(0, 90) ?? "",
-  };
-});
-step("[category] product cards rendered", category.cards > 0, `${category.cards} cards — e.g. "${category.sample}"`);
-step("[category] cards contain NO product image", category.cards > 0 && category.images === 0, `img elements inside grid: ${category.images}`);
-step("[category] cards show the category icon + code", category.withIcon === category.cards && category.withCode === category.cards, `icon ${category.withIcon}/${category.cards}, code ${category.withCode}/${category.cards}`);
+/* 1. category screens: identity only — no photo, no code, no stock status.
+      Several real categories are opened through the tiles themselves, desktop
+      and mobile, because the rule must hold everywhere a card is rendered. */
+await go(page, "/");
+const tileHrefs = await page.evaluate(() =>
+  [...document.querySelectorAll(".ks-category-tile[href]")].map((a) => a.getAttribute("href")).filter(Boolean),
+);
+const others = [...new Set(tileHrefs)].filter((h) => h !== "/category/shopping-basket").slice(0, 4);
+const toAudit = [...others, "/category/shopping-basket"]; // ends on the screen the rest of the journey buys from
+console.log(` auditing ${toAudit.length} category screens: ${toAudit.join(", ")}\n`);
+for (const [i, href] of toAudit.entries()) {
+  await go(page, href);
+  const c = await auditCards(page);
+  const tag = `[category ${i + 1}] ${href.replace("/category/", "")}`;
+  step(`${tag} product cards rendered`, c.cards > 0, `${c.cards} cards @ ${c.shortest}-${c.tallest}px — e.g. "${c.sample}"`);
+  step(`${tag} cards contain NO product image`, c.cards > 0 && c.images === 0, `img elements inside grid: ${c.images}`);
+  step(`${tag} every card keeps its category icon and name`, c.withIcon === c.cards && c.withName === c.cards, `icon ${c.withIcon}/${c.cards}, name ${c.withName}/${c.cards}`);
+  step(`${tag} NO "کد محصول" text anywhere in the cards`, c.withCode === 0, `cards showing a code: ${c.withCode}`);
+  step(`${tag} NO availability badge in the cards`, c.withStock === 0, `cards showing stock: ${c.withStock}`);
+}
 step("[category] no image request was made for cards", page.remoteImageRequests.length === 0, `${page.remoteImageRequests.length} remote image request(s)`);
 await shot(page, "01-category");
+
+/* 1b. the same contract on a phone */
+const mob = await newPage(browser, { width: 390, height: 844, deviceScaleFactor: 2 });
+for (const href of ["/category/shopping-basket", tileHrefs[1] ?? "/category/picnic-basket"]) {
+  await go(mob, href);
+  const c = await auditCards(mob);
+  const tag = `[category mobile] ${href.replace("/category/", "")}`;
+  step(`${tag} cards render without image/code/stock`, c.cards > 0 && c.images === 0 && c.withCode === 0 && c.withStock === 0, `${c.cards} cards, img=${c.images}, code=${c.withCode}, stock=${c.withStock}`);
+  step(`${tag} cards stay uniform after the removal (no leftover empty space)`, c.tallest - c.shortest <= 2, `heights ${c.shortest}-${c.tallest}px`);
+}
+await shot(mob, "01b-category-mobile");
+await mob.close();
+await go(page, "/category/shopping-basket");
 
 /* 2. product details: the real mapped image */
 const href = await page.evaluate(() => document.querySelector('.ks-category-product-grid a[href*="/product/"]')?.getAttribute("href") ?? "");
@@ -223,12 +267,16 @@ const detail = await page.evaluate(() => {
     ashkanBtn: [...document.querySelectorAll("a")].find((a) => a.textContent.includes("اشکان پلاستیک"))?.href ?? "",
     colors: [...document.querySelectorAll("button")].filter((b) => b.querySelector("span[style*='background']") && b.textContent.trim().length <= 14).map((b) => b.textContent.trim()),
     title: document.querySelector("h1,h2")?.textContent?.trim().slice(0, 60) ?? "",
+    text: document.body.textContent.replace(/\s+/g, " ").trim(),
   };
 });
 const askedFor = decodeURIComponent(detail.src.includes("url=") ? detail.src.split("url=")[1].split("&")[0] : detail.src);
 step("[product] real mapped image is painted", detail.painted && detail.w > 60, `${detail.w}×${detail.h} from ${askedFor.slice(0, 80)}`);
 step("[product] request carries the real Ashkan asset URL", /ashkanplastic\.com\/wp-content\/uploads\//.test(askedFor), askedFor.slice(0, 100));
 step("[product] Ashkan link opens the real product URL in a new tab", /^https:\/\/ashkanplastic\.com\/product\/\d+\/$/.test(detail.ashkanBtn), detail.ashkanBtn || "no button (no real link in data)");
+// the two facts removed from the cards must still be readable here
+step("[product] details screen still shows the product code", /کد محصول/.test(detail.text), (detail.text.match(/کد محصول[^۰-۹٠-٩\d]{0,4}\d+/) ?? ["(not found)"])[0]);
+step("[product] details screen still shows the availability status", /ناموجود|موجود در انبار/.test(detail.text), (detail.text.match(/(ناموجود|موجود در انبار)/) ?? ["(not found)"])[0]);
 await shot(page, "02-product");
 
 const categoryHrefs = await page.evaluate(() => [...document.querySelectorAll('.ks-category-product-grid a[href*="/product/"]')].map((a) => a.getAttribute("href")));

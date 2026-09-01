@@ -93,7 +93,9 @@ node scripts/qa-browser.mjs   # 76 checks: geometry/paint, desktop + mobile
 
 ### The non-negotiable journey (customer → admin)
 
-Category card (must contain **no product image**) → Product Details (real mapped image +
+Category card (**no product image**, and since the final edit **no «کد محصول» and no
+availability badge** either — a card is the category icon plus the product name; the code and
+the stock status are Product Details information only) → Product Details (real mapped image +
 Ashkan CTA) → colour + quantity → cart → checkout form → `POST /api/orders` → **201 + order
 number** → admin login `karen` → `/admin/orders` **must list that order** with: order number,
 customer name, phone, province, city, postal code, address, order date, order status, payment
