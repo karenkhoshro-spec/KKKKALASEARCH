@@ -40,6 +40,8 @@ export default function AdminLoginPage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <label className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>{t("admin.username")}</label>
           <input
+            id="admin-username"
+            name="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             autoComplete="username"
@@ -58,6 +60,8 @@ export default function AdminLoginPage() {
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
             <input
+              id="admin-password"
+              name="password"
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}

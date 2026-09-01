@@ -782,6 +782,31 @@ html[data-theme="light"] .ks-menu-purple-btn {
   color: #ffffff;
 }
 
+/* ---------------------------------------------------------------------------
+   Touch ergonomics (measured in a real browser, not guessed): the header
+   actions paint at 2.35rem = 37.6px, which is below the 44px minimum Android
+   and iOS recommend, and the theme switch is only 29.6px tall. On phones we
+   grow the hit areas — the theme switch via an invisible ::after so the
+   visual size of the track stays exactly as designed.
+   --------------------------------------------------------------------------- */
+@media (max-width: 639.98px) {
+  .ks-crystal-action-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .ks-theme-control {
+    position: relative;
+  }
+
+  .ks-theme-control::after {
+    content: "";
+    position: absolute;
+    inset: -0.75rem -0.4rem;
+    border-radius: 9999px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ks-logo-particles i,
   .ks-theme-knob {

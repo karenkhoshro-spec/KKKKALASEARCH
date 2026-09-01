@@ -1,3 +1,4 @@
+import ProductImage from "./ProductImage";
 import { Link } from "react-router-dom";
 import { PackageSearch, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -111,17 +112,12 @@ export default function CustomerOrdersPanel() {
                 {order.items.map((item, index) => (
                   <div key={`${item.sku}-${index}`} className="flex items-center gap-2.5">
                     <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg" style={{ background: "var(--chip-bg)" }}>
-                      {item.image ? (
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="h-full w-full object-contain"
-                          loading="lazy"
-                          referrerPolicy="no-referrer"
-                        />
-                      ) : (
-                        <PackageSearch size={16} className="m-auto mt-4" style={{ color: "var(--text-muted)" }} />
-                      )}
+                      <ProductImage
+                        src={item.image}
+                        alt={item.name}
+                        size={144}
+                        fallback={<PackageSearch size={16} style={{ color: "var(--text-muted)" }} />}
+                      />
                     </div>
                     <div className="min-w-0 flex-1 text-[11px] leading-5" style={{ color: "var(--text-primary)" }}>
                       <p className="truncate font-bold">{item.name}</p>

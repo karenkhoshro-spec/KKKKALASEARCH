@@ -1,5 +1,6 @@
 import type { CartItem } from "../types";
 import { getProductById } from "../data/products";
+import { firstMappedImageUrl } from "../data/productImageResolver";
 
 export const ORDER_STATUSES = ["registered", "preparing", "ready_pickup", "shipping", "delivered"] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
@@ -88,7 +89,15 @@ export function buildOrderItems(items: CartItem[]): OrderItemPayload[] {
       color: item.variation?.color ?? variation?.colorName ?? "",
       colorCode: item.variation?.colorHex ?? variation?.color ?? "",
       quantity: item.quantity,
-      image: item.variation?.image || variation?.image || product?.productImageUrl || product?.image || item.image || "",
+      // The admin and the customer panel paint this field directly, so it must be
+      // the real mapped URL (the CSV only carries a bare file name).
+      image: firstMappedImageUrl(
+        item.variation?.image,
+        variation?.image,
+        product?.productImageUrl,
+        product?.image,
+        item.image,
+      ) ?? "",
       unitPrice,
       price: unitPrice,
       lineTotal: unitPrice * item.quantity,

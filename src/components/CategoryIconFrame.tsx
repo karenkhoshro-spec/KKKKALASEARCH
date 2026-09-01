@@ -42,7 +42,7 @@ export default function CategoryIconFrame({
     <div className={`ks-icon-3d ks-icon-tone-${tone} ks-category-icon-wrapper ${className}`}>
       <span className="ks-icon-orbit" aria-hidden="true" />
       <span className="ks-icon-face" aria-hidden="true" />
-      <CategoryIcon id={id} size={size} className="relative z-[1] h-[62%] w-[62%] object-contain" />
+      <CategoryIcon id={id} size={size} className="relative z-[1] h-[68%] w-[68%] object-contain" />
     </div>
   );
 }

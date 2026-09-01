@@ -5,6 +5,7 @@ import { useLanguage } from "../../i18n/LanguageContext";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import { fetchAdminOrders, patchOrderStatus, ORDER_STATUSES, type StoredOrder, type OrderStatus } from "../../utils/ordersApi";
 import { downloadStoredOrderPdf, orderPdfLabels, viewStoredOrderPdf } from "../../utils/orderPdf";
+import ProductImage from "../../components/ProductImage";
 
 export default function AdminOrdersPage() {
   const { t, dir, lang } = useLanguage();
@@ -17,9 +18,23 @@ export default function AdminOrdersPage() {
 
   useEffect(() => {
     if (!token) return;
+    let cancelled = false;
     fetchAdminOrders(token)
-      .then(setOrders)
-      .catch(() => setError(t("errors.generic")));
+      .then((list) => {
+        if (cancelled) return;
+        setOrders(list);
+        setError("");
+      })
+      .catch(() => {
+        if (cancelled) return;
+        // A rejected fetch (not a 401/empty list) means the orders API itself is
+        // not reachable — say so, otherwise an empty screen looks like
+        // "the customer's order disappeared".
+        setError(t("admin.apiUnavailable"));
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [token, t]);
 
   const filtered = useMemo(() => {
@@ -95,10 +110,12 @@ export default function AdminOrdersPage() {
         style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
       />
 
-      {error && <p className="mb-3 text-xs" style={{ color: "var(--danger)" }}>{error}</p>}
+      {error && orders.length > 0 ? <p className="mb-3 text-xs" style={{ color: "var(--danger)" }}>{error}</p> : null}
 
       {filtered.length === 0 ? (
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("admin.noOrders")}</p>
+        <p className="text-sm" style={{ color: error ? "var(--danger)" : "var(--text-muted)" }}>
+          {error || t("admin.noOrders")}
+        </p>
       ) : (
         <div className="flex flex-col gap-3">
           {filtered.map((order) => {
@@ -169,17 +186,19 @@ export default function AdminOrdersPage() {
                     <div className="flex flex-col gap-2">
                       {order.items.map((item, index) => (
                         <div key={`${item.sku}-${index}`} className="flex items-center gap-3 rounded-xl p-2" style={{ background: "var(--chip-bg)" }}>
-                          <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl">
-                            {item.image ? (
-                              <img src={item.image} alt="" className="h-full w-full object-contain" referrerPolicy="no-referrer" />
-                            ) : (
-                              <PackageSearch size={18} className="m-auto mt-4" />
-                            )}
+                          <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl" style={{ background: "var(--surface)" }}>
+                            <ProductImage
+                              src={item.image}
+                              alt={item.name || item.model || item.productId}
+                              size={160}
+                              fallback={<PackageSearch size={18} />}
+                            />
                           </div>
                           <div className="min-w-0 flex-1 text-xs" style={{ color: "var(--text-primary)" }}>
                             <p className="truncate font-bold">{item.name || item.model}</p>
-                            <p className="flex flex-wrap items-center gap-x-2 gap-y-1" style={{ color: "var(--text-muted)" }}>
+                            <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1" style={{ color: "var(--text-muted)" }}>
                               <span>{t("admin.productId")}: <span dir="ltr">{item.productId || "-"}</span></span>
+                              <span aria-hidden="true">·</span>
                               <span>{t("product.productCode")}: <span dir="ltr">{item.productCode || "-"}</span></span>
                             </p>
                             <p style={{ color: "var(--text-muted)" }}>{t("product.sku")}: <span dir="ltr">{item.sku || "-"}</span></p>

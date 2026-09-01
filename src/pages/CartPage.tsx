@@ -4,8 +4,8 @@ import { useLanguage } from "../i18n/LanguageContext";
 import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
 import { goBack } from "../utils/safeBack";
-import { fullImageChain } from "../data/productImageResolver";
 import { getProductById } from "../data/products";
+import ProductImage from "../components/ProductImage";
 import OverlayHeader from "../components/OverlayHeader";
 import CustomerOrdersPanel from "../components/CustomerOrdersPanel";
 
@@ -90,7 +90,6 @@ export default function CartPage() {
           </h2>
           <div className="flex flex-col gap-2.5">
             {items.map((item) => {
-              const imageSrc = item.image ? fullImageChain(item.image, 240)[0] : undefined;
               const product = getProductById(item.productId);
               const sku = item.variation?.sku ?? product?.sku;
               const productCode = product?.productCode ?? item.productId;
@@ -107,17 +106,7 @@ export default function CartPage() {
                   style={{ border: "1px solid var(--border-soft)" }}
                 >
                   <div className="product-media h-16 w-16 shrink-0 overflow-hidden rounded-xl sm:h-[4.5rem] sm:w-[4.5rem]">
-                    {imageSrc ? (
-                      <img
-                        src={imageSrc}
-                        alt={item.name}
-                        className="h-full w-full object-contain"
-                        loading="lazy"
-                        referrerPolicy="no-referrer"
-                      />
-                    ) : (
-                      <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>{t("product.imageUnavailable")}</span>
-                    )}
+                    <ProductImage src={item.image} alt={item.name} size={240} />
                   </div>
                   <div className="min-w-0 flex-1 text-[11px] leading-5 sm:text-xs">
                     <h3 className="truncate text-sm font-bold" style={{ color: "var(--text-primary)" }}>
@@ -126,9 +115,12 @@ export default function CartPage() {
                     {model && model !== item.name && (
                       <p style={{ color: "var(--text-muted)" }}>{model}</p>
                     )}
-                    <p style={{ color: "var(--text-muted)" }}>
-                      {t("product.productCode")}: {productCode}
-                      {sku ? ` · ${t("product.sku")}: ${sku}` : ""}
+                    <p className="flex flex-wrap items-center gap-x-2" style={{ color: "var(--text-muted)" }}>
+                      <span>{t("product.productCode")}: <span dir="ltr">{productCode}</span></span>
+                      {product && product.id !== productCode ? (
+                        <span>{t("admin.productId")}: <span dir="ltr">{product.id}</span></span>
+                      ) : null}
+                      {sku ? <span>{t("product.sku")}: <span dir="ltr">{sku}</span></span> : null}
                     </p>
                     {color ? (
                       <p className="flex items-center gap-1.5 font-semibold" style={{ color: "var(--accent-1)" }}>
@@ -155,6 +147,18 @@ export default function CartPage() {
                         {t("product.variation")}: {variationName}
                       </p>
                     ) : null}
+                    <p className="mt-0.5 flex flex-wrap items-center gap-1.5">
+                      <span
+                        className="rounded-full px-2 py-0.5 text-[10px] font-black"
+                        style={
+                          (product?.variations?.find((entry) => entry.id === item.variation?.id)?.inStock ?? product?.inStock ?? true)
+                            ? { background: "rgba(34,197,94,0.14)", color: "#15803d", border: "1px solid rgba(34,197,94,0.4)" }
+                            : { background: "rgba(239,68,68,0.14)", color: "#b91c1c", border: "1px solid rgba(239,68,68,0.4)" }
+                        }
+                      >
+                        {(product?.variations?.find((entry) => entry.id === item.variation?.id)?.inStock ?? product?.inStock ?? true) ? t("product.inStock") : t("product.outOfStock")}
+                      </span>
+                    </p>
                     <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 font-bold" style={{ color: "var(--text-primary)" }}>
                       <span>{t("cart.quantity")}: {item.quantity}</span>
                       {unit !== undefined ? (

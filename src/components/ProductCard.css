@@ -358,3 +358,68 @@ html[data-theme="light"] .ks-product-details-url-cta:hover {
   outline: 2px solid var(--accent-1);
   outline-offset: 2px;
 }
+
+/* ---------------------------------------------------------------------------
+   Image-free catalogue row (category + search screens).
+   The product photo belongs to Product Details; these rows carry identity
+   only — icon, name, code, price/availability — so a 100-item category paints
+   100 tiny rows instead of downloading 100 product photos.
+   --------------------------------------------------------------------------- */
+.ks-product-card--no-image {
+  /* the card base class is column-flowed for image cards; these are rows */
+  flex-direction: row;
+  align-items: center;
+  text-align: start;
+  gap: 0.6rem;
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+  background: var(--surface);
+  border: 1.2px solid var(--border-soft);
+  box-shadow: inset 0 1px 1.5px rgba(255, 255, 255, 0.06);
+  text-decoration: none;
+}
+
+.ks-product-card--no-image:hover {
+  background: var(--surface-strong);
+  border-color: rgba(168, 85, 247, 0.45);
+  box-shadow: 0 6px 18px var(--shadow-glow);
+}
+
+.ks-product-card--no-image:focus-visible {
+  outline: 2px solid var(--accent-1);
+  outline-offset: 2px;
+}
+
+html[data-theme="light"] .ks-product-card--no-image {
+  background: #ffffff;
+  border-color: rgba(203, 213, 225, 0.85);
+  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.04);
+}
+
+html[data-theme="light"] .ks-product-card--no-image:hover {
+  border-color: rgba(147, 51, 234, 0.4);
+  box-shadow: 0 4px 14px rgba(148, 163, 184, 0.16);
+}
+
+/* No animated halo on list icons: 24+ filtered SVG filters per screen were a
+   measurable paint cost, and the glow is a category-tile feature. */
+.ks-product-card--no-image .ks-category-icon {
+  filter: none;
+}
+
+/* Offscreen cards skip layout and paint (347 products on /products). */
+.ks-category-product-grid > .ks-product-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 210px;
+}
+
+.ks-category-product-grid > .ks-product-card--no-image {
+  contain-intrinsic-size: auto 68px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ks-product-card--no-image {
+    transition: none;
+  }
+}

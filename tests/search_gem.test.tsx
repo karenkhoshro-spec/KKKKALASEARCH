@@ -27,7 +27,7 @@ describe("KalaSearch Search UI — Purple Gemstone & Crystal Glassmorphism", () 
     expect(html).toContain("ks-gem-facet-cut");
   });
 
-  it("renders SearchPage with overlay header, category indicator, and catalog image cards", () => {
+  it("renders SearchPage with overlay header, category indicator, and image-free result cards", () => {
     const html = renderToString(
       <MemoryRouter initialEntries={["/search?q=لگن"]}>
         <LanguageProvider>
@@ -43,7 +43,11 @@ describe("KalaSearch Search UI — Purple Gemstone & Crystal Glassmorphism", () 
     expect(html).toContain("مشاهده دسته کامل");
     expect(html).toContain("ks-category-product-grid");
     expect(html).toContain("ks-product-card");
-    expect(html).toContain("ks-product-image-wrapper");
+    // BEB5: search results are identity-only cards too — no product image here,
+    // so a category screen can never inherit a picture from a search card.
+    expect(html).toContain("ks-product-card--no-image");
+    expect(html).not.toContain("ks-product-image-wrapper");
+    expect(html).not.toMatch(/<img/);
     expect(html).not.toContain("is-minimal");
   });
 

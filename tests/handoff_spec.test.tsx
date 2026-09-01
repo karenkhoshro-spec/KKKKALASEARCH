@@ -179,13 +179,54 @@ describe("handoff spec — navigation, cards, footer", () => {
     const ring = navCss.slice(start, start + 900);
     expect(ring).toContain("inset: 0;");
     expect(ring).toContain("border-radius: inherit;");
-    expect(ring).toContain("padding: 1.6px;");
+    // one uniform band width on all four sides, thin enough to read as a ring
+    const padding = ring.match(/padding:\s*([^;]+);/)?.[1]?.trim() ?? "";
+    const parts = padding.split(/\s+/).filter(Boolean);
+    expect(parts.length).toBe(1);
+    const band = parseFloat(parts[0]);
+    expect(Number.isFinite(band)).toBe(true);
+    expect(band).toBeGreaterThan(0.5);
+    expect(band).toBeLessThanOrEqual(2);
     expect(ring).toContain("mask-composite: exclude");
     expect(ring).toContain("pointer-events: none;");
     expect(ring).not.toMatch(/inset:\s*-/); // never escapes the card bounds
     // day + night both defined, and motion is honoured
     expect(navCss).toContain('html[data-theme="light"] .ks-icon-3d::before');
     expect(navCss).toContain("@media (prefers-reduced-motion: reduce)");
+
+    // BEB5: the glow must hug the icon plate, not bleed over the tile. Every
+    // outer shadow on the plate keeps a short radius, and the glyph filter is a
+    // tight trace of the shape rather than a square halo.
+    const plate = navCss.slice(navCss.indexOf(".ks-icon-3d {"), navCss.indexOf(".ks-icon-3d::before"));
+    const plateHalos = [...plate.matchAll(/0 0 (\d+)px/g)].map((m) => Number(m[1]));
+    expect(plateHalos.length).toBeGreaterThan(0);
+    for (const halo of plateHalos) {
+      expect(halo).toBeLessThanOrEqual(12);
+    }
+    // base (idle) glyph halo only — hover emphasis is a separate, allowed rule
+    const glyphStart = navCss.indexOf(".ks-category-icon {");
+    const glyph = navCss.slice(glyphStart, navCss.indexOf("}", glyphStart));
+    const glyphShadows = [...glyph.matchAll(/drop-shadow\(([^)]*)\)/g)].map((m) => m[1].trim());
+    expect(glyphShadows.length).toBeGreaterThan(0);
+    for (const shadow of glyphShadows) {
+      const [x, y, blur] = shadow.split(/\s+/).map((v) => parseFloat(v));
+      expect(Math.abs(x)).toBeLessThanOrEqual(1); // traces the shape, no square halo
+      expect(blur).toBeLessThanOrEqual(4);
+      expect(Number.isFinite(y)).toBe(true);
+    }
+    // hover / pressed emphasis must hug the icon too — no wide cloud
+    const hoverStart = navCss.indexOf(".ks-category-tile:hover .ks-category-icon");
+    const hover = navCss.slice(hoverStart, navCss.indexOf("}", hoverStart));
+    const hoverHalos = [...hover.matchAll(/drop-shadow\(0 0 (\d+)px/g)].map((m) => Number(m[1]));
+    expect(hoverHalos.length).toBeGreaterThan(0);
+    for (const halo of hoverHalos) {
+      expect(halo).toBeLessThanOrEqual(8);
+    }
+
+    // decorative layers inside the plate must not join the flex layout
+    const orbit = navCss.slice(navCss.indexOf(".ks-icon-orbit,"), navCss.indexOf(".ks-icon-orbit {"));
+    expect(orbit).toContain("position: absolute;");
+    expect(orbit).toContain("inset: 0;");
   });
 
   it("footer quick access is one chip per destination, product list removed", () => {

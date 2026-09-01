@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect } from "react";
+import { useDeferredValue, useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { Sparkles, Search, Tag } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -6,7 +6,7 @@ import { useListContext } from "../context/ListContext";
 import { searchProducts } from "../data/products";
 import { goBack } from "../utils/safeBack";
 import { categories } from "../data/categories";
-import ProductCard from "../components/ProductCard";
+import ProductGrid from "../components/ProductGrid";
 import OverlayHeader from "../components/OverlayHeader";
 
 export default function SearchPage() {
@@ -19,18 +19,19 @@ export default function SearchPage() {
 
   // Perf: keep typing responsive — the full-catalog scan runs at deferred priority
   const deferredQuery = useDeferredValue(query);
-  const results = searchProducts(deferredQuery, lang);
+  const results = useMemo(() => searchProducts(deferredQuery, lang), [deferredQuery, lang]);
 
   useEffect(() => {
     setListContext({ type: "search", query });
   }, [query, setListContext]);
 
   // Identify if query directly corresponds to a known primary category
-  const matchedCategory = categories.find(
-    (c) =>
-      c.name.fa.includes(query.trim()) ||
-      (query.trim().length >= 3 && c.name.fa.toLowerCase().includes(query.trim().toLowerCase()))
-  );
+  const matchedCategory = useMemo(() => {
+    const needle = query.trim();
+    if (!needle) return undefined;
+    const lower = needle.toLowerCase();
+    return categories.find((c) => c.name.fa.includes(needle) || (needle.length >= 3 && c.name.fa.toLowerCase().includes(lower)));
+  }, [query]);
 
   const handleBack = () => {
     goBack(navigate);
@@ -100,11 +101,7 @@ export default function SearchPage() {
           </p>
         </div>
       ) : (
-        <div className="ks-category-product-grid">
-          {results.map((p) => (
-            <ProductCard key={p.id} product={p} hidePrice />
-          ))}
-        </div>
+        <ProductGrid products={results} hidePrice noImage />
       )}
     </div>
   );

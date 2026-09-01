@@ -87,7 +87,7 @@ describe("17-item UI polish", () => {
     expect(backIndex).toBeGreaterThan(titleIndex);
   });
 
-  it("renders category product cards as independent bordered cards with images", () => {
+  it("renders category product cards as independent bordered cards WITHOUT product images", () => {
     const html = shell(
       <Routes>
         <Route path="/category/:categoryId" element={<CategoryPage />} />
@@ -96,7 +96,13 @@ describe("17-item UI polish", () => {
     );
     expect(html).toContain("ks-category-product-grid");
     expect(html).toContain("ks-product-card");
-    expect(html).toContain("ks-product-image-wrapper");
+    // BEB5: the real product photo belongs to Product Details only. Category
+    // cards carry identity (name + code) and the category icon — never an <img>.
+    expect(html).toContain("ks-product-card--no-image");
+    expect(html).toContain("ks-product-card-icon");
+    expect(html).toContain("کد محصول");
+    expect(html).not.toContain("ks-product-image-wrapper");
+    expect(html).not.toMatch(/<img/);
     expect(html).not.toContain("is-minimal");
   });
 
@@ -144,7 +150,10 @@ describe("17-item UI polish", () => {
     expect(html).toContain('type="password"');
     expect(html).toContain("left-2.5");
     expect(html).toContain("rounded-[2rem]");
-    expect(html).not.toContain("mkhoshrou");
+    // the real secret lives in .env.local only; assert the rendered login page never
+    // leaks it (skipped silently when the env var is not set, e.g. in CI)
+    const adminSecret = String(process.env.ADMIN_PASSWORD || "").trim();
+    if (adminSecret) expect(html).not.toContain(adminSecret);
     expect(html).not.toContain("ADMIN_PASSWORD");
   });
 

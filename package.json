@@ -8,7 +8,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "qa:boot": "node scripts/qa-app-boot.mjs"
+    "qa:boot": "node scripts/qa-app-boot.mjs",
+    "qa:journey": "node scripts/qa-journey.mjs",
+    "qa:api": "node scripts/qa-api.mjs",
+    "qa:perf": "node scripts/qa-perf.mjs"
   },
   "dependencies": {
     "clsx": "2.1.1",

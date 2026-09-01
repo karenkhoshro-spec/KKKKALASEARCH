@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { FileDown, PackageCheck, Send } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -10,7 +10,8 @@ import { orderPdfLabels, storedOrderToPdfData } from "../utils/orderPdf";
 import { deliverOrderToSeller } from "../utils/sellerDelivery";
 import { normalizeIranLocal, isValidIranLocal, toFullIranPhone } from "../utils/phone";
 import { goBack } from "../utils/safeBack";
-import { buildOrderItems, createRemoteOrder, type PaymentStatus } from "../utils/ordersApi";
+import { buildOrderItems, createRemoteOrder, type PaymentStatus, type StoredOrder } from "../utils/ordersApi";
+import type { CartItem } from "../types";
 import OverlayHeader from "../components/OverlayHeader";
 
 export default function CheckoutPage() {
@@ -30,14 +31,51 @@ export default function CheckoutPage() {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<{ name?: string; phone?: string; address?: string; province?: string; city?: string; postalCode?: string; email?: string }>({});
   const [submitting, setSubmitting] = useState(false);
+  const [orderError, setOrderError] = useState("");
+  const [pdfState, setPdfState] = useState<"idle" | "pending" | "ready" | "failed">("idle");
   const [result, setResult] = useState<{
     orderNumber: string;
     date: string;
-    pdfBlob: Blob;
+    pdfBlob: Blob | null;
     sent: boolean;
     paymentStatus: PaymentStatus;
     status: string;
   } | null>(null);
+  // snapshot of the stored order + its lines, so the PDF can be (re)generated
+  // after the cart has already been cleared
+  const docSourceRef = useRef<{ order: StoredOrder; lines: CartItem[]; total: number; date: string; phone: string; notes: string; name: string } | null>(null);
+
+  /**
+   * Documents (PDF + optional seller delivery) are generated AFTER the order is
+   * stored and confirmed. A slow or failing PDF must never look like a lost
+   * order — the order number and the admin record already exist by then.
+   */
+  const generateDocuments = async () => {
+    const source = docSourceRef.current;
+    if (!source) return;
+    setPdfState("pending");
+    try {
+      const pdfBlob = await generateOrderPdf(
+        storedOrderToPdfData(source.order, dir, t("cart.toman") || "تومان", orderPdfLabels(t)),
+      );
+      const delivery = await deliverOrderToSeller(pdfBlob, {
+        orderNumber: source.order.orderNumber,
+        date: source.date,
+        customerName: source.name,
+        phone: source.phone,
+        notes: source.notes,
+        items: source.lines,
+        total: source.total,
+      });
+      setResult((prev) => (prev ? { ...prev, pdfBlob, sent: delivery.sent } : prev));
+      setPdfState("ready");
+      downloadBlob(pdfBlob, source.order.document?.filename || `${source.order.orderNumber}.pdf`);
+      showToast(t("notifications.pdfGenerated") || "فایل PDF سفارش تولید شد", "success");
+    } catch {
+      setPdfState("failed");
+      showToast(t("checkout.pdfFailed"), "error");
+    }
+  };
 
   if (items.length === 0 && !result) {
     return <Navigate to="/cart" replace />;
@@ -73,6 +111,7 @@ export default function CheckoutPage() {
     const date = new Date().toLocaleDateString(lang === "fa" ? "fa-IR" : lang === "ar" ? "ar-EG" : "en-US");
     const fullPhone = toFullIranPhone(phoneLocal);
 
+    setOrderError("");
     try {
       const remote = await createRemoteOrder({
         customer: {
@@ -89,36 +128,37 @@ export default function CheckoutPage() {
         total,
       });
       const orderNumber = remote.orderNumber;
-      const pdfBlob = await generateOrderPdf(
-        storedOrderToPdfData(remote, dir, t("cart.toman") || "تومان", orderPdfLabels(t)),
-      );
 
-      const delivery = await deliverOrderToSeller(pdfBlob, {
-        orderNumber,
+      // The order now exists on the server and in the persisted store: confirm
+      // it to the customer before doing anything optional and slow.
+      docSourceRef.current = {
+        order: remote,
+        lines: items,
+        total,
         date,
-        customerName: fullName.trim(),
         phone: fullPhone,
         notes: notes.trim(),
-        items,
-        total,
-      });
-
+        name: fullName.trim(),
+      };
       addOrder({ orderNumber, date, total, itemsCount: items.reduce((s, i) => s + i.quantity, 0), status: remote.status });
-      downloadBlob(pdfBlob, remote.document?.filename || `${orderNumber}.pdf`);
-      showToast(t("notifications.pdfGenerated") || "فایل PDF سفارش تولید شد", "success");
-
       setResult({
         orderNumber,
         date,
-        pdfBlob,
-        sent: delivery.sent,
+        pdfBlob: null,
+        sent: false,
         paymentStatus: remote.paymentStatus,
         status: remote.status,
       });
       clearCart();
-    } catch {
-      showToast(t("errors.generic") || "خطا در تولید سفارش", "error");
-    } finally {
+      setSubmitting(false);
+      void generateDocuments();
+    } catch (error) {
+      setOrderError(
+        error instanceof Error && error.message && error.message !== "order_failed"
+          ? error.message
+          : t("checkout.orderFailed"),
+      );
+      showToast(t("checkout.orderFailed"), "error");
       setSubmitting(false);
     }
   };
@@ -157,21 +197,34 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <button
-            onClick={() => downloadBlob(result.pdfBlob, `${result.orderNumber}.pdf`)}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl py-3 text-sm font-bold text-white shadow-[var(--shadow-glow)] transition-transform hover:scale-[1.01] active:scale-95"
-            style={{ background: "linear-gradient(90deg, var(--accent-2), var(--accent-1))" }}
-          >
-            <FileDown size={16} />
-            <span>{t("checkout.downloadPdf") || "دانلود PDF سفارش"}</span>
-          </button>
+          <div className="flex w-full flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => (pdfState === "failed" || pdfState === "idle" ? void generateDocuments() : result.pdfBlob && downloadBlob(result.pdfBlob, `${result.orderNumber}.pdf`))}
+              disabled={pdfState === "pending" || (pdfState === "ready" && !result.pdfBlob)}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl py-3 text-sm font-bold text-white shadow-[var(--shadow-glow)] transition-transform hover:scale-[1.01] active:scale-95 disabled:cursor-progress disabled:opacity-70"
+              style={{ background: "linear-gradient(90deg, var(--accent-2), var(--accent-1))" }}
+            >
+              <FileDown size={16} />
+              <span>
+                {pdfState === "pending"
+                  ? t("checkout.pdfPending")
+                  : pdfState === "failed" || pdfState === "idle"
+                    ? t("checkout.pdfRetry")
+                    : t("checkout.downloadPdf") || "دانلود PDF سفارش"}
+              </span>
+            </button>
+            <p className="text-[11px] leading-5" style={{ color: pdfState === "failed" ? "var(--danger)" : "var(--text-muted)" }}>
+              {pdfState === "failed" ? t("checkout.pdfFailed") : pdfState === "ready" ? t("checkout.pdfReady") : t("checkout.orderStored")}
+            </p>
+          </div>
 
           <div
             className="flex w-full items-start gap-2 rounded-2xl p-3.5 text-start text-xs leading-5"
             style={{ background: "var(--chip-bg)", color: "var(--text-secondary)" }}
           >
             <Send size={15} className="mt-0.5 shrink-0 text-green-400" />
-            <span>فایل PDF سفارش شما با موفقیت تولید شد و آماده دانلود است.</span>
+            <span>{t("checkout.orderStored")}</span>
           </div>
 
           <Link to="/" className="text-sm font-semibold" style={{ color: "var(--accent-1)" }}>
@@ -201,6 +254,10 @@ export default function CheckoutPage() {
             {t("checkout.fullName")} <span style={{ color: "var(--danger)" }}>*</span>
           </label>
           <input
+            id="checkout-fullName"
+            name="fullName"
+            autoComplete="name"
+            type="text"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             placeholder="مثال: علی محمدی"
@@ -219,6 +276,10 @@ export default function CheckoutPage() {
               +98
             </span>
             <input
+              id="checkout-phone"
+              name="phone"
+              autoComplete="tel-national"
+              type="tel"
               value={phoneLocal}
               onChange={(e) => setPhoneLocal(normalizeIranLocal(e.target.value))}
               placeholder="9XX XXX XXXX"
@@ -236,6 +297,9 @@ export default function CheckoutPage() {
           </label>
           <input
             type="email"
+            id="checkout-email"
+            name="email"
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@example.com"
@@ -252,6 +316,10 @@ export default function CheckoutPage() {
               {t("checkout.province")} <span style={{ color: "var(--danger)" }}>*</span>
             </label>
             <input
+              id="checkout-province"
+              name="province"
+              autoComplete="address-level1"
+              type="text"
               value={province}
               onChange={(e) => setProvince(e.target.value)}
               className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none"
@@ -264,6 +332,10 @@ export default function CheckoutPage() {
               {t("checkout.city")} <span style={{ color: "var(--danger)" }}>*</span>
             </label>
             <input
+              id="checkout-city"
+              name="city"
+              autoComplete="address-level2"
+              type="text"
               value={city}
               onChange={(e) => setCity(e.target.value)}
               className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none"
@@ -278,6 +350,10 @@ export default function CheckoutPage() {
             {t("checkout.address")} <span style={{ color: "var(--danger)" }}>*</span>
           </label>
           <input
+            id="checkout-address"
+            name="address"
+            autoComplete="street-address"
+            type="text"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-violet-500"
@@ -291,6 +367,10 @@ export default function CheckoutPage() {
             {t("checkout.postalCode")} <span style={{ color: "var(--danger)" }}>*</span>
           </label>
           <input
+            id="checkout-postalCode"
+            name="postalCode"
+            autoComplete="postal-code"
+            type="text"
             value={postalCode}
             onChange={(e) => setPostalCode(e.target.value.replace(/\D/g, "").slice(0, 10))}
             inputMode="numeric"
@@ -305,7 +385,9 @@ export default function CheckoutPage() {
             {t("checkout.notes")} (اختیاری)
           </label>
           <textarea
-            value={notes}
+                        id="checkout-notes"
+            name="notes"
+value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder={t("checkout.notesPlaceholder")}
             rows={3}
@@ -322,6 +404,16 @@ export default function CheckoutPage() {
             {total.toLocaleString()} {t("cart.toman")}
           </span>
         </div>
+
+        {orderError ? (
+          <p
+            role="alert"
+            className="rounded-xl px-3 py-2.5 text-[11px] font-bold leading-5"
+            style={{ background: "rgba(239,68,68,0.10)", color: "var(--danger)", border: "1px solid rgba(239,68,68,0.35)" }}
+          >
+            {orderError}
+          </p>
+        ) : null}
 
         <button
           type="submit"

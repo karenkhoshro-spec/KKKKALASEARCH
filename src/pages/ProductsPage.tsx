@@ -5,7 +5,7 @@ import { useLanguage } from "../i18n/LanguageContext";
 import { useListContext } from "../context/ListContext";
 import { categories } from "../data/categories";
 import { products } from "../data/products";
-import ProductCard from "../components/ProductCard";
+import ProductGrid from "../components/ProductGrid";
 import { goBack } from "../utils/safeBack";
 import OverlayHeader from "../components/OverlayHeader";
 
@@ -102,11 +102,7 @@ export default function ProductsPage() {
         </select>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
-        {list.map((p) => (
-          <ProductCard key={p.id} product={p} />
-        ))}
-      </div>
+      <ProductGrid products={list} />
     </div>
   );
 }

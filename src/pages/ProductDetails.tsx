@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ExternalLink, Minus, Plus, ShoppingCart, CheckCircle2, XCircle, Heart, Share2 } from "lucide-react";
+import { ExternalLink, Minus, Plus, ShoppingCart, CheckCircle2, PackageSearch, Heart, Share2 } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
@@ -8,7 +8,7 @@ import { useWishlist } from "../context/WishlistContext";
 import { useListContext, listContextToPath } from "../context/ListContext";
 import { getProductById } from "../data/products";
 import { isValidProductUrl } from "../data/csvSource";
-import { fullImageChain } from "../data/productImageResolver";
+import { fullImageChain, imageCandidatesToTry, markImageFailed, markImageLoaded } from "../data/productImageResolver";
 import { goBack } from "../utils/safeBack";
 import { shareOrCopyUrl } from "../utils/share";
 import OverlayHeader from "../components/OverlayHeader";
@@ -40,8 +40,12 @@ export default function ProductDetails() {
   const selectedVariation = product?.variations?.find((v) => v.id === variationId);
   const quantity = qtyForVariation(qtyByVariation, selectedVariation?.id);
   const rawActiveImage = selectedVariation?.image || (product as any)?.productImageUrl || product?.image;
+  // Same session memory the cards and the order lines use: the hop that already
+  // worked for this asset is tried first, dead hops are skipped, and an asset
+  // with no real mapping issues no request at all.
   const imageChain = rawActiveImage ? fullImageChain(rawActiveImage, 900) : [];
-  const activeImage = imageChain[imgAttempt];
+  const imageCandidates = imageCandidatesToTry(rawActiveImage, 900).candidates;
+  const activeImage = imageCandidates[imgAttempt]?.src ?? imageChain[imgAttempt];
 
   useEffect(() => {
     setImgAttempt(0);
@@ -49,10 +53,10 @@ export default function ProductDetails() {
   }, [rawActiveImage]);
 
   useEffect(() => {
-    if (!rawActiveImage || imgLoaded || imgAttempt >= imageChain.length) return;
+    if (!rawActiveImage || imgLoaded || imgAttempt >= imageCandidates.length) return;
     const timer = setTimeout(() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }, 6000);
     return () => clearTimeout(timer);
-  }, [rawActiveImage, activeImage, imgLoaded, imgAttempt, imageChain.length]);
+  }, [rawActiveImage, activeImage, imgLoaded, imgAttempt, imageCandidates.length]);
 
   const backPath = listContext.type === "home" ? "/" : listContextToPath(listContext);
 
@@ -63,7 +67,7 @@ export default function ProductDetails() {
   if (!product) {
     return (
       <div className="mx-auto flex max-w-lg flex-col items-center gap-4 px-4 py-24 text-center">
-        <XCircle size={40} style={{ color: "var(--danger)" }} />
+        <PackageSearch size={40} style={{ color: "var(--text-muted)" }} />
         <p style={{ color: "var(--text-primary)" }}>{t("errors.notFound")}</p>
         <Link to="/" className="rounded-xl px-4 py-2 text-sm font-semibold text-white" style={{ background: "var(--accent-1)" }}>
           {t("errors.goHome")}
@@ -172,8 +176,22 @@ export default function ProductDetails() {
                   fetchPriority="high"
                   decoding="async"
                   referrerPolicy="no-referrer"
-                  onLoad={() => setImgLoaded(true)}
-                  onError={() => { setImgLoaded(false); setImgAttempt((a) => a + 1); }}
+                  onLoad={(event) => {
+                    if (event.currentTarget.naturalWidth > 0) {
+                      setImgLoaded(true);
+                      const won = imageCandidates[imgAttempt];
+                      if (won) markImageLoaded(rawActiveImage, 900, won.index);
+                    } else {
+                      setImgLoaded(false);
+                      setImgAttempt((a) => a + 1);
+                    }
+                  }}
+                  onError={() => {
+                    setImgLoaded(false);
+                    const lost = imageCandidates[imgAttempt];
+                    if (lost) markImageFailed(rawActiveImage, 900, lost.index);
+                    setImgAttempt((a) => a + 1);
+                  }}
                 />
               ) : (
                 <span className="text-xs" style={{ color: "var(--text-muted)" }}>{t("product.imageUnavailable")}</span>
@@ -271,7 +289,11 @@ export default function ProductDetails() {
                       border: "1px solid rgba(244, 63, 94, 0.35)",
                     }}
                   >
-                    <XCircle size={15} />
+                    <span
+                      aria-hidden="true"
+                      className="inline-block h-2 w-2 rounded-full"
+                      style={{ background: "var(--danger)" }}
+                    />
                     <span>{t("product.outOfStock") || "ناموجود"}</span>
                   </span>
                 )}
@@ -293,7 +315,7 @@ export default function ProductDetails() {
                 </span>
               ) : (
                 <span className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>
-                  -
+                  {t("product.priceUnknown")}
                 </span>
               )}
             </div>

@@ -4,7 +4,7 @@ import { useLanguage } from "../i18n/LanguageContext";
 import { useListContext } from "../context/ListContext";
 import { categories } from "../data/categories";
 import { getOtherSubcategoryCounts, getProductsByCategory } from "../data/products";
-import ProductCard from "../components/ProductCard";
+import ProductGrid from "../components/ProductGrid";
 import CategoryOverlayHeader from "../components/CategoryOverlayHeader";
 import CategoryIconFrame from "../components/CategoryIconFrame";
 import "../components/CategoryNav.css";
@@ -68,17 +68,9 @@ export default function CategoryPage() {
       {/* 3. Product grid when on primary category or inside a subcategory of Other */}
       {(!isOther || subcategoryId) && (
         <>
-          {list.length === 0 ? (
-            <p className="py-16 text-center text-sm font-semibold" style={{ color: "var(--text-muted)" }}>
-              {t("search.noResults")}
-            </p>
-          ) : (
-            <div className="ks-category-product-grid">
-              {list.map((p) => (
-                <ProductCard key={p.id} product={p} hidePrice />
-              ))}
-            </div>
-          )}
+          {/* Category cards stay image-free: the real mapped photo belongs to
+              Product Details. */}
+          <ProductGrid products={list} hidePrice noImage emptyLabel={t("search.noResults")} />
         </>
       )}
     </div>

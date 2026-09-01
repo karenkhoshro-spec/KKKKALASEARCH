@@ -17,6 +17,45 @@
  * - Lazy-load images
  */
 
+/* -------------------------------------------------------------------------
+   Stored assets are file names in the CSV layer ("4030.jpg") while the browser
+   needs the mapped absolute URL. Resolving a bare name against the project's
+   OWN mapping table keeps an order line renderable without inventing anything:
+   if the name is not in the real mapping, there is simply no image.
+   ------------------------------------------------------------------------- */
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+import productImageMapping from "./productImages.json";
+
+const imageUrlByName = new Map<string, string>();
+for (const rawUrl of Object.values(productImageMapping as Record<string, string>)) {
+  const url = typeof rawUrl === "string" ? rawUrl.trim() : "";
+  if (!url || !/^https?:\/\//i.test(url)) continue;
+  const name = url.split("/").pop() ?? "";
+  if (name && !imageUrlByName.has(name.toLowerCase())) imageUrlByName.set(name.toLowerCase(), url);
+}
+
+/**
+ * Turn anything the data layer stores (absolute URL, protocol-relative URL or a
+ * bare upload file name) into the real mapped URL, or undefined when the product
+ * genuinely has no mapping. Never returns a fabricated asset.
+ */
+export function resolveMappedImageUrl(value: string | undefined | null): string | undefined {
+  const trimmed = String(value ?? "").trim();
+  if (!trimmed) return undefined;
+  if (isValidImageUrl(trimmed)) return trimmed;
+  const name = (trimmed.includes("/") ? trimmed.split("/").pop() ?? trimmed : trimmed).toLowerCase();
+  return imageUrlByName.get(name);
+}
+
+/** First candidate that maps to a real URL — used when several sources exist. */
+export function firstMappedImageUrl(...candidates: (string | undefined | null)[]): string | undefined {
+  for (const candidate of candidates) {
+    const resolved = resolveMappedImageUrl(candidate);
+    if (resolved) return resolved;
+  }
+  return undefined;
+}
+
 export function isValidImageUrl(raw: string | undefined | null): boolean {
   if (!raw) return false;
   const trimmed = String(raw).trim();
@@ -189,8 +228,100 @@ export function imageRelayCandidates(realImageUrl: string, width = 640): string[
  * Only if all three fail does the UI show the "تصویر موجود نیست" placeholder.
  */
 export function fullImageChain(realImageUrl: string, width = 640): string[] {
-  const [relay1, relay2] = imageRelayCandidates(realImageUrl, width);
-  return [relay1, realImageUrl, relay2];
+  // The CSV layer stores bare upload file names ("4030.jpg"). Resolving here —
+  // the single entry point every surface uses — means the cart, the product
+  // page, the admin order lines and the cards all request the SAME real mapped
+  // asset, and an unmapped product fires no doomed request at all.
+  const resolved = resolveMappedImageUrl(realImageUrl);
+  if (!resolved) return [];
+  const [relay1, relay2] = imageRelayCandidates(resolved, width);
+  return [relay1, resolved, relay2];
+}
+
+/* -------------------------------------------------------------------------
+   Shared fallback memory
+   Every surface that paints a real Ashkan asset (search card, category card,
+   product details, cart, admin/customer order lines) used to walk its own
+   [relay -> origin -> relay] chain, so one asset could be requested up to
+   three times per component and the dead candidates were retried forever —
+   the single biggest source of slowness on image-heavy screens.
+   The outcome of a chain is now remembered for the session, per asset, so a
+   card starts at the candidate that already worked and skips the ones already
+   known to be dead. Nothing is invented here: the candidates stay exactly the
+   real mapping + the real relays.
+   ------------------------------------------------------------------------- */
+// Keys are the *mapped* asset so a caller holding a bare CSV file name and a
+// caller holding the resolved URL share one memory instead of two.
+const chainKey = (realImageUrl: string | undefined | null, width: number) =>
+  `${width}|${resolveMappedImageUrl(realImageUrl ?? undefined) ?? String(realImageUrl ?? "").trim()}`;
+const chainGoodIndex = new Map<string, number>();
+const chainDeadIndexes = new Map<string, Set<number>>();
+
+/** Index of the candidate that last loaded successfully for this asset (0 = first). */
+export function knownGoodImageIndex(realImageUrl: string | undefined, width = 640): number {
+  if (!realImageUrl) return 0;
+  return chainGoodIndex.get(chainKey(realImageUrl, width)) ?? 0;
+}
+
+/** Candidates already proven unreachable for this asset (network/404/CORS). */
+export function deadImageIndexes(realImageUrl: string | undefined, width = 640): Set<number> {
+  return chainDeadIndexes.get(chainKey(realImageUrl, width)) ?? new Set<number>();
+}
+
+export function markImageLoaded(realImageUrl: string | undefined, width: number, index: number): void {
+  if (!realImageUrl) return;
+  chainGoodIndex.set(chainKey(realImageUrl, width), index);
+}
+
+export function markImageFailed(realImageUrl: string | undefined, width: number, index: number): void {
+  if (!realImageUrl) return;
+  const key = chainKey(realImageUrl, width);
+  const dead = chainDeadIndexes.get(key) ?? new Set<number>();
+  dead.add(index);
+  chainDeadIndexes.set(key, dead);
+}
+
+/**
+ * The candidates a component should actually try, each with its position in the
+ * canonical chain (so a failure is remembered against the right hop), plus the
+ * index to start from. Falls back to the plain chain when every candidate was
+ * marked dead — they may recover on another network.
+ */
+export interface ImageCandidate {
+  src: string;
+  index: number;
+}
+
+export function imageCandidatesToTry(
+  realImageUrl: string | undefined | null,
+  width = 640,
+): { candidates: ImageCandidate[]; startIndex: number } {
+  const mapped = resolveMappedImageUrl(realImageUrl ?? undefined);
+  if (!mapped) return { candidates: [], startIndex: 0 };
+  const full = fullImageChain(mapped, width).map((src, index) => ({ src, index }));
+  if (full.length === 0) return { candidates: [], startIndex: 0 };
+
+  const good = knownGoodImageIndex(mapped, width);
+  if (good > 0 && full[good]) {
+    // start with the hop that already won this session, keep the rest as fallback
+    return { candidates: [full[good], ...full.filter((entry) => entry.index !== good)], startIndex: 0 };
+  }
+
+  const dead = deadImageIndexes(mapped, width);
+  if (dead.size === 0) return { candidates: full, startIndex: 0 };
+  const alive = full.filter((entry) => !dead.has(entry.index));
+  return { candidates: alive.length > 0 ? alive : full, startIndex: 0 };
+}
+
+/** Convenience wrapper for callers that only need the URL list. */
+export function imageChainToTry(realImageUrl: string | undefined, width = 640): { chain: string[]; startIndex: number } {
+  const { candidates } = imageCandidatesToTry(realImageUrl, width);
+  return { chain: candidates.map((entry) => entry.src), startIndex: 0 };
+}
+
+/** Cache size guard for very long sessions. */
+export function imageChainCacheStats() {
+  return { remembered: chainGoodIndex.size, degraded: chainDeadIndexes.size };
 }
 
 export async function resolveProductImageViaProxy(productUrl: string, proxyEndpoint = "/api/product-image"): Promise<string | undefined> {
