@@ -52,8 +52,15 @@ async function resolveBrowser() {
       : path.join(process.cwd(), "node_modules/@sparticuz/chromium/bin/al2023.tar.br");
     if (fs.existsSync(tarball)) {
       fs.mkdirSync("/tmp/al2023", { recursive: true });
-      fs.writeFileSync("/tmp/al2023/a.tar", zlib.brotliDecompressSync(fs.readFileSync(tarball)));
-      spawnSync("tar", ["-xf", "a.tar", "-C", "/tmp/al2023"], { stdio: "ignore" });
+      const tarOut = "/tmp/al2023/a.tar";
+      fs.writeFileSync(tarOut, zlib.brotliDecompressSync(fs.readFileSync(tarball)));
+      // the archive holds lib/*.so next to the binary; extract with an absolute
+      // path (a relative "-xf a.tar" silently fails when cwd is the repo)
+      const untar = spawnSync("tar", ["-xf", tarOut, "-C", "/tmp/al2023"], { encoding: "utf8" });
+      if (untar.status !== 0) {
+        throw new Error(`could not unpack the Chromium runtime libraries for QA: ${untar.stderr || untar.error || "tar failed"}`);
+      }
+      fs.rmSync(tarOut, { force: true });
       fs.rmSync("/tmp/al2023/a.tar", { force: true });
     }
   }

@@ -49,11 +49,17 @@ npm run preview    # http://localhost:4173  (same /api plugin, shared order stor
 ### Admin credentials (env only — never in the repo)
 
 ```bash
-# .env.local
+# .env.local  (all three are required for the admin area)
 ADMIN_USERNAME=karen
 ADMIN_PASSWORD=<the real password>
+ADMIN_SESSION_SECRET=<any long random string, e.g. `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))">
 # optional: ORDERS_FILE=/abs/path/orders.json  (defaults to data/orders.json)
 ```
+
+Without `ADMIN_SESSION_SECRET` the API answers admin login with **503 `admin_not_configured`** by
+design (no default secret is shipped), and the admin screens stay empty — that is a
+configuration gap, not a bug. `server/viteApiPlugin.mjs` reads `.env.local` at boot, so restart
+the dev/preview server after editing it. See `.env.example` for the canonical list.
 
 `server/orderHandler.mjs` reads them at boot; the admin login is case-insensitive on the
 username. Without these set, `/admin` refuses login by design.
