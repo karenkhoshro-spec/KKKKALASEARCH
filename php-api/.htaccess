@@ -1,0 +1,20 @@
+# KalaSearch — public_html/api/.htaccess
+# Copy with the API files:  php-api/*  →  public_html/api/
+# Every /api/* request is routed to the front controller index.php.
+# The SPA .htaccess in public_html/ already passes /api/* through untouched.
+
+Options -Indexes
+RewriteEngine On
+
+# cPanel/Apache often strips the Authorization header from PHP — restore it
+# so Bearer tokens reach the front controller.
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+# Block direct access to internal PHP modules and configuration files.
+RewriteRule ^lib/ - [F,L]
+RewriteRule ^config.*\.php$ - [F,L]
+RewriteRule ^images-mapping\.json$ - [F,L]
+
+# Everything else → the front controller.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]

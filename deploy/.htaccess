@@ -1,0 +1,36 @@
+# ============================================================================
+# KalaSearch — public_html/.htaccess  (cPanel root of the deployed site)
+# Copy this file to public_html/.htaccess after uploading dist/*.
+#
+# Rules:
+#   1. /api/*         → passed through to public_html/api/ (PHP front controller)
+#   2. /assets/*      → real files only; a MISSING asset returns a true 404,
+#                       it is never rewritten to the SPA shell
+#   3. existing files → served normally
+#   4. everything else → index.html (React SPA routes like /product/:id work
+#                       on browser refresh)
+# ============================================================================
+
+Options -Indexes
+RewriteEngine On
+
+# Block access to dotfiles (.env, .git, ...) defensively.
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+# 1) API — handled by public_html/api/.htaccess (front controller).
+RewriteRule ^api/ - [L,NC]
+
+# 2) Missing assets must 404, not fall back to the SPA shell.
+#    (Existing files under these prefixes are still served normally.)
+RewriteRule ^assets/ - [L]
+RewriteRule ^images/ - [L]
+
+# 3) Serve real files and directories.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# 4) SPA fallback — React routes refresh correctly.
+RewriteRule ^ index.html [L]

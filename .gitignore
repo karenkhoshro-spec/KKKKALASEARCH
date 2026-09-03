@@ -25,6 +25,12 @@ logs/
 *.log
 *.pid
 
+# PHP backend local config (cPanel) — never commit real credentials
+php-api/config.local.php
+php-api/kalasearch-config.php
+php-api/images-mapping.json
+public_html/
+
 # Local databases and data dumps
 /data/
 *.db
@@ -32,6 +38,7 @@ logs/
 *.sqlite3
 *.dump
 *.sql
+!database/schema.sql
 backup/
 backups/
 *.bak
