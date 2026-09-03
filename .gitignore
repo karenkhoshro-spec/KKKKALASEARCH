@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Build and coverage output
+dist/
+coverage/
+.vite/
+.turbo/
+tsconfig.tsbuildinfo
+scripts/.sitemap-cache/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets/
+credentials/
+
+# Logs and runtime output
+logs/
+*.log
+*.pid
+
+# Local databases and data dumps
+/data/
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*.sql
+backup/
+backups/
+*.bak
+*.backup
+*.zip
+
+# Temporary/editor/OS files
+.tmp/
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
