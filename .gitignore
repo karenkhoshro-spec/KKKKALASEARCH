@@ -8,6 +8,7 @@ coverage/
 .turbo/
 tsconfig.tsbuildinfo
 scripts/.sitemap-cache/
+public/*.zip
 
 # Environment and secrets
 .env

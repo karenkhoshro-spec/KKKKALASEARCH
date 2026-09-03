@@ -2,9 +2,17 @@ import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { readOrders, writeOrders } from "./orderStore.mjs";
+import {
+  readOrders,
+  writeOrders,
+  readAdminRevocations,
+  writeAdminRevocations,
+} from "./orderStore.mjs";
 
 const PROJECT_ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
+
+/** Maximum accepted JSON request body size (protects the API from abuse). */
+const MAX_BODY_BYTES = 512 * 1024;
 
 /**
  * Real product image mapping (src/data/productImages.json): productId -> real
@@ -35,7 +43,7 @@ export const PAYMENT_STATUSES = ["unpaid"];
 
 function loadDotEnv() {
   try {
-    const envPath = path.join(process.cwd(), ".env");
+    const envPath = path.join(PROJECT_ROOT, ".env");
     if (!fs.existsSync(envPath)) return;
     for (const line of fs.readFileSync(envPath, "utf8").split("\n")) {
       const trimmed = line.trim();
@@ -80,12 +88,25 @@ function adminPass() {
   return process.env.ADMIN_PASSWORD || "";
 }
 
+function decodeTokenPayload(token) {
+  const [payload] = String(token || "").split(".");
+  if (!payload) return null;
+  try {
+    const data = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+    return typeof data === "object" && data !== null ? data : null;
+  } catch {
+    return null;
+  }
+}
+
 export function signAdminToken() {
   const secret = adminSecret();
   const user = adminUser();
   if (!secret || !user) return "";
   const exp = Date.now() + 7 * 24 * 60 * 60 * 1000;
-  const payload = Buffer.from(JSON.stringify({ u: user, exp })).toString("base64url");
+  const payload = Buffer.from(
+    JSON.stringify({ u: user, exp, jti: crypto.randomBytes(9).toString("base64url") }),
+  ).toString("base64url");
   const sig = crypto.createHmac("sha256", secret).update(payload).digest("base64url");
   return `${payload}.${sig}`;
 }
@@ -98,12 +119,35 @@ export function verifyAdminToken(token) {
   const a = Buffer.from(sig);
   const b = Buffer.from(expected);
   if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return false;
+  let data;
   try {
-    const data = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
-    return data.u === adminUser() && Number(data.exp) > Date.now();
+    data = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
   } catch {
     return false;
   }
+  if (data.u !== adminUser() || Number(data.exp) <= Date.now()) return false;
+  // Reject tokens that were explicitly revoked by logout.
+  const now = Date.now();
+  const revoked = readAdminRevocations().filter((entry) => Number(entry?.exp) > now);
+  if (data.jti && revoked.some((entry) => entry.jti === data.jti)) return false;
+  return true;
+}
+
+/**
+ * Revokes a single admin session token. Logout invalidates that token server-
+ * side immediately (and permanently, even across server restarts); every other
+ * signed token stays valid. Returns true when the token was actually revoked.
+ */
+export function revokeAdminToken(token) {
+  const data = decodeTokenPayload(token);
+  if (!data || !data.jti) return false;
+  const now = Date.now();
+  const revoked = readAdminRevocations().filter((entry) => Number(entry?.exp) > now);
+  if (!revoked.some((entry) => entry.jti === data.jti)) {
+    revoked.push({ jti: data.jti, exp: Number(data.exp) || now + 7 * 24 * 60 * 60 * 1000 });
+    writeAdminRevocations(revoked);
+  }
+  return true;
 }
 
 export function adminLogin(username, password) {
@@ -129,6 +173,37 @@ function generateOrderNumber(existing) {
   return `KS-${day}-${Date.now().toString(36).toUpperCase()}`;
 }
 
+const MAX_LEN = {
+  name: 200,
+  code: 200,
+  sku: 200,
+  variation: 120,
+  notes: 2000,
+  address: 600,
+  city: 120,
+  province: 120,
+  email: 254,
+  image: 2048,
+};
+
+function clampLen(value, key) {
+  return String(value || "").trim().slice(0, MAX_LEN[key] ?? 200);
+}
+
+/** True when a raw order-item payload is sane enough to be persisted. */
+function isValidOrderItem(item) {
+  if (!item || typeof item !== "object") return false;
+  const hasCode = String(item.productCode || item.productId || item.sku || "").trim().length > 0;
+  if (!hasCode) return false;
+  const hasName = String(item.name || item.model || "").trim().length > 0;
+  if (!hasName) return false;
+  const quantity = Number(item.quantity);
+  if (!Number.isInteger(quantity) || quantity < 1 || quantity > 9999) return false;
+  const unitPrice = Number(item.unitPrice ?? item.price);
+  if (!Number.isFinite(unitPrice) || unitPrice < 0) return false;
+  return true;
+}
+
 function publicItem(item) {
   const unitPrice = Number(item.unitPrice ?? item.price) || 0;
   const quantity = Math.max(1, Number(item.quantity) || 1);
@@ -137,18 +212,18 @@ function publicItem(item) {
   const resolvedImage =
     storedImage || imageMappingForCode(item.productCode || item.productId || item.sku || "");
   return {
-    productId: String(item.productId || ""),
-    productCode: String(item.productCode || ""),
-    sku: String(item.sku || ""),
-    name,
-    model: String(item.model || name),
-    variation: String(item.variation || ""),
-    color: String(item.color || ""),
+    productId: String(item.productId || "").slice(0, MAX_LEN.code),
+    productCode: clampLen(item.productCode, "code"),
+    sku: clampLen(item.sku, "sku"),
+    name: clampLen(name, "name"),
+    model: clampLen(item.model || name, "name"),
+    variation: clampLen(item.variation, "variation"),
+    color: clampLen(item.color, "variation"),
     quantity,
-    image: resolvedImage,
+    image: storedImage ? storedImage.slice(0, MAX_LEN.image) : resolvedImage,
     unitPrice,
     price: unitPrice,
-    lineTotal: Number(item.lineTotal) || unitPrice * quantity,
+    lineTotal: unitPrice * quantity,
   };
 }
 
@@ -200,11 +275,17 @@ export function createOrder(payload) {
   if (!city) return { ok: false, status: 400, error: "city_required" };
   if (!address) return { ok: false, status: 400, error: "address_required" };
   if (postalCode.length !== 10) return { ok: false, status: 400, error: "invalid_postal_code" };
-  if (email && !email.includes("@")) return { ok: false, status: 400, error: "invalid_email" };
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { ok: false, status: 400, error: "invalid_email" };
+  }
   if (items.length === 0) return { ok: false, status: 400, error: "items_required" };
+  if (items.length > 100) return { ok: false, status: 400, error: "too_many_items" };
+  if (!items.every(isValidOrderItem)) return { ok: false, status: 400, error: "items_invalid" };
 
-  const normalizedItems = items.map((item) => publicItem(item));
-  const total = Number(payload?.total);
+  // Server is the source of truth for money: row totals and the grand total
+  // are always recomputed from unit price × quantity, never trusted from the
+  // client payload.
+  const normalizedItems = items.map(publicItem);
   const computed = normalizedItems.reduce((sum, item) => sum + item.lineTotal, 0);
   const orders = readOrders();
   const createdAt = new Date().toISOString();
@@ -214,9 +295,18 @@ export function createOrder(payload) {
     createdAt,
     status: "registered",
     paymentStatus: "unpaid",
-    customer: { name, phone, email, province, city, address, postalCode, notes },
+    customer: {
+      name: clampLen(name, "name"),
+      phone,
+      email: clampLen(email, "email"),
+      province: clampLen(province, "province"),
+      city: clampLen(city, "city"),
+      address: clampLen(address, "address"),
+      postalCode,
+      notes: clampLen(notes, "notes"),
+    },
     items: normalizedItems,
-    total: Number.isFinite(total) ? total : computed,
+    total: computed,
     document: {
       kind: "proforma",
       filename: `${orderNumber}.pdf`,
@@ -275,6 +365,31 @@ function bearer(req) {
   return match ? match[1] : "";
 }
 
+/** Reads the request body, failing fast when it exceeds the size cap. */
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    let size = 0;
+    let done = false;
+    req.on("data", (chunk) => {
+      if (done) return;
+      size += chunk.length;
+      if (size > MAX_BODY_BYTES) {
+        done = true;
+        req.removeAllListeners("data");
+        req.removeAllListeners("end");
+        reject({ tooLarge: true });
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on("end", () => {
+      if (!done) resolve(Buffer.concat(chunks).toString("utf8"));
+    });
+    req.on("error", (error) => reject(error));
+  });
+}
+
 export async function handleApiRequest(req, res) {
   const url = new URL(req.url || "/", "http://local.invalid");
   const method = (req.method || "GET").toUpperCase();
@@ -285,14 +400,24 @@ export async function handleApiRequest(req, res) {
     return true;
   }
 
+  // Lightweight liveness/health check for hosting platforms and load balancers.
+  if (method === "GET" && url.pathname === "/api/health") {
+    send(res, 200, { ok: true });
+    return true;
+  }
+
   let raw = "";
   if (method === "POST" || method === "PATCH" || method === "PUT") {
-    raw = await new Promise((resolve, reject) => {
-      const chunks = [];
-      req.on("data", (chunk) => chunks.push(chunk));
-      req.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
-      req.on("error", reject);
-    });
+    try {
+      raw = await readBody(req);
+    } catch (error) {
+      if (error && error.tooLarge) {
+        send(res, 413, { error: "payload_too_large" });
+        return true;
+      }
+      send(res, 500, { error: "server_error" });
+      return true;
+    }
   }
   let body = {};
   if (raw) {
@@ -329,6 +454,17 @@ export async function handleApiRequest(req, res) {
   if (method === "POST" && url.pathname === "/api/admin/login") {
     const result = adminLogin(String(body.username || ""), String(body.password || ""));
     send(res, result.ok ? 200 : result.status, result.ok ? { token: result.token } : { error: result.error });
+    return true;
+  }
+
+  if (method === "POST" && url.pathname === "/api/admin/logout") {
+    const token = bearer(req);
+    if (!verifyAdminToken(token)) {
+      send(res, 401, { error: "unauthorized" });
+      return true;
+    }
+    revokeAdminToken(token);
+    send(res, 200, { ok: true });
     return true;
   }
 

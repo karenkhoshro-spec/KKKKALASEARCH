@@ -137,6 +137,15 @@ export async function adminSession(token: string): Promise<boolean> {
   return res.ok;
 }
 
+/** Server-side session invalidation: the current token is revoked immediately. */
+export async function adminLogout(token: string): Promise<void> {
+  const res = await fetch(`${apiBase()}/api/admin/logout`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error("logout_failed");
+}
+
 export async function fetchAdminOrders(token: string): Promise<StoredOrder[]> {
   const res = await fetch(`${apiBase()}/api/admin/orders`, {
     headers: { Authorization: `Bearer ${token}` },

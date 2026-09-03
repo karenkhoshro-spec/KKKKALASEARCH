@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { adminLogin as loginRequest, adminSession } from "../utils/ordersApi";
+import { adminLogin as loginRequest, adminLogout, adminSession } from "../utils/ordersApi";
 
 const STORAGE_KEY = "kala-search-admin-token";
 
@@ -66,9 +66,19 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     setToken(next);
   }, []);
 
+  /**
+   * Logs out everywhere: the token is revoked server-side (fire-and-forget so
+   * local logout always succeeds even offline) and removed from storage.
+   */
   const logout = useCallback(() => {
+    const current = readAdminToken();
     writeAdminToken(null);
     setToken(null);
+    if (current) {
+      void adminLogout(current).catch(() => {
+        /* best-effort server revocation; local session is already cleared */
+      });
+    }
   }, []);
 
   const value = useMemo(() => ({ token, ready, login, logout }), [token, ready, login, logout]);

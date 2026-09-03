@@ -4,21 +4,58 @@ import { fileURLToPath } from "url";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dataDir = path.join(root, "data");
-const ordersFile = path.join(dataDir, "orders.json");
 
-export function readOrders() {
+/**
+ * Runtime data file. The running app uses `data/orders.json`; automated tests
+ * set `KALA_ORDERS_FILE` to a temp path so test runs can never pollute (or
+ * corrupt) the real store the preview/admin UI is reading from.
+ */
+export function ordersFilePath() {
+  // Production uses ORDER_STORE_PATH (see docs/HOSTINGER_DEPLOYMENT.md) so
+  // order data can live on a persistent volume outside dist/. KALA_ORDERS_FILE
+  // is kept as a legacy alias (used by older local setups/tests).
+  const explicit = process.env.ORDER_STORE_PATH || process.env.KALA_ORDERS_FILE;
+  return explicit ? path.resolve(explicit) : path.join(dataDir, "orders.json");
+}
+
+/**
+ * Secondary runtime files (admin token revocation, …) live next to the orders
+ * file so the override keeps every piece of runtime state isolated together.
+ */
+export function runtimeFilePath(name) {
+  return path.join(path.dirname(ordersFilePath()), name);
+}
+
+function readJson(file, fallback) {
   try {
-    const raw = fs.readFileSync(ordersFile, "utf8");
+    const raw = fs.readFileSync(file, "utf8");
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    return parsed ?? fallback;
   } catch {
-    return [];
+    return fallback;
   }
 }
 
+function writeJson(file, value) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const tmp = `${file}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(value, null, 2));
+  fs.renameSync(tmp, file);
+}
+
+export function readOrders() {
+  return readJson(ordersFilePath(), []);
+}
+
 export function writeOrders(orders) {
-  fs.mkdirSync(dataDir, { recursive: true });
-  const tmp = `${ordersFile}.tmp`;
-  fs.writeFileSync(tmp, JSON.stringify(orders, null, 2));
-  fs.renameSync(tmp, ordersFile);
+  writeJson(ordersFilePath(), orders);
+}
+
+export function readAdminRevocations() {
+  const entries = readJson(runtimeFilePath("admin_revoked.json"), []);
+  return Array.isArray(entries) ? entries : [];
+}
+
+export function writeAdminRevocations(entries) {
+  writeJson(runtimeFilePath("admin_revoked.json"), entries);
 }

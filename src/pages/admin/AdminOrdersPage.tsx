@@ -36,8 +36,12 @@ export default function AdminOrdersPage() {
 
   const handleStatus = async (orderNumber: string, status: OrderStatus) => {
     if (!token) return;
-    const updated = await patchOrderStatus(token, orderNumber, status);
-    setOrders((prev) => prev.map((order) => (order.orderNumber === orderNumber ? updated : order)));
+    try {
+      const updated = await patchOrderStatus(token, orderNumber, status);
+      setOrders((prev) => prev.map((order) => (order.orderNumber === orderNumber ? updated : order)));
+    } catch {
+      setError(t("errors.generic"));
+    }
   };
 
   const dateLabel = (iso: string) => {
