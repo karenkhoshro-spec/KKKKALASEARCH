@@ -88,7 +88,7 @@ if ($method === 'POST' && $path === '/api/admin/login') {
     }
     $username = (string) ($body['username'] ?? '');
     $password = (string) ($body['password'] ?? '');
-    if ($username === '' || !ks_verify_admin_password($password)) {
+    if ($username === '' || $username !== ks_config()['admin_username'] || !ks_verify_admin_password($password)) {
         ks_send_error(401, 'invalid_credentials');
     }
     ks_send(200, ['token' => ks_issue_admin_token()]);

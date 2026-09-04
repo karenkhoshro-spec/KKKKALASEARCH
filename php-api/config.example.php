@@ -28,7 +28,9 @@ return [
     'db_password'          => 'CHANGE_ME_STRONG_DB_PASSWORD',
 
     // --- Admin login -----------------------------------------------------
-    'admin_username'       => 'karen',
+    // Official management account: username "Orderx". NEVER write the real
+    // password here — only its bcrypt hash (password_hash/password_verify).
+    'admin_username'       => 'Orderx',
     // bcrypt hash from password_hash() — the ONLY recommended form.
     'admin_password_hash'  => '',                // e.g. '$2y$10$....'
     // Legacy plaintext fallback (used ONLY when admin_password_hash is '').

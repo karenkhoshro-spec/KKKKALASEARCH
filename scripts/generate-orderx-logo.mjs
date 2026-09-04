@@ -1,10 +1,13 @@
 /**
  * Renders the Orderx logo into public/orderx-logo.png:
- *   - Black "ORDERX" wordmark on pure white, bold sans-serif (Archivo Black)
+ *   - Black "ORDERX" wordmark on a FULLY TRANSPARENT background (RGBA PNG;
+ *     no white rectangle behind the logo in PDFs or on tinted surfaces)
  *   - Standard character spacing for ORDER, slightly tighter kerning before X
  *   - Stylized X: the two strokes are separated — a single left diagonal plus
  *     a right-pointing chevron (two bars meeting at an apex), so the right
  *     arm extends further, giving an arrow/chevron effect pointing right.
+ *   - Safe-area padding on every side so no letter (especially the X) can be
+ *     clipped by PDF object-fit or container edges.
  *
  * DEV UTILITY ONLY — the PNG is committed, so this script is not needed in
  * CI or production. To regenerate:
@@ -22,19 +25,20 @@ GlobalFonts.registerFromPath(FONT_PATH, "Archivo Black");
 const W = 1000;
 const H = 260;
 const FONT_SIZE = 170;
+const SAFE = 14; // transparent safe-area padding (px) on every side — prevents clipping
 const canvas = createCanvas(W, H);
 const ctx = canvas.getContext("2d");
 
-// Pure white background.
-ctx.fillStyle = "#ffffff";
-ctx.fillRect(0, 0, W, H);
+// FULLY TRANSPARENT background — clearRect leaves alpha 0 everywhere.
+ctx.clearRect(0, 0, W, H);
 
 // ---- "ORDER" metrics (alphabetic baseline — glyph top = baseline - ascent) ----
 ctx.font = `${FONT_SIZE}px "Archivo Black"`;
 const text = "ORDER";
 const m = ctx.measureText(text);
 const capTop = m.actualBoundingBoxAscent; // ≈ 120 at 170px
-const yTop = (H - capTop) / 2; // glyph tops start here → content is centered
+// Vertical safe area: content box shrunk by SAFE on top and bottom.
+const yTop = (H - capTop) / 2 + SAFE / 2; // glyph tops start here → content is centered
 const baseline = yTop + capTop;
 const yBot = yTop + capTop; // X sits on the baseline like the letters
 const yMid = yTop + capTop / 2;
@@ -45,7 +49,7 @@ const GAP = 14; // slightly tighter kerning than standard letter spacing
 const x0 = m.width + GAP;
 const x1 = x0 + X_W;
 
-// Center the whole wordmark horizontally.
+// Center the whole wordmark horizontally, inside the SAFE side padding.
 const totalW = m.width + GAP + X_W;
 const shift = (W - totalW) / 2;
 

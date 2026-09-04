@@ -102,10 +102,12 @@ export const PDF_MARGIN = 30;
 export const PDF_CONTENT_W = PDF_PAGE_W - PDF_MARGIN * 2;
 
 /** Brand block: the real Orderx logo when available, otherwise a clean
- *  black "Orderx" wordmark. Nothing else is printed around the brand. */
+ *  black "Orderx" wordmark. The transparent PNG renders on any page color;
+ *  object-fit:contain + explicit height keep the full O-R-D-E-R-X (and the
+ *  chevron X) un-clipped with the original aspect ratio. */
 function brandBlock(logoDataUrl: string | undefined): string {
   const logo = logoDataUrl
-    ? `<img src="${logoDataUrl}" alt="Orderx" style="height:46px;max-width:260px;object-fit:contain;display:inline-block;" />`
+    ? `<img src="${logoDataUrl}" alt="Orderx" style="height:46px;width:auto;max-width:300px;object-fit:contain;object-position:center;display:inline-block;padding:0 2px;" />`
     : `<div style="font-size:26px;font-weight:900;letter-spacing:3px;color:#000000;line-height:1.15;">Orderx</div>`;
   return `<div style="text-align:center;">${logo}</div>`;
 }
