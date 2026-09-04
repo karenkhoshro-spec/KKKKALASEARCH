@@ -15,13 +15,14 @@
  *   POST    /api/admin/logout         (bearer) → 200 {ok:true} | 401
  *   GET     /api/admin/session        (bearer) → 200 {ok:true} | 401
  *   GET     /api/admin/orders         (bearer) → 200 {orders:[…]} | 401
+ *   POST    /api/admin/change-password (bearer) → 200 {ok:true} | 400/401
  *   PATCH   /api/admin/orders/:orderNumber/status (bearer) → 200 {order} | 400/404/401
  */
 
 require __DIR__ . '/lib/bootstrap.php';
 
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
-$path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+$path = ks_request_path();
 
 // CORS: the app is same-origin only — no Access-Control-* headers are sent,
 // so cross-origin browsers cannot call the API at all.
@@ -88,7 +89,7 @@ if ($method === 'POST' && $path === '/api/admin/login') {
     }
     $username = (string) ($body['username'] ?? '');
     $password = (string) ($body['password'] ?? '');
-    if ($username === '' || $username !== ks_config()['admin_username'] || !ks_verify_admin_password($password)) {
+    if (!ks_admin_username_matches($username) || !ks_verify_admin_password($password)) {
         ks_send_error(401, 'invalid_credentials');
     }
     ks_send(200, ['token' => ks_issue_admin_token()]);
@@ -100,7 +101,7 @@ if ($method === 'POST' && $path === '/api/admin/owner-login') {
     }
     $username = (string) ($body['username'] ?? '');
     $password = (string) ($body['password'] ?? '');
-    if ($username === '' || $username !== ks_config()['owner_username'] || !ks_verify_owner_password($password)) {
+    if (!ks_owner_username_matches($username) || !ks_verify_owner_password($password)) {
         ks_send_error(401, 'invalid_credentials');
     }
     ks_send(200, ['token' => ks_issue_admin_token($username), 'role' => 'owner']);
@@ -128,6 +129,21 @@ if ($method === 'GET' && $path === '/api/admin/orders') {
         ks_send_error(401, 'unauthorized');
     }
     ks_send(200, ['orders' => ks_list_admin_orders()]);
+}
+
+if ($method === 'POST' && $path === '/api/admin/change-password') {
+    $token = ks_bearer_token();
+    if (!ks_verify_admin_token($token)) {
+        ks_send_error(401, 'unauthorized');
+    }
+    $current = (string) ($body['currentPassword'] ?? '');
+    $new = (string) ($body['newPassword'] ?? '');
+    $confirm = (string) ($body['confirmPassword'] ?? '');
+    $result = ks_change_admin_password($current, $new, $confirm, $token);
+    if ($result['ok']) {
+        ks_send(200, ['ok' => true]);
+    }
+    ks_send_error($result['status'], $result['error']);
 }
 
 if ($method === 'PATCH' && preg_match('#^/api/admin/orders/([^/]+)/status$#', $path, $m)) {

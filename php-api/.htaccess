@@ -6,9 +6,17 @@
 Options -Indexes
 RewriteEngine On
 
-# cPanel/Apache often strips the Authorization header from PHP — restore it
-# so Bearer tokens reach the front controller.
-SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+# cPanel / Apache / LiteSpeed / PHP-FPM often strip the Authorization header
+# before it reaches PHP. Restore it so Bearer tokens work for:
+#   GET  /api/admin/session
+#   GET  /api/admin/orders
+#   POST /api/admin/logout
+#   PATCH /api/admin/orders/.../status
+<IfModule mod_setenvif.c>
+  SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+</IfModule>
+RewriteCond %{HTTP:Authorization} .
+RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 # Block direct access to internal PHP modules and configuration files.
 RewriteRule ^lib/ - [F,L]

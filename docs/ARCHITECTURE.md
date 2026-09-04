@@ -1,5 +1,21 @@
 # KalaSearch data architecture
 
+## Production vs local backends
+
+- **Production on cPanel / shared hosting:** PHP 8.1 + MySQL (`php-api/`,
+  `database/schema.sql`). Browser calls relative `/api/...`. Admin login is
+  `POST /api/admin/login`. Bootstrap credentials live in `kalasearch-config.php`
+  **outside** `public_html`. After a password change in `/admin`, the bcrypt
+  hash is stored in MySQL `admin_credentials` and overrides the config file
+  (see `docs/CPANEL_PHP_DEPLOYMENT.md`).
+- **Local development:** Vite + the Node API middleware (`server/orderHandler.mjs`).
+  Node is not required on cPanel.
+
+Admin username/password are **never** in the React app, `VITE_*` variables,
+or GitHub.
+
+---
+
 ## Current mode: local CSV
 
 The UI imports the stable facade in `src/data/products.ts`. That facade exposes a `ProductProvider`; the active implementation is `LocalCsvProductProvider`, backed by the existing CSV adapter in `src/data/csvSource.ts`. CSV parsing, Persian normalization, price mapping, category mapping, and variant mapping stay in the data layer.

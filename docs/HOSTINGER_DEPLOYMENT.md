@@ -1,6 +1,16 @@
-# KalaSearch — Hostinger Production Deployment Guide
+# KalaSearch — Hostinger / Node VPS Deployment Guide
 
-KalaSearch is a **React + Vite frontend with a real Node.js backend** (`server/index.mjs`).
+> **Shared hosting / cPanel (including Hostinger shared and typical Iranian
+> cPanel plans):** production is **PHP 8.1 + MySQL**. Follow
+> [`CPANEL_PHP_DEPLOYMENT.md`](./CPANEL_PHP_DEPLOYMENT.md). Do **not** start
+> Node, PM2, or `npm run start` on those plans. `/admin` authenticates against
+> the PHP API (`POST /api/admin/login`).
+>
+> **This file is only for a Node.js VPS or Hostinger “Node.js Web App”** that
+> you intentionally choose. The Node backend stays in the repo for local
+> development (`npm run dev` / `npm run start`) and for that optional VPS path.
+
+KalaSearch is a **React + Vite frontend with a real Node.js backend** (`server/index.mjs`) on this optional path.
 The production server serves the built SPA from `dist/` **and** the `/api/*` endpoints
 (orders, admin auth, health). It does **not** depend on `vite preview` or any Vite
 process at runtime.

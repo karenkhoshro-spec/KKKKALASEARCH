@@ -1,5 +1,6 @@
 import type { CartItem } from "../types";
 import { getProductById } from "../data/products";
+import { classifyAdminLoginFailure } from "./adminLoginErrors";
 
 export const ORDER_STATUSES = ["registered", "preparing", "ready_pickup", "shipping", "delivered"] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
@@ -124,14 +125,21 @@ export async function fetchOrderByNumber(orderNumber: string, phone: string): Pr
 }
 
 export async function adminLogin(username: string, password: string): Promise<string> {
-  const res = await fetch(`${apiBase()}/api/admin/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${apiBase()}/api/admin/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+  } catch {
+    throw new Error("network_error");
+  }
   const data = await parseJson(res);
-  if (!res.ok || !data.token) throw new Error(data.error || "login_failed");
-  return data.token as string;
+  if (res.ok && typeof data.token === "string" && data.token) {
+    return data.token;
+  }
+  throw new Error(classifyAdminLoginFailure({ status: res.status, error: data.error }));
 }
 
 export async function adminSession(token: string): Promise<boolean> {
@@ -184,6 +192,32 @@ export async function fetchAdminOrders(token: string): Promise<StoredOrder[]> {
   const data = await parseJson(res);
   if (!res.ok) throw new Error(data.error || "orders_failed");
   return Array.isArray(data.orders) ? data.orders : [];
+}
+
+export async function changeAdminPassword(
+  token: string,
+  payload: { currentPassword: string; newPassword: string; confirmPassword: string },
+): Promise<void> {
+  let res: Response;
+  try {
+    res = await fetch(`${apiBase()}/api/admin/change-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    throw new Error("network_error");
+  }
+  const data = await parseJson(res);
+  if (res.ok && data.ok) return;
+  if (res.status === 401 && data.error === "invalid_current_password") {
+    throw new Error("invalid_current_password");
+  }
+  if (res.status === 401) throw new Error("unauthorized");
+  throw new Error(typeof data.error === "string" && data.error ? data.error : "server_error");
 }
 
 export async function patchOrderStatus(token: string, orderNumber: string, status: OrderStatus): Promise<StoredOrder> {

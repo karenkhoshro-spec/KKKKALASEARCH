@@ -127,5 +127,66 @@ echo "== ks_image_for_code ==\n";
 check('stored image preferred over mapping', ks_image_for_code('8039010', 'https://stored.example/a.jpg') === 'https://stored.example/a.jpg');
 check('empty code → empty', ks_image_for_code('', '') === '');
 
+echo "== ks_request_path (cPanel rewrite variants) ==\n";
+check(
+    'plain REQUEST_URI /api/admin/login',
+    ks_request_path(['REQUEST_URI' => '/api/admin/login']) === '/api/admin/login'
+);
+check(
+    'query string stripped',
+    ks_request_path(['REQUEST_URI' => '/api/admin/login?x=1']) === '/api/admin/login'
+);
+check(
+    'front controller REQUEST_URI + REDIRECT_URL',
+    ks_request_path([
+        'REQUEST_URI' => '/api/index.php',
+        'REDIRECT_URL' => '/api/admin/login',
+        'SCRIPT_NAME' => '/api/index.php',
+    ]) === '/api/admin/login'
+);
+check(
+    'PATH_INFO /admin/login under /api/index.php',
+    ks_request_path([
+        'REQUEST_URI' => '/api/index.php',
+        'PATH_INFO' => '/admin/login',
+        'SCRIPT_NAME' => '/api/index.php',
+    ]) === '/api/admin/login'
+);
+check(
+    '/api/index.php/admin/login collapsed',
+    ks_request_path(['REQUEST_URI' => '/api/index.php/admin/login']) === '/api/admin/login'
+);
+check(
+    'THE_REQUEST recovers original path',
+    ks_request_path([
+        'REQUEST_URI' => '/api/index.php',
+        'THE_REQUEST' => 'POST /api/admin/login HTTP/1.1',
+        'SCRIPT_NAME' => '/api/index.php',
+    ]) === '/api/admin/login'
+);
+check(
+    'relative /admin/login + SCRIPT_NAME /api/index.php',
+    ks_request_path([
+        'REQUEST_URI' => '/admin/login',
+        'SCRIPT_NAME' => '/api/index.php',
+    ]) === '/api/admin/login'
+);
+check(
+    'health path',
+    ks_request_path(['REQUEST_URI' => '/api/health']) === '/api/health'
+);
+check(
+    'trailing slash stripped',
+    ks_request_path(['REQUEST_URI' => '/api/admin/login/']) === '/api/admin/login'
+);
+check(
+    'session path',
+    ks_request_path(['REQUEST_URI' => '/api/admin/session']) === '/api/admin/session'
+);
+check(
+    'orders path',
+    ks_request_path(['REQUEST_URI' => '/api/admin/orders']) === '/api/admin/orders'
+);
+
 echo "\n$pass passed, $fail failed\n";
 exit($fail === 0 ? 0 : 1);

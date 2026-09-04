@@ -1,5 +1,12 @@
 # KalaSearch — cPanel / PHP / MySQL Deployment Guide
 
+**This is the production path for shared hosting / cPanel.**
+
+Production shared hosting uses **PHP 8.1+ and MySQL**. Node.js
+(`server/index.mjs`, `npm run start`, PM2) is **only** for local development
+and for an optional VPS that you deliberately choose. Do **not** start Node
+on cPanel. `/admin` talks to `POST /api/admin/login` on the PHP API.
+
 Production path for **standard Iranian cPanel shared hosting** (PHP 8.1+ and
 MySQL/MariaDB — **no Node.js, no VPS, no PM2, no Docker, no nginx** required).
 
@@ -60,7 +67,9 @@ Output: `dist/` — pure static files (`index.html`, `assets/`, `images/`).
 
 1. cPanel → **phpMyAdmin** → select your database (left sidebar).
 2. **Import** tab → **Choose File** → `database/schema.sql` → **Go**.
-3. Verify three tables exist: `orders`, `order_items`, `admin_sessions`.
+3. Verify these tables exist: `orders`, `order_items`, `admin_sessions`,
+   `admin_credentials` (the last one is empty until you change the password
+   in `/admin`; it is created by `schema.sql`).
 
 Or via SSH on a VPS (not needed for cPanel):
 
@@ -122,8 +131,9 @@ return [
   'db_name'              => 'karenk_kalasearch',
   'db_user'              => 'karenk_kalasearch',
   'db_password'          => 'STRONG_DB_PASSWORD',
-  'admin_username'       => 'karen',
-  'admin_password_hash'  => '$2y$10$...',       // ← generate below
+  // Bootstrap username — not compiled into the React app. Case-sensitive.
+  'admin_username'       => 'admin',
+  'admin_password_hash'  => '$2y$10$...',       // ← generate below; NEVER a raw password
   'admin_password'       => '',                 // leave empty once hash is set
   'admin_session_secret' => 'LONG_RANDOM_STRING_AT_LEAST_32_CHARS',
   'session_ttl_days'     => 7,
@@ -263,7 +273,163 @@ Optional — a clean deployment can start with zero orders.
   the PHP backend only stores the order snapshot and returns `document`
   metadata.
 
-## 19. Local development (unchanged)
+## 19. `/admin` login — exact cPanel checklist
+
+`/admin` is a **React page**. Logging in calls **PHP**. If the page loads but
+login fails, the SPA is fine and the API/config is not.
+
+### Required folder structure
+
+```
+/home/USERNAME/
+  kalasearch-config.php          ← REQUIRED. Outside public_html. Mode 600.
+  public_html/
+    .htaccess                    ← copy of deploy/.htaccess
+    index.html                   ← Vite build
+    assets/  (if the build emits them)
+    images/
+    orderx-logo.png
+    api/                         ← contents of php-api/ (not the folder name php-api)
+      .htaccess
+      index.php
+      lib/
+        bootstrap.php
+        config.php
+        db.php
+        util.php
+        auth.php
+        orders.php
+```
+
+Do **not** upload `php-api/config.example.php` as the live config, and do
+**not** put `kalasearch-config.php` inside `public_html`.
+
+### Where the username and password live
+
+| Item | Where it is set | Where it must NEVER be |
+|---|---|---|
+| Admin username | `admin_username` in `kalasearch-config.php` (or env `ADMIN_USERNAME`) | React, `src/`, `public/`, `VITE_*`, GitHub |
+| Admin password | bcrypt hash in `admin_password_hash` | raw password in any committed file |
+| Session HMAC pepper | `admin_session_secret` | frontend / GitHub |
+
+The login form is empty on purpose. Type the **exact** `admin_username` from
+the config file (case-sensitive). The intended bootstrap username is `admin`.
+It is **not** hardcoded in the React app.
+
+### Generate `ADMIN_PASSWORD_HASH` (never commit the raw password)
+
+On your computer (PHP 8.1+), for the intended bootstrap password:
+
+```bash
+php -r "echo password_hash('admin', PASSWORD_DEFAULT), PHP_EOL;"
+```
+
+Paste **only the hash** (starts with `$2y$`) into `admin_password_hash`.
+Leave `admin_password` empty. The live site uses `password_verify()`.
+Never put the raw password in `src/`, `public/`, GitHub, or `config.example.php`.
+
+After first login, change that password in **Admin orders → Change password**.
+The new bcrypt hash is stored in MySQL table `admin_credentials` and overrides
+the config file from then on (no need to edit `kalasearch-config.php` again).
+
+### Generate `ADMIN_SESSION_SECRET`
+
+```bash
+php -r "echo bin2hex(random_bytes(32)), PHP_EOL;"
+# or: openssl rand -hex 32
+```
+
+At least 32 characters. This peppers the session token before it is stored
+in MySQL (`admin_sessions.token_hash`).
+
+### MySQL schema
+
+phpMyAdmin → your database → Import → `database/schema.sql`.
+
+Confirm these tables exist:
+
+- `orders`
+- `order_items`
+- `admin_sessions`  ← login **cannot** succeed without this table
+- `admin_credentials` ← empty at first; filled when the admin changes the password in the panel
+
+A successful `POST /api/admin/login` **inserts a row** into `admin_sessions`.
+If the database is missing, login returns `500 {"error":"server_error"}`
+(never a stack trace or the DB password).
+
+### Config variables that must be non-empty
+
+```
+db_host, db_name, db_user, db_password
+admin_username              (intended bootstrap: admin)
+admin_password_hash         (bcrypt of the bootstrap password — see above)
+admin_session_secret
+session_ttl_days            (default 7)
+```
+
+If username / hash / secret are empty, login returns
+`503 {"error":"admin_not_configured"}`. The React page now shows a
+**configuration** message, not “wrong password”.
+
+### How to test `/api/health`
+
+```bash
+curl -sS https://YOUR-DOMAIN/api/health
+# expected: {"ok":true}
+```
+
+If this is HTML, 404, or the homepage, `public_html/api/` or `.htaccess` is
+wrong — `/admin` will not be able to log in.
+
+### How to test `/api/admin/login`
+
+```bash
+curl -sS -D - -o /tmp/ks-login.json -X POST https://YOUR-DOMAIN/api/admin/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"admin","password":"YOUR_BOOTSTRAP_PASSWORD"}'
+```
+
+Use the username that is actually in `kalasearch-config.php`.
+
+| HTTP | Body | Meaning |
+|---|---|---|
+| 200 | `{"token":"..."}` | Config + MySQL + password are correct |
+| 401 | `{"error":"invalid_credentials"}` | Username or password does not match the config (case-sensitive username) |
+| 503 | `{"error":"admin_not_configured"}` | Hash/username/secret missing |
+| 500 | `{"error":"server_error"}` | DB down, wrong DB password, or `admin_sessions` missing |
+| 404 | `{"error":"not_found"}` | Request never reached the PHP front controller |
+
+Then:
+
+```bash
+TOKEN=$(php -r 'echo json_decode(file_get_contents("/tmp/ks-login.json"))->token;')
+curl -sS https://YOUR-DOMAIN/api/admin/session -H "Authorization: Bearer $TOKEN"
+curl -sS https://YOUR-DOMAIN/api/admin/orders  -H "Authorization: Bearer $TOKEN"
+```
+
+Both must be 200. If login is 200 but these are 401, Apache stripped the
+`Authorization` header — `public_html/api/.htaccess` must contain the
+`SetEnvIf Authorization` / `RewriteRule` restore lines.
+
+### Common causes of a “wrong password” on cPanel (and what you see now)
+
+| Real cause | Old UI (bug) | UI now |
+|---|---|---|
+| `kalasearch-config.php` missing / empty hash | “wrong password” | Admin is not configured |
+| Typed `karen` but config says `Orderx` (or vice versa) | “wrong password” | Invalid username or password |
+| Username case mismatch (`orderx` vs `Orderx`) | “wrong password” | Invalid username or password |
+| MySQL / `admin_sessions` missing | “wrong password” | Server error |
+| `public_html/api/` not uploaded, so `/api/admin/login` 404s | “wrong password” | Cannot reach /api |
+| `public_html/.htaccess` missing, SPA swallowed `/api` | “wrong password” | Cannot reach /api |
+| Wrong password | “wrong password” | Invalid username or password |
+
+### Authorization Bearer passthrough
+
+cPanel PHP-FPM often exposes the header as `REDIRECT_HTTP_AUTHORIZATION`.
+The API reads both that and `HTTP_AUTHORIZATION`. Login itself does not
+need a Bearer token; **session, orders, logout, and status PATCH do**.
+
+## 20. Local development (unchanged)
 
 ```bash
 npm ci

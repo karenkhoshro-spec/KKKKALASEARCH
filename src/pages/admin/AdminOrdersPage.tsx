@@ -6,6 +6,7 @@ import { useAdminAuth } from "../../context/AdminAuthContext";
 import { fetchAdminOrders, patchOrderStatus, ORDER_STATUSES, type StoredOrder, type OrderStatus } from "../../utils/ordersApi";
 import { downloadStoredOrderPdf, orderPdfLabels } from "../../utils/orderPdf";
 import OrderItemImage from "../../components/OrderItemImage";
+import AdminChangePassword from "../../components/AdminChangePassword";
 
 type StatusFilter = "all" | OrderStatus;
 
@@ -190,6 +191,7 @@ export default function AdminOrdersPage() {
             </div>
           </div>
         </div>
+        <AdminChangePassword />
       </div>
 
       {error && <p className="mb-3 text-xs" style={{ color: "var(--danger)" }}>{error}</p>}

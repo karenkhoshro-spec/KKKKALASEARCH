@@ -172,6 +172,12 @@ CODE=$(req POST /api/admin/login /tmp/ks-login.json)
 check "wrong password → 401" "$CODE" "401"
 check "…with invalid_credentials" "$(json .error)" "invalid_credentials"
 cat > /tmp/ks-login.json <<JSON
+{ "username": "wrong-username", "password": "$ADMIN_PASSWORD" }
+JSON
+CODE=$(req POST /api/admin/login /tmp/ks-login.json)
+check "wrong username → 401" "$CODE" "401"
+check "…with invalid_credentials" "$(json .error)" "invalid_credentials"
+cat > /tmp/ks-login.json <<JSON
 { "username": "$ADMIN_USERNAME", "password": "$ADMIN_PASSWORD" }
 JSON
 CODE=$(req POST /api/admin/login /tmp/ks-login.json)
@@ -226,6 +232,41 @@ check "order survives restart" "$(json ".orders | map(select(.orderNumber == \"$
 check "delivered status survives restart" "$(json ".orders[] | select(.orderNumber == \"$ORDER_NO\") | .status")" "delivered"
 CODE=$(req GET /api/admin/session)
 check "session token survives restart (DB-backed) → 200" "$CODE" "200"
+
+echo "== 8b. change password (DB override) =="
+cat > /tmp/ks-pw.json <<'JSON'
+{ "currentPassword": "wrong", "newPassword": "next-pass-ok", "confirmPassword": "next-pass-ok" }
+JSON
+CODE=$(req POST /api/admin/change-password /tmp/ks-pw.json)
+check "wrong current password → 401" "$CODE" "401"
+check "…invalid_current_password" "$(json .error)" "invalid_current_password"
+cat > /tmp/ks-pw.json <<JSON
+{ "currentPassword": "$ADMIN_PASSWORD", "newPassword": "ab", "confirmPassword": "ab" }
+JSON
+CODE=$(req POST /api/admin/change-password /tmp/ks-pw.json)
+check "too short → 400" "$CODE" "400"
+cat > /tmp/ks-pw.json <<JSON
+{ "currentPassword": "$ADMIN_PASSWORD", "newPassword": "next-pass-ok", "confirmPassword": "other" }
+JSON
+CODE=$(req POST /api/admin/change-password /tmp/ks-pw.json)
+check "mismatch → 400" "$CODE" "400"
+cat > /tmp/ks-pw.json <<JSON
+{ "currentPassword": "$ADMIN_PASSWORD", "newPassword": "next-pass-ok", "confirmPassword": "next-pass-ok" }
+JSON
+CODE=$(req POST /api/admin/change-password /tmp/ks-pw.json)
+check "valid change → 200" "$CODE" "200"
+TOKEN=""
+cat > /tmp/ks-login.json <<JSON
+{ "username": "$ADMIN_USERNAME", "password": "$ADMIN_PASSWORD" }
+JSON
+CODE=$(req POST /api/admin/login /tmp/ks-login.json)
+check "old password no longer works → 401" "$CODE" "401"
+cat > /tmp/ks-login.json <<JSON
+{ "username": "$ADMIN_USERNAME", "password": "next-pass-ok" }
+JSON
+CODE=$(req POST /api/admin/login /tmp/ks-login.json)
+check "new password works → 200" "$CODE" "200"
+TOKEN=$(json .token)
 
 echo "== 9. logout revokes the token =="
 CODE=$(req POST /api/admin/logout)
