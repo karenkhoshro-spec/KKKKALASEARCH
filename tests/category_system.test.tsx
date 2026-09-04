@@ -145,7 +145,7 @@ describe("KalaSearch Crystal Design System — Category Navigation", () => {
     expect(html).toContain("سایر");
   });
 
-  it("renders CategoryNav with two swipeable rows: primaries + promoted subcategories + سایر trigger", () => {
+  it("renders CategoryNav as ONE compact horizontal slider with سایر as the modal trigger", () => {
     const html = renderToString(
       <MemoryRouter>
         <LanguageProvider>
@@ -153,21 +153,29 @@ describe("KalaSearch Crystal Design System — Category Navigation", () => {
         </LanguageProvider>
       </MemoryRouter>
     );
-    expect(html).toContain("ks-category-grid-4");
-    expect(html).toContain("ks-category-row-other");
+    // Single-row slider (old two-row layout removed)
+    expect(html).toContain("ks-category-slider");
+    expect(html.match(/ks-category-slider/g)).toHaveLength(1);
+    expect(html).not.toContain("ks-category-grid-4");
+    expect(html).not.toContain("ks-category-row-other");
+
+    // Every primary category (8 + سایر) renders as one compact card
+    const cardMatches = html.match(/ks-category-card(?![-\w])/g);
+    expect(cardMatches).toHaveLength(categories.length); // 9 cards, one row
+
+    // All primaries link into the existing category routes, in order
     const linkMatches = html.match(/href="\/category\/[^"]+"/g);
-    // Row 1: 5 primaries; Row 2: 3 primaries + 6 promoted subcategories.
     expect(linkMatches?.[0]).toBe('href="/category/shopping-basket"');
     expect(linkMatches?.[3]).toBe('href="/category/zanbil"');
     expect(linkMatches?.[5]).toBe('href="/category/basin-bathtub"');
     expect(linkMatches?.[6]).toBe('href="/category/pitcher-glass"');
-    // Popular subcategories are promoted into the visible rows (deep links
-    // into the "سایر" subcategory view) instead of being hidden inside it.
-    expect(html).toContain('href="/category/other?sub=colander-bowl"');
-    expect(html).toContain('href="/category/other?sub=spice"');
-    // سایر is the final tile of row two and opens the full-category panel
-    // (modal trigger — no direct link, nothing is lost).
-    expect(html).toContain("ks-category-tile-other");
+    expect(linkMatches?.[7]).toBe('href="/category/freezer"');
+
+    // سایر is the FINAL card and opens the full-category panel (modal
+    // trigger — no direct link, nothing is lost).
+    expect(html).toContain("ks-category-card--other");
+    expect(html).toContain('aria-label="سایر"');
+    expect(html).toContain("aria-haspopup=\"dialog\"");
     expect(html).not.toContain('href="/category/other" ');
   });
 

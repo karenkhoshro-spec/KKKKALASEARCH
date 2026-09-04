@@ -28,15 +28,15 @@ describe("UI & UX System Polish & Validation Suite", () => {
     );
 
     expect(html).toContain("جستجو");
-    // Quick access now hosts the full category box under the categories title;
-    // the price-sort control moved into the همه محصولات header.
+    // Categories render as ONE compact horizontal slider under the title;
+    // the price-sort control lives in the همه محصولات header.
     expect(html).toContain("دسته‌بندی محصولات");
     expect(html).toContain("ارزان‌ترین");
     expect(html).toContain('href="/category/shopping-basket"');
-    // Popular subcategories are promoted into the visible rows; سایر opens the
-    // full-category panel instead of being a plain link (Req: better slider).
-    expect(html).toContain('href="/category/other?sub=colander-bowl"');
-    expect(html).toContain("ks-category-tile-other");
+    // سایر is the final slider card and opens the full-category panel
+    // instead of being a plain link.
+    expect(html).toContain("ks-category-slider");
+    expect(html).toContain("ks-category-card--other");
     // Main product cards live under همه محصولات with an expand control
     expect(html).toContain("همه محصولات");
     expect(html).toContain("مشاهده بیشتر");

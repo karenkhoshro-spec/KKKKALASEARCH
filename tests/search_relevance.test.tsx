@@ -101,32 +101,45 @@ describe("Home page compact quick search", () => {
   });
 });
 
-describe("Category rows: both rows horizontally swipeable", () => {
-  it("renders both rows with the shared scroll strip class", () => {
+describe("Category slider: one compact horizontal swipe strip", () => {
+  it("renders a single row slider with همه cards including سایر last", () => {
     const html = shell(<Home />);
-    const row1 = html.indexOf('data-cat-row="1"');
-    const row2 = html.indexOf('data-cat-row="2"');
-    expect(row1).toBeGreaterThan(-1);
-    expect(row2).toBeGreaterThan(row1);
-    // Both rows share ks-category-row-scroll (overflow-x auto + snap + drag);
-    // capture from each row's class attribute back to its opening "<div".
-    const classStart1 = html.lastIndexOf("<div", row1);
-    const row1Class = html.slice(classStart1, row1);
-    const classStart2 = html.lastIndexOf("<div", row2);
-    const row2Class = html.slice(classStart2, row2);
-    expect(row1Class).toContain("ks-category-row-scroll");
-    expect(row2Class).toContain("ks-category-row-scroll");
+    expect(html).toContain("ks-category-slider");
+    // Exactly ONE slider row (old two-row layout removed)
+    expect(html.match(/ks-category-slider/g)).toHaveLength(1);
+    // سایر is the final card and opens the existing modal. All category
+    // links precede it (it is a modal-trigger button, not a link).
+    expect(html).toContain("ks-category-card--other");
+    expect(html).toContain('aria-label="سایر"');
+    const otherIdx = html.indexOf("ks-category-card--other");
+    const lastLinkIdx = html.lastIndexOf('href="/category/');
+    expect(otherIdx).toBeGreaterThan(lastLinkIdx);
   });
 
-  it("defines horizontal native scrolling + snap in CSS for both rows", () => {
+  it("defines compact native horizontal scrolling in CSS (no wrap, small gap)", () => {
     const css = readFileSync("src/components/CategoryNav.css", "utf8");
+    expect(css).toContain("flex-wrap: nowrap");
     expect(css).toContain("overflow-x: auto");
-    expect(css).toContain("scroll-snap-type: x proximity");
+    expect(css).toContain("scroll-snap-type: x mandatory");
+    expect(css).toContain("touch-action: pan-x");
     expect(css).toContain("-webkit-overflow-scrolling: touch");
-    // Row 1 and row 2 share the same scroll behavior rule
-    expect(css).toMatch(/\.ks-category-grid-4,\s*\n\.ks-category-row-scroll \{/);
-    // Identical tile min-widths on both rows
-    expect(css).toMatch(/\.ks-category-row-other > \.ks-category-tile \{\s*\n\s*min-width: 22%;/);
+    expect(css).toContain("overscroll-behavior-x: contain");
+    expect(css).toMatch(/\.ks-category-card \{[^}]*flex: 0 0 auto;/s);
+    expect(css).toMatch(/\.ks-category-card \{[^}]*scroll-snap-align: start;/s);
+    // Small compact gap (8px target), never large spacing
+    expect(css).toMatch(/gap: 8px/);
+    // Compact card width range per spec (100–130px)
+    expect(css).toMatch(/width: 104px/);
+    expect(css).toMatch(/width: 130px/);
+    // No old two-row classes remain
+    expect(css).not.toContain("ks-category-grid-4");
+    expect(css).not.toContain("ks-category-row-other");
+  });
+
+  it("keeps dark-mode neon purple card styling and light-mode clean cards", () => {
+    const css = readFileSync("src/components/CategoryNav.css", "utf8");
+    expect(css).toContain('html[data-theme="light"] .ks-category-card');
+    expect(css).toContain("rgba(168, 85, 247"); // purple neon border/glow
   });
 });
 
