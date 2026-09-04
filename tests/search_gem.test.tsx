@@ -43,8 +43,11 @@ describe("KalaSearch Search UI — Purple Gemstone & Crystal Glassmorphism", () 
     expect(html).toContain("مشاهده دسته کامل");
     expect(html).toContain("ks-category-product-grid");
     expect(html).toContain("ks-product-card");
-    expect(html).toContain("ks-product-image-wrapper");
-    expect(html).not.toContain("is-minimal");
+    // Search result cards are now name-only (matching category browsing):
+    // no image wrapper, no price, minimal card style.
+    expect(html).toContain("is-minimal");
+    expect(html).not.toContain("ks-product-image-wrapper");
+    expect(html).not.toContain("تومان");
   });
 
   it("preserves search functionality and product search matching", () => {

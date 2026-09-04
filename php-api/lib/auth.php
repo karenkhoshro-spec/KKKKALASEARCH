@@ -20,6 +20,15 @@ function ks_admin_configured(): bool
         && $c['admin_session_secret'] !== '';
 }
 
+/** True when the optional Owner (Hiboss) account is configured. */
+function ks_owner_configured(): bool
+{
+    $c = ks_config();
+    return $c['owner_username'] !== ''
+        && ($c['owner_password_hash'] !== '' || $c['owner_password'] !== '')
+        && $c['admin_session_secret'] !== '';
+}
+
 function ks_verify_admin_password(string $password): bool
 {
     $c = ks_config();
@@ -30,19 +39,30 @@ function ks_verify_admin_password(string $password): bool
     return hash_equals($c['admin_password'], $password);
 }
 
+function ks_verify_owner_password(string $password): bool
+{
+    $c = ks_config();
+    if ($c['owner_password_hash'] !== '') {
+        return password_verify($password, $c['owner_password_hash']);
+    }
+    // Legacy plaintext fallback — documented migration path is OWNER_PASSWORD_HASH.
+    return hash_equals($c['owner_password'], $password);
+}
+
 /** Issue a new session token (row inserted into admin_sessions). */
-function ks_issue_admin_token(): string
+function ks_issue_admin_token(?string $username = null): string
 {
     $c = ks_config();
     $token = bin2hex(random_bytes(32));
     $tokenHash = hash_hmac('sha256', $token, $c['admin_session_secret']);
     $ttl = max(1, (int) $c['session_ttl_days']);
     $expiresAt = gmdate('Y-m-d H:i:s', time() + $ttl * 86400);
+    $who = $username !== null && $username !== '' ? $username : $c['admin_username'];
 
     $stmt = ks_db()->prepare(
         'INSERT INTO admin_sessions (token_hash, username, expires_at) VALUES (?, ?, ?)'
     );
-    $stmt->execute([$tokenHash, $c['admin_username'], $expiresAt]);
+    $stmt->execute([$tokenHash, $who, $expiresAt]);
     return $token;
 }
 
@@ -60,6 +80,31 @@ function ks_verify_admin_token(?string $token): bool
     );
     $stmt->execute([$tokenHash]);
     return $stmt->fetchColumn() !== false;
+}
+
+/**
+ * Role of a valid session token: "owner" for the configured Owner account,
+ * "admin" otherwise. Returns '' when the token is invalid.
+ */
+function ks_session_role(?string $token): string
+{
+    if ($token === null || $token === '' || !ks_admin_configured()) {
+        return '';
+    }
+    $tokenHash = hash_hmac('sha256', $token, ks_config()['admin_session_secret']);
+    $stmt = ks_db()->prepare(
+        'SELECT username FROM admin_sessions
+          WHERE token_hash = ? AND revoked_at IS NULL AND expires_at > UTC_TIMESTAMP()
+          LIMIT 1'
+    );
+    $stmt->execute([$tokenHash]);
+    $username = $stmt->fetchColumn();
+    if ($username === false) {
+        return '';
+    }
+    return ks_config()['owner_username'] !== '' && $username === ks_config()['owner_username']
+        ? 'owner'
+        : 'admin';
 }
 
 /** Permanently revoke a session token (logout). */

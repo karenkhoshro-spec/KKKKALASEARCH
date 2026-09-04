@@ -61,11 +61,19 @@ export interface OrderPdfData {
     postalCode?: string;
     notes: string;
     product: string;
+    /** Column title for the product-name column (defaults to `product`). */
+    productName?: string;
     productCode?: string;
     variation: string;
+    /** Column title for the color/variation column (defaults to `variation`). */
+    colorLabel?: string;
     sku?: string;
     quantity: string;
     packQuantity?: string;
+    /** "تعداد انتخابی" — the quantity the customer picked. */
+    selectedQuantity?: string;
+    /** "جمع کل تعداد کالا" — selected quantity × units per package. */
+    totalQuantity?: string;
     price: string;
     lineTotal: string;
     total: string;
@@ -93,19 +101,40 @@ export const PDF_PAGE_H = 1123;
 export const PDF_MARGIN = 30;
 export const PDF_CONTENT_W = PDF_PAGE_W - PDF_MARGIN * 2;
 
+/** Brand block: the real Orderx logo when available, otherwise a clean
+ *  black "Orderx" wordmark. Nothing else is printed around the brand. */
+function brandBlock(logoDataUrl: string | undefined): string {
+  const logo = logoDataUrl
+    ? `<img src="${logoDataUrl}" alt="Orderx" style="height:46px;max-width:260px;object-fit:contain;display:inline-block;" />`
+    : `<div style="font-size:26px;font-weight:900;letter-spacing:3px;color:#000000;line-height:1.15;">Orderx</div>`;
+  return `<div style="text-align:center;">${logo}</div>`;
+}
+
 /**
  * Builds the printable proforma invoice HTML. Every text block wraps
  * (`overflow-wrap:anywhere`), rows grow vertically, and nothing depends on
  * absolute positions — so nothing can fall outside the page.
+ *
+ * @param data          order data
+ * @param pageIndicator optional "page x / y" note (kept for compat)
+ * @param brandLogo     optional data-URL of the Orderx logo; when omitted a
+ *                      clean "Orderx" wordmark is printed instead.
  */
-export function buildInvoiceHtml(data: OrderPdfData, pageIndicator?: string): string {
+export function buildInvoiceHtml(data: OrderPdfData, pageIndicator?: string, brandLogo?: string): string {
   const rtl = data.dir === "rtl";
   const align = rtl ? "right" : "left";
   const counterAlign = rtl ? "left" : "right";
 
+  const productCol = data.labels.productName || data.labels.product || "محصول";
+  const colorCol = data.labels.colorLabel || data.labels.variation || "رنگ";
+
   const rows = data.items
     .map(
-      (item, idx) => `
+      (item, idx) => {
+        const pack = Number(item.packQuantity);
+        const packShown = Number.isFinite(pack) && pack > 0;
+        const qty = item.quantity;
+        return `
       <tr style="background:${idx % 2 === 0 ? "#f9f6ff" : "#ffffff"};">
         <td style="padding:8px 10px;border:1px solid #e4defa;text-align:center;font-weight:bold;">${idx + 1}</td>
         <td style="padding:8px 10px;border:1px solid #e4defa;text-align:${align};overflow-wrap:anywhere;line-height:1.7;">
@@ -114,18 +143,26 @@ export function buildInvoiceHtml(data: OrderPdfData, pageIndicator?: string): st
           ${item.spec ? `<div style="font-size:11px;color:#64748b;margin-top:2px;">${escapeHtml(item.spec)}</div>` : ""}
         </td>
         <td style="padding:8px 10px;border:1px solid #e4defa;text-align:center;overflow-wrap:anywhere;">
-          <div>${item.variation ? escapeHtml(item.variation) : "-"}</div>
+          <div style="color:#1e1b4b;">${item.variation || item.color ? escapeHtml(item.variation || item.color) : "-"}</div>
           ${item.sku ? `<div dir="ltr" style="font-size:11px;color:#7c3aed;font-family:monospace;margin-top:2px;">${escapeHtml(item.sku)}</div>` : ""}
         </td>
-        <td style="padding:8px 10px;border:1px solid #e4defa;text-align:center;font-weight:bold;">
-          ${item.quantity}
-          ${item.packQuantity ? `<div style="font-size:10px;color:#64748b;">(بسته: ${item.packQuantity})</div>` : ""}
+        <td style="padding:8px 6px;border:1px solid #e4defa;text-align:center;">
+          <div style="font-weight:bold;color:#1e1b4b;">${qty}</div>
+        </td>
+        <td style="padding:8px 6px;border:1px solid #e4defa;text-align:center;">
+          ${
+            packShown
+              ? `<div style="font-weight:bold;color:#6d28d9;">${pack}</div>
+                 <div style="font-size:10px;color:#64748b;margin-top:2px;line-height:1.6;">${escapeHtml(data.labels.totalQuantity || "جمع کل تعداد کالا")}: ${qty * pack}</div>`
+              : "<div style=\"color:#94a3b8;\">-</div>"
+          }
         </td>
         <td style="padding:8px 10px;border:1px solid #e4defa;text-align:center;white-space:nowrap;">${formatPrice(item.price, data.currencyLabel)}</td>
         <td style="padding:8px 10px;border:1px solid #e4defa;text-align:center;font-weight:bold;color:#7c3aed;white-space:nowrap;">
-          ${formatPrice(item.price === undefined ? undefined : item.price * item.quantity, data.currencyLabel)}
+          ${formatPrice(item.price === undefined ? undefined : item.price * qty, data.currencyLabel)}
         </td>
-      </tr>`,
+      </tr>`;
+      },
     )
     .join("");
 
@@ -143,6 +180,9 @@ export function buildInvoiceHtml(data: OrderPdfData, pageIndicator?: string): st
       `<div style="margin-top:3px;"><b>${escapeHtml(data.labels.paymentStatus || "وضعیت پرداخت")}:</b> ${escapeHtml(data.paymentStatus)}</div>`,
     );
   }
+  if (pageIndicator) {
+    metaLines.push(`<div style="margin-top:3px;color:#928aab;">${escapeHtml(pageIndicator)}</div>`);
+  }
 
   const customerLines: string[] = [];
   customerLines.push(`<div><b>${escapeHtml(data.labels.customer)}:</b> ${escapeHtml(data.customerName)}</div>`);
@@ -150,70 +190,73 @@ export function buildInvoiceHtml(data: OrderPdfData, pageIndicator?: string): st
   if (data.email) {
     customerLines.push(`<div><b>${escapeHtml(data.labels.email || "ایمیل")}:</b> <span dir="ltr">${escapeHtml(data.email)}</span></div>`);
   }
-  if (data.province) {
-    customerLines.push(`<div><b>${escapeHtml(data.labels.province || "استان")}:</b> ${escapeHtml(data.province)}</div>`);
-  }
+  // استان (province) was intentionally removed from the PDF output — the
+  // checkout form no longer collects it and legacy values are never printed.
   if (data.city) {
     customerLines.push(`<div><b>${escapeHtml(data.labels.city || "شهر")}:</b> ${escapeHtml(data.city)}</div>`);
-  }
-  if (data.postalCode) {
-    customerLines.push(`<div><b>${escapeHtml(data.labels.postalCode || "کد پستی")}:</b> <span dir="ltr">${escapeHtml(data.postalCode)}</span></div>`);
   }
   if (data.address) {
     customerLines.push(`<div><b>${escapeHtml(data.labels.address || "آدرس")}:</b> ${escapeHtml(data.address)}</div>`);
   }
+  if (data.postalCode) {
+    customerLines.push(`<div><b>${escapeHtml(data.labels.postalCode || "کد پستی")}:</b> <span dir="ltr">${escapeHtml(data.postalCode)}</span></div>`);
+  }
+
+  const orderBoxLines: string[] = [];
+  orderBoxLines.push(
+    `<div style="font-size:13px;"><b>${escapeHtml(data.labels.orderNumber)}:</b> <span dir="ltr" style="font-family:monospace;font-weight:bold;color:#7c3aed;">${escapeHtml(data.orderNumber)}</span></div>`,
+  );
+  orderBoxLines.push(...metaLines);
 
   return `
-    <div style="border-bottom:2.5px solid #7c3aed;padding-bottom:12px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-      <div style="text-align:${align};">
-        <div style="font-size:22px;font-weight:900;letter-spacing:1px;color:#6d28d9;">KALASEARCH</div>
-        <div style="font-size:12px;color:#6b6180;font-weight:600;margin-top:2px;">${escapeHtml(data.labels.title)}</div>
-      </div>
-      <div style="text-align:${counterAlign};font-size:12px;color:#40364f;">
-        <div><b>${escapeHtml(data.labels.orderNumber)}:</b> <span dir="ltr" style="font-family:monospace;font-weight:bold;color:#7c3aed;">${escapeHtml(data.orderNumber)}</span></div>
-        ${metaLines.join("")}
-        ${pageIndicator ? `<div style="margin-top:3px;color:#928aab;">${escapeHtml(pageIndicator)}</div>` : ""}
-      </div>
+    <div style="border-bottom:2.5px solid #7c3aed;padding-bottom:13px;margin-bottom:14px;">
+      ${brandBlock(brandLogo)}
     </div>
-    <div style="display:flex;gap:12px;margin-bottom:16px;font-size:12px;flex-wrap:wrap;">
-      <div style="flex:1;min-width:300px;background:#f7f4ff;border:1px solid #e4defa;border-radius:12px;padding:12px 14px;line-height:1.9;overflow-wrap:anywhere;text-align:${align};">
+    <div style="display:flex;gap:12px;margin-bottom:14px;font-size:12px;flex-wrap:wrap;">
+      <div style="flex:1.2;min-width:280px;background:#f7f4ff;border:1px solid #e4defa;border-radius:12px;padding:12px 14px;line-height:1.95;overflow-wrap:anywhere;text-align:${align};">
+        <div style="font-weight:800;color:#5b21b6;margin-bottom:4px;">${escapeHtml(data.labels.customer)}</div>
         ${customerLines.join("")}
       </div>
-      ${
-        data.notes
-          ? `<div style="flex:1;min-width:220px;background:#fdf8f2;border:1px solid #f3e3cd;border-radius:12px;padding:12px 14px;line-height:1.9;overflow-wrap:anywhere;text-align:${align};">
-              <div><b>${escapeHtml(data.labels.notes)}:</b> ${escapeHtml(data.notes)}</div>
-            </div>`
-          : ""
-      }
+      <div style="flex:1;min-width:230px;background:#faf7ff;border:1px solid #e9e2fb;border-radius:12px;padding:12px 14px;line-height:1.9;overflow-wrap:anywhere;text-align:${align};">
+        ${orderBoxLines.join("")}
+        ${
+          data.notes
+            ? `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed #ddd6fe;"><b>${escapeHtml(data.labels.notes)}:</b> ${escapeHtml(data.notes)}</div>`
+            : ""
+        }
+      </div>
     </div>
     <table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;">
       <colgroup>
-        <col style="width:34px" />
+        <col style="width:30px" />
         <col />
-        <col style="width:21%" />
-        <col style="width:58px" />
-        <col style="width:17%" />
-        <col style="width:17%" />
+        <col style="width:14%" />
+        <col style="width:9%" />
+        <col style="width:13%" />
+        <col style="width:14%" />
+        <col style="width:14%" />
       </colgroup>
       <thead>
         <tr style="background:#7c3aed;color:#fff;">
           <th style="padding:8px;border:1px solid #7c3aed;">#</th>
-          <th style="padding:8px 10px;border:1px solid #7c3aed;">${escapeHtml(data.labels.product)}</th>
-          <th style="padding:8px 10px;border:1px solid #7c3aed;">${escapeHtml(data.labels.variation)} / ${escapeHtml(data.labels.sku || "SKU")}</th>
+          <th style="padding:8px 10px;border:1px solid #7c3aed;">${escapeHtml(productCol)}</th>
+          <th style="padding:8px 10px;border:1px solid #7c3aed;">${escapeHtml(colorCol)}</th>
           <th style="padding:8px;border:1px solid #7c3aed;">${escapeHtml(data.labels.quantity)}</th>
+          <th style="padding:8px;border:1px solid #7c3aed;">${escapeHtml(data.labels.packQuantity || "تعداد در بسته")}</th>
           <th style="padding:8px 10px;border:1px solid #7c3aed;">${escapeHtml(data.labels.price)}</th>
           <th style="padding:8px 10px;border:1px solid #7c3aed;">${escapeHtml(data.labels.lineTotal)}</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
-    </table>
-    <div style="display:flex;justify-content:flex-end;margin-top:14px;">
-      <div style="background:linear-gradient(90deg, #ea580c, #7c3aed);color:#fff;border-radius:12px;padding:12px 22px;font-size:14px;font-weight:800;">
-        ${escapeHtml(data.labels.total)}: ${data.total.toLocaleString("en-US")} ${escapeHtml(data.currencyLabel)}
-      </div>
-    </div>
-    <div style="margin-top:18px;font-size:10px;color:#928aab;text-align:center;">
-      کالاسرچ · درگاه هوشمند جستجو و انتخاب کالا · ${escapeHtml(data.dateLabel || data.date)}
-    </div>`;
+      <tfoot>
+        <tr style="background:linear-gradient(90deg,#f5efff,#ede4fe);">
+          <td colspan="7" style="padding:0;border:1.5px solid #7c3aed;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 16px;">
+              <div style="font-size:14px;font-weight:900;color:#4c1d95;">${escapeHtml(data.labels.total)}</div>
+              <div style="font-size:15px;font-weight:900;color:#7c3aed;white-space:nowrap;">${data.total.toLocaleString("en-US")} ${escapeHtml(data.currencyLabel)}</div>
+            </div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>`;
 }

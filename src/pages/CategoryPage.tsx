@@ -1,9 +1,9 @@
 import { useEffect, useState, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useListContext } from "../context/ListContext";
 import { categories } from "../data/categories";
-import { getOtherSubcategoryCounts, getProductsByCategory } from "../data/products";
+import { getOtherSubcategoryCounts, getListableProductsByCategory } from "../data/products";
 import ProductCard from "../components/ProductCard";
 import CategoryOverlayHeader from "../components/CategoryOverlayHeader";
 import CategoryIconFrame from "../components/CategoryIconFrame";
@@ -11,21 +11,38 @@ import "../components/CategoryNav.css";
 
 export default function CategoryPage() {
   const { categoryId = "" } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { t, lang } = useLanguage();
   const { setListContext } = useListContext();
-  const [subcategoryId, setSubcategoryId] = useState<string | undefined>();
+  // Subcategory selection: URL-first (?sub=…) so links from the home category
+  // rows / search shortcut land inside the subcategory directly. The local
+  // state below handles in-page back navigation.
+  const subParam = searchParams.get("sub") || undefined;
+  const [localSub, setLocalSub] = useState<string | undefined>();
+  const subcategoryId = subParam ?? localSub;
 
   const category = useMemo(() => categories.find((c) => c.id === categoryId), [categoryId]);
-  const list = useMemo(() => getProductsByCategory(categoryId, subcategoryId), [categoryId, subcategoryId]);
+  // Customer grids show only products that have a real usable image.
+  const list = useMemo(() => getListableProductsByCategory(categoryId, subcategoryId), [categoryId, subcategoryId]);
   const subcategories = useMemo(() => (categoryId === "other" ? getOtherSubcategoryCounts() : []), [categoryId]);
 
   useEffect(() => {
     setListContext({ type: "category", categoryId });
-    setSubcategoryId(undefined);
+    setLocalSub(undefined);
   }, [categoryId, setListContext]);
 
   const isOther = categoryId === "other";
   const selectedSub = useMemo(() => subcategories.find((s) => s.id === subcategoryId), [subcategories, subcategoryId]);
+
+  // "Back" from a ?sub= deep link clears the URL param instead of the local state.
+  const backFromSub = () => {
+    if (subParam) {
+      searchParams.delete("sub");
+      setSearchParams(searchParams, { replace: true });
+    } else {
+      setLocalSub(undefined);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-5xl px-3.5 py-4 sm:px-6">
@@ -39,7 +56,7 @@ export default function CategoryPage() {
         }
         productCount={(!isOther || subcategoryId) ? list.length : undefined}
         to="/"
-        onBack={isOther && subcategoryId ? () => setSubcategoryId(undefined) : undefined}
+        onBack={isOther && subcategoryId ? backFromSub : undefined}
       />
 
       {/* 2. Subcategories list for "Other" when no subcategory is selected */}
@@ -49,7 +66,7 @@ export default function CategoryPage() {
             <button
               type="button"
               key={sub.id}
-              onClick={() => setSubcategoryId(sub.id)}
+              onClick={() => setLocalSub(sub.id)}
               className="glass ks-other-sub-card ks-category-tile group flex h-full min-h-[90px] flex-col items-center justify-center gap-2 rounded-2xl p-3 text-center cursor-pointer sm:min-h-[105px] sm:p-3.5"
               aria-label={sub.name[lang]}
             >

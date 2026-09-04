@@ -145,7 +145,7 @@ describe("KalaSearch Crystal Design System — Category Navigation", () => {
     expect(html).toContain("سایر");
   });
 
-  it("renders CategoryNav with two 4-item rows + centered 'other' tile", () => {
+  it("renders CategoryNav with two swipeable rows: primaries + promoted subcategories + سایر trigger", () => {
     const html = renderToString(
       <MemoryRouter>
         <LanguageProvider>
@@ -156,12 +156,19 @@ describe("KalaSearch Crystal Design System — Category Navigation", () => {
     expect(html).toContain("ks-category-grid-4");
     expect(html).toContain("ks-category-row-other");
     const linkMatches = html.match(/href="\/category\/[^"]+"/g);
-    expect(linkMatches).toHaveLength(9);
+    // Row 1: 5 primaries; Row 2: 3 primaries + 6 promoted subcategories.
     expect(linkMatches?.[0]).toBe('href="/category/shopping-basket"');
     expect(linkMatches?.[3]).toBe('href="/category/zanbil"');
     expect(linkMatches?.[5]).toBe('href="/category/basin-bathtub"');
     expect(linkMatches?.[6]).toBe('href="/category/pitcher-glass"');
-    expect(linkMatches?.[8]).toBe('href="/category/other"');
+    // Popular subcategories are promoted into the visible rows (deep links
+    // into the "سایر" subcategory view) instead of being hidden inside it.
+    expect(html).toContain('href="/category/other?sub=colander-bowl"');
+    expect(html).toContain('href="/category/other?sub=spice"');
+    // سایر is the final tile of row two and opens the full-category panel
+    // (modal trigger — no direct link, nothing is lost).
+    expect(html).toContain("ks-category-tile-other");
+    expect(html).not.toContain('href="/category/other" ');
   });
 
   it("preserves KalaSearch Logo and Animated Logo without alterations", () => {

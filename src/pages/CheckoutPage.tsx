@@ -20,15 +20,15 @@ export default function CheckoutPage() {
   const { showToast } = useToast();
   const navigate = useNavigate();
 
+  // Customer form is intentionally minimal: name, phone, city, address + notes.
+  // Email / province / postal code were removed from checkout (legacy orders
+  // and API clients may still carry them and remain fully supported).
   const [fullName, setFullName] = useState(account?.name ?? "");
   const [phoneLocal, setPhoneLocal] = useState("");
-  const [province, setProvince] = useState("");
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
-  const [postalCode, setPostalCode] = useState("");
   const [notes, setNotes] = useState("");
-  const [email, setEmail] = useState("");
-  const [errors, setErrors] = useState<{ name?: string; phone?: string; address?: string; province?: string; city?: string; postalCode?: string; email?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string; phone?: string; address?: string; city?: string }>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{
     orderNumber: string;
@@ -53,14 +53,11 @@ export default function CheckoutPage() {
       nextErrors.phone = t("checkout.invalidPhone") || "شماره موبایل معتبر نیست";
       showToast("لطفاً شماره موبایل معتبر وارد کنید.", "error");
     }
-    if (!province.trim()) nextErrors.province = t("checkout.required");
     if (!city.trim()) nextErrors.city = t("checkout.required");
     if (!address.trim()) {
       nextErrors.address = t("checkout.required");
       showToast(t("checkout.required"), "error");
     }
-    if (!/^\d{10}$/.test(postalCode.replace(/\D/g, ""))) nextErrors.postalCode = t("checkout.invalidPostal");
-    if (email.trim() && !email.includes("@")) nextErrors.email = t("checkout.invalidEmail");
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -78,11 +75,8 @@ export default function CheckoutPage() {
         customer: {
           name: fullName.trim(),
           phone: fullPhone,
-          email: email.trim() || undefined,
-          province: province.trim(),
           city: city.trim(),
           address: address.trim(),
-          postalCode: postalCode.replace(/\D/g, ""),
           notes: notes.trim(),
         },
         items: buildOrderItems(items),
@@ -236,45 +230,15 @@ export default function CheckoutPage() {
 
         <div>
           <label className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
-            {t("checkout.email")}
+            {t("checkout.city")} <span style={{ color: "var(--danger)" }}>*</span>
           </label>
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="name@example.com"
-            dir="ltr"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
             className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-violet-500"
             style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
           />
-          {errors.email && <p className="mt-1 text-xs" style={{ color: "var(--danger)" }}>{errors.email}</p>}
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
-              {t("checkout.province")} <span style={{ color: "var(--danger)" }}>*</span>
-            </label>
-            <input
-              value={province}
-              onChange={(e) => setProvince(e.target.value)}
-              className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none"
-              style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
-            />
-            {errors.province && <p className="mt-1 text-xs" style={{ color: "var(--danger)" }}>{errors.province}</p>}
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
-              {t("checkout.city")} <span style={{ color: "var(--danger)" }}>*</span>
-            </label>
-            <input
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none"
-              style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
-            />
-            {errors.city && <p className="mt-1 text-xs" style={{ color: "var(--danger)" }}>{errors.city}</p>}
-          </div>
+          {errors.city && <p className="mt-1 text-xs" style={{ color: "var(--danger)" }}>{errors.city}</p>}
         </div>
 
         <div>
@@ -288,20 +252,6 @@ export default function CheckoutPage() {
             style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
           />
           {errors.address && <p className="mt-1 text-xs" style={{ color: "var(--danger)" }}>{errors.address}</p>}
-        </div>
-
-        <div>
-          <label className="mb-1.5 block text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
-            {t("checkout.postalCode")} <span style={{ color: "var(--danger)" }}>*</span>
-          </label>
-          <input
-            value={postalCode}
-            onChange={(e) => setPostalCode(e.target.value.replace(/\D/g, "").slice(0, 10))}
-            inputMode="numeric"
-            className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none"
-            style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
-          />
-          {errors.postalCode && <p className="mt-1 text-xs" style={{ color: "var(--danger)" }}>{errors.postalCode}</p>}
         </div>
 
         <div>

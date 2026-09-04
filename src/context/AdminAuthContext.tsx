@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { adminLogin as loginRequest, adminLogout, adminSession } from "../utils/ordersApi";
+import { adminLogin as loginRequest, adminLogout, adminSessionInfo, ownerLogin as ownerLoginRequest } from "../utils/ordersApi";
 
 const STORAGE_KEY = "kala-search-admin-token";
 
@@ -23,10 +23,15 @@ function writeAdminToken(value: string | null) {
   }
 }
 
+export type AdminRole = "admin" | "owner" | null;
+
 interface AdminAuthValue {
   token: string | null;
+  role: AdminRole;
   ready: boolean;
   login: (username: string, password: string) => Promise<void>;
+  /** Owner (Hiboss) login — uses the separate OWNER_USERNAME/OWNER_PASSWORD. */
+  ownerLogin: (username: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -34,6 +39,7 @@ const AdminAuthContext = createContext<AdminAuthValue | null>(null);
 
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => readAdminToken());
+  const [role, setRole] = useState<AdminRole>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -43,13 +49,16 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       setReady(true);
       return;
     }
-    adminSession(current)
-      .then((ok) => {
+    adminSessionInfo(current)
+      .then((info) => {
         if (cancelled) return;
-        if (ok) setToken(current);
-        else {
+        if (info.ok) {
+          setToken(current);
+          setRole(info.role === "owner" ? "owner" : "admin");
+        } else {
           writeAdminToken(null);
           setToken(null);
+          setRole(null);
         }
       })
       .finally(() => {
@@ -60,11 +69,32 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const login = useCallback(async (username: string, password: string) => {
-    const next = await loginRequest(username, password);
-    writeAdminToken(next);
-    setToken(next);
+  const storeSession = useCallback(async (nextToken: string) => {
+    writeAdminToken(nextToken);
+    setToken(nextToken);
+    try {
+      const info = await adminSessionInfo(nextToken);
+      setRole(info.ok ? (info.role === "owner" ? "owner" : "admin") : null);
+    } catch {
+      setRole(null);
+    }
   }, []);
+
+  const login = useCallback(
+    async (username: string, password: string) => {
+      const next = await loginRequest(username, password);
+      await storeSession(next);
+    },
+    [storeSession],
+  );
+
+  const ownerLogin = useCallback(
+    async (username: string, password: string) => {
+      const next = await ownerLoginRequest(username, password);
+      await storeSession(next);
+    },
+    [storeSession],
+  );
 
   /**
    * Logs out everywhere: the token is revoked server-side (fire-and-forget so
@@ -74,6 +104,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     const current = readAdminToken();
     writeAdminToken(null);
     setToken(null);
+    setRole(null);
     if (current) {
       void adminLogout(current).catch(() => {
         /* best-effort server revocation; local session is already cleared */
@@ -81,7 +112,10 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const value = useMemo(() => ({ token, ready, login, logout }), [token, ready, login, logout]);
+  const value = useMemo(
+    () => ({ token, role, ready, login, ownerLogin, logout }),
+    [token, role, ready, login, ownerLogin, logout],
+  );
   return <AdminAuthContext.Provider value={value}>{children}</AdminAuthContext.Provider>;
 }
 

@@ -14,3 +14,28 @@ export const categories: Category[] = [
   { id: "freezer", name: name("فریزری"), icon: "freezer", sortOrder: 8 },
   { id: "other", name: name("سایر"), icon: "other", sortOrder: 9 },
 ];
+
+/**
+ * Popular subcategories promoted from inside "سایر" so the two visible home
+ * rows show more of what customers search for. Each entry maps to a route
+ * (/category/other + subcategory id) handled by CategoryPage's subcategory
+ * view — the data-driven mapping in csvSource.ts is untouched.
+ */
+export interface HomeSubcategoryEntry {
+  id: string;
+  nameFa: string;
+}
+
+export const promotedSubcategories: HomeSubcategoryEntry[] = [
+  { id: "colander-bowl", nameFa: "آبکش و کاسه" },
+  { id: "spice", nameFa: "جا ادویه" },
+  { id: "organizer", nameFa: "سبد و نظم‌دهنده" },
+  { id: "bucket", nameFa: "سطل" },
+  { id: "powder-sponge-holder", nameFa: "جا پودری و اسکاجی" },
+  { id: "kitchen-tools", nameFa: "لوازم آشپزخانه" },
+];
+
+/** Human label for a subcategory id (falls back to the id itself). */
+export function promotedSubcategoryLabel(id: string): string | undefined {
+  return promotedSubcategories.find((sub) => sub.id === id)?.nameFa;
+}

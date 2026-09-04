@@ -16,7 +16,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   };
 
   return (
-    <form onSubmit={submit} className="ks-search-form" role="search" aria-label="جستجوی هوشمند کالا سرچ">
+    <form onSubmit={submit} className="ks-search-form" role="search" aria-label="جستجوی هوشمند OrderX">
       <div className={`ks-search-wrapper ${focused ? "is-focused" : ""}`}>
         <div className={`ks-search-inner ${large ? "py-2 sm:py-2.5" : "py-1.5"}`}>
           <div className="ks-search-icon-wrapper" aria-hidden="true">

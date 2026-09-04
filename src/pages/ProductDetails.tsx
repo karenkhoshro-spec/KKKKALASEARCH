@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ExternalLink, Minus, Plus, ShoppingCart, CheckCircle2, XCircle, Heart, Share2 } from "lucide-react";
+import { ExternalLink, Minus, Plus, ShoppingCart, CheckCircle2, XCircle, Share2 } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
-import { useWishlist } from "../context/WishlistContext";
 import { useListContext, listContextToPath } from "../context/ListContext";
 import { getProductById } from "../data/products";
 import { isValidProductUrl } from "../data/csvSource";
@@ -21,7 +20,6 @@ export default function ProductDetails() {
   const { t, lang } = useLanguage();
   const { addItem } = useCart();
   const { showToast } = useToast();
-  const { isSaved, toggle } = useWishlist();
   const { listContext } = useListContext();
   const product = getProductById(id);
   const [qtyByVariation, setQtyByVariation] = useState<Record<string, number>>({});
@@ -31,10 +29,16 @@ export default function ProductDetails() {
   const [imgLoaded, setImgLoaded] = useState(false);
 
   useEffect(() => {
-    if (product?.variations?.[0]?.id) {
-      setVariationId(product.variations[0].id);
+    // Default selection: the first color chip (which is guaranteed in-stock
+    // thanks to the availability-first ordering) rather than a random
+    // variation that may be out of stock.
+    const first = colorGroups.find((group) => group.anyInStock) ?? colorGroups[0];
+    const preferred = first ? (first.group.find((v) => v.inStock) ?? first.group[0]) : product?.variations?.[0];
+    if (preferred?.id) {
+      setVariationId(preferred.id);
     }
     setQtyByVariation({});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product?.id]);
 
   const selectedVariation = product?.variations?.find((v) => v.id === variationId);
@@ -97,14 +101,36 @@ export default function ProductDetails() {
       )),
   ].map((spec) => spec.trim()).filter(Boolean)));
 
+  // Color chips grouped by name, ORDERED availability-first: colors that still
+  // have at least one in-stock variation come first, fully unavailable colors
+  // are pushed to the end and shown with an explicit "ناموجود" tag.
   const colorVariations = (product.variations ?? []).filter((v) => v.colorName);
-  const uniqueColors = Array.from(new Map(colorVariations.map((v) => [v.colorName, v])).values());
+  const byColorName = new Map<string, typeof colorVariations>();
+  for (const variation of colorVariations) {
+    const group = byColorName.get(variation.colorName!);
+    if (group) group.push(variation);
+    else byColorName.set(variation.colorName!, [variation]);
+  }
+  const colorGroups = Array.from(byColorName.entries()).map(([colorName, group]) => ({
+    colorName,
+    group,
+    anyInStock: group.some((variation) => variation.inStock),
+  }));
+  const uniqueColors = [
+    ...colorGroups.filter((group) => group.anyInStock),
+    ...colorGroups.filter((group) => !group.anyInStock),
+  ];
+  const colorRepVariation = (group: (typeof uniqueColors)[number]) =>
+    group.group.find((variation) => variation.inStock) ?? group.group[0];
 
   const handleAddToCart = () => {
     const hasColorVariants = uniqueColors.length > 0;
     const cartLines = hasColorVariants
       ? uniqueColors
-          .map((v) => ({ v, q: qtyForVariation(qtyByVariation, v.id) }))
+          .map((entry) => {
+            const variation = colorRepVariation(entry);
+            return { v: variation, q: qtyForVariation(qtyByVariation, variation.id) };
+          })
           .filter((line) => line.q > 0)
       : [{ v: selectedVariation, q: quantity }].filter((line) => line.q > 0);
 
@@ -130,7 +156,9 @@ export default function ProductDetails() {
               sku: v.sku,
               price: v.price,
               color: v.colorName,
+              colorHex: v.color || undefined,
               image: v.image || product.productImageUrl,
+              packQuantity: v.packQuantity,
             }
           : undefined,
       );
@@ -332,31 +360,45 @@ export default function ProductDetails() {
             </div>
           )}
 
-          {/* Color variations if available */}
+          {/* Color variations if available — in-stock colors first, unavailable after */}
           {uniqueColors.length > 0 && (
             <div>
               <h3 className="mb-2 text-xs font-bold sm:text-sm" style={{ color: "var(--text-primary)" }}>{t("product.color")}</h3>
               <div className="flex flex-wrap gap-2">
-                {uniqueColors.map((v) => (
-                  <button
-                    type="button"
-                    key={v.colorName}
-                    onClick={() => setVariationId(v.id)}
-                    className="flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-medium transition-all sm:text-sm cursor-pointer"
-                    style={{
-                      borderColor: variationId === v.id ? "var(--accent-1)" : "var(--border-soft)",
-                      background: variationId === v.id ? "var(--chip-bg)" : "transparent",
-                      color: "var(--text-primary)",
-                      boxShadow: variationId === v.id ? "0 0 12px var(--accent-glow)" : "none",
-                    }}
-                  >
-                    <span
-                      className="h-3.5 w-3.5 rounded-full border"
-                      style={{ background: v.color, borderColor: v.color === "#f8fafc" ? "var(--border-soft)" : v.color }}
-                    />
-                    {v.colorName}
-                  </button>
-                ))}
+                {uniqueColors.map((entry) => {
+                  const variation = colorRepVariation(entry);
+                  const selected = variationId === variation.id;
+                  const color = variation.color;
+                  return (
+                    <button
+                      type="button"
+                      key={entry.colorName}
+                      onClick={() => setVariationId(variation.id)}
+                      className="flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-medium transition-all sm:text-sm cursor-pointer"
+                      style={{
+                        borderColor: selected ? "var(--accent-1)" : "var(--border-soft)",
+                        background: selected ? "var(--chip-bg)" : "transparent",
+                        color: entry.anyInStock ? "var(--text-primary)" : "var(--text-muted)",
+                        boxShadow: selected ? "0 0 12px var(--accent-glow)" : "none",
+                        opacity: entry.anyInStock ? 1 : 0.72,
+                      }}
+                    >
+                      <span
+                        className="h-3.5 w-3.5 rounded-full border"
+                        style={{ background: color, borderColor: color === "#f8fafc" ? "var(--border-soft)" : color }}
+                      />
+                      {entry.colorName}
+                      {!entry.anyInStock && (
+                        <span
+                          className="rounded-full px-1.5 py-px text-[9px] font-bold"
+                          style={{ background: "rgba(244, 63, 94, 0.16)", color: "var(--danger)" }}
+                        >
+                          {t("product.outOfStock") || "ناموجود"}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -409,17 +451,6 @@ export default function ProductDetails() {
                 {t("product.requestProduction")}
               </button>
             )}
-            <button
-              type="button"
-              onClick={() => {
-                const added = toggle(product.id);
-                showToast(added ? t("notifications.addedToWishlist") : t("notifications.removedFromWishlist"), "info");
-              }}
-              aria-label="wishlist"
-              className="glass flex h-[48px] w-[48px] shrink-0 items-center justify-center rounded-2xl transition-transform hover:scale-105 active:scale-95 sm:h-[52px] sm:w-[52px] cursor-pointer"
-            >
-              <Heart size={19} fill={isSaved(product.id) ? "var(--accent-3)" : "none"} style={{ color: isSaved(product.id) ? "var(--accent-3)" : "var(--text-secondary)" }} />
-            </button>
             <button
               type="button"
               onClick={async () => {

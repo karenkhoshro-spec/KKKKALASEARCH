@@ -161,29 +161,24 @@ function ks_validate_order_payload($payload): ?string
 
     $name = trim((string) ($customer['name'] ?? ''));
     $phone = ks_normalize_phone($customer['phone'] ?? '');
-    $province = trim((string) ($customer['province'] ?? ''));
     $city = trim((string) ($customer['city'] ?? ''));
     $address = trim((string) ($customer['address'] ?? ''));
-    $postalCode = preg_replace('/\D/', '', (string) ($customer['postalCode'] ?? ''));
     $email = trim((string) ($customer['email'] ?? ''));
 
+    // Required checkout fields (mirrors the Node server). Province, postal code
+    // and email were removed from the customer form and are optional; legacy
+    // clients may still send them and they are accepted.
     if ($name === '') {
         return 'name_required';
     }
     if ($phone === '') {
         return 'invalid_phone';
     }
-    if ($province === '') {
-        return 'province_required';
-    }
     if ($city === '') {
         return 'city_required';
     }
     if ($address === '') {
         return 'address_required';
-    }
-    if (strlen($postalCode) !== 10) {
-        return 'invalid_postal_code';
     }
     if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return 'invalid_email';

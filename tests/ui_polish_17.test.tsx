@@ -55,14 +55,17 @@ describe("17-item UI polish", () => {
     expect(qtyForVariation(map, "red")).toBe(1);
   });
 
-  it("renders header animated branding instead of boxed static logo assets", () => {
+  it("renders header OrderX branding (X-only sway) instead of old KalaSearch assets", () => {
     const html = shell(<Header />);
-    expect(html).toContain("کالا سرچ");
-    expect(html).toContain("KalaSearch");
-    expect(html).toContain("animate-spin-slow");
-    expect(html).toContain("ks-logo-particles");
+    // The site-wide brand is OrderX: static "Order", animated "X".
+    expect(html).toContain("ks-orderx-logo");
+    expect(html).toContain("ks-orderx-word");
+    expect(html).toContain("ks-orderx-x");
+    expect(html).toContain('aria-label="OrderX"');
+    // No old KalaSearch logo assets or wordmarks in the header.
     expect(html).not.toContain("kalasearch-bag");
-    expect(html).not.toContain("HorizontalBrandingLogo");
+    expect(html).not.toContain("کالا سرچ");
+    expect(html).not.toContain("KalaSearch");
   });
 
   it("keeps theme toggle only in the hamburger menu as a clear sun/moon segmented control", () => {

@@ -63,6 +63,39 @@ html[data-theme="light"] {
   50% { box-shadow: 0 8px 24px rgba(233, 130, 50, 0.16); }
 }
 
+/* ==========================================================================
+   Admin orders header — centered title between Home and Logout. On very
+   small screens the buttons collapse to icon-only so nothing overlaps.
+   ========================================================================== */
+.ks-admin-orders-header {
+  direction: rtl; /* Persian admin layout: Home visually right, Logout left */
+}
+.ks-admin-orders-header h1 span {
+  min-width: 0;
+}
+.ks-admin-orders-header a span + *,
+.ks-admin-orders-header button span + * {
+  display: inline;
+}
+.ks-admin-orders-header a,
+.ks-admin-orders-header button {
+  min-width: 0;
+  overflow: hidden;
+}
+.ks-admin-orders-header a > :last-child,
+.ks-admin-orders-header button > :last-child {
+  max-width: 26vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 420px) {
+  .ks-admin-orders-header a > :last-child,
+  .ks-admin-orders-header button > :last-child {
+    display: none; /* icon-only on tiny screens — no overlap */
+  }
+}
+
 html[data-theme="light"] .category-tile,
 html[data-theme="light"] .subcategory-tile {
   background: #ffffff;
@@ -781,5 +814,29 @@ html[data-theme="light"] .ks-menu-purple-btn {
   .ks-theme-option {
     animation: none;
     transition: none;
+  }
+}
+
+/* ==========================================================================
+   Home: expandable "همه محصولات" slide panel + premium expand button
+   ========================================================================== */
+@keyframes ksMoreSlideDown {
+  from { opacity: 0; transform: translateY(16px) scale(0.995); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.ks-more-panel {
+  animation: ksMoreSlideDown 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ks-home-expand-btn {
+  background: linear-gradient(90deg, var(--accent-2), var(--accent-1));
+  border: none;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ks-more-panel {
+    animation: none;
   }
 }

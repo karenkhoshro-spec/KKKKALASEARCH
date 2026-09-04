@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "../i18n/LanguageContext";
-import Logo from "./Logo";
+import OrderXLogo from "./OrderXLogo";
 import "./Footer.css";
 
 export default function Footer() {
@@ -10,8 +10,8 @@ export default function Footer() {
     <footer className="ks-footer mt-10 border-t" style={{ borderColor: "var(--border-soft)" }}>
       <div className="mx-auto max-w-6xl px-4 pt-7 pb-12 sm:px-6">
         <div className="ks-footer-brand-wrap mb-6 flex flex-col items-center overflow-visible text-center">
-          <Link to="/" aria-label="بازگشت به صفحه اصلی کالا سرچ" className="ks-footer-brand inline-flex justify-center overflow-visible">
-            <Logo />
+          <Link to="/" aria-label="OrderX — بازگشت به صفحه اصلی" className="ks-footer-brand inline-flex justify-center overflow-visible">
+            <OrderXLogo />
           </Link>
           <p className="mt-2.5 max-w-md text-xs sm:text-sm leading-6" style={{ color: "var(--text-secondary)" }}>
             {t("footer.about")}
@@ -33,7 +33,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-8 border-t pt-5 text-center text-xs" style={{ borderColor: "var(--border-soft)", color: "var(--text-muted)" }}>
-          © {new Date().getFullYear()} Kala Search — {t("footer.rights")}
+          © {new Date().getFullYear()} OrderX — {t("footer.rights")}
         </div>
       </div>
     </footer>

@@ -1,6 +1,6 @@
 import { useLanguage } from "../i18n/LanguageContext";
 import type { Lang } from "../types";
-import { HorizontalBrandingLogo } from "./BrandingLogo";
+import OrderXLogo from "./OrderXLogo";
 import { useUiLayer } from "../context/UiLayerContext";
 import "./LanguageWelcomeModal.css";
 
@@ -19,7 +19,9 @@ export default function LanguageWelcomeModal({ onDone }: { onDone: () => void })
       <div className="ks-welcome-card animate-pop relative w-full max-w-md rounded-3xl p-6 sm:p-8">
         <div className="relative flex flex-col items-center text-center">
           <div className="mb-3 flex items-center justify-center overflow-visible">
-            <HorizontalBrandingLogo showTagline={false} />
+            <div className="flex items-center justify-center rounded-2xl px-5 py-3" style={{ background: "var(--accent-1)" }}>
+              <OrderXLogo />
+            </div>
           </div>
 
           <h2 className="mt-2 text-xl font-bold" style={{ color: "var(--text-primary)" }}>

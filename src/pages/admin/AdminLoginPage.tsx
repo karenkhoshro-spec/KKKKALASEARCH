@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
-import { Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { Link, Navigate } from "react-router-dom";
+import { Eye, EyeOff, Home, ShieldCheck } from "lucide-react";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 
@@ -31,6 +31,18 @@ export default function AdminLoginPage() {
   return (
     <div className="mx-auto max-w-md px-4 py-10" dir={dir}>
       <div className="glass-strong rounded-[2rem] p-6 sm:p-7" style={{ border: "1px solid var(--border-soft)" }}>
+        {/* Home button — returns to the public store from the management login */}
+        <div className="mb-4 flex items-center justify-between">
+          <Link
+            to="/"
+            aria-label={t("menu.home") || "خانه"}
+            className="glass flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-transform hover:scale-[1.03] active:scale-95"
+            style={{ color: "var(--accent-1)", border: "1px solid var(--border-soft)" }}
+          >
+            <Home size={15} />
+            {t("menu.home") || "خانه"}
+          </Link>
+        </div>
         <div className="mb-5 flex flex-col items-center gap-2 text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl" style={{ background: "var(--chip-bg)", color: "var(--accent-1)" }}>
             <ShieldCheck size={22} />

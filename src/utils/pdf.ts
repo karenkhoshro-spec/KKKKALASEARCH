@@ -15,6 +15,49 @@ export type { OrderPdfData, OrderPdfItem } from "./invoiceHtml";
 export const INVOICE_PAGE_W = PDF_PAGE_W;
 export const INVOICE_PAGE_H = PDF_PAGE_H;
 
+/**
+ * Same-origin public asset that holds the Orderx logo in the built site
+ * (public/orderx-logo.png → dist/ → public_html root on cPanel). When the
+ * file is not deployed yet the invoice falls back to a clean "Orderx"
+ * wordmark, so PDF generation never breaks on a missing asset.
+ */
+export const DEFAULT_BRAND_LOGO_URL = "/orderx-logo.png";
+
+function toDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+}
+
+const brandLogoCache = new Map<string, Promise<string | null>>();
+
+/**
+ * Loads the Orderx logo (same-origin, root-relative path) once and embeds it
+ * as a data URL so html2canvas never has to re-fetch it. Any failure (missing
+ * file, network error) resolves to null → wordmark fallback.
+ */
+function loadBrandLogo(logoUrl: string): Promise<string | null> {
+  const cached = brandLogoCache.get(logoUrl);
+  if (cached) return cached;
+  const pending = (async () => {
+    try {
+      const absolute = new URL(logoUrl, window.location.origin).href;
+      const res = await fetch(absolute, { cache: "no-store" });
+      if (!res.ok) return null;
+      const blob = await res.blob();
+      if (!blob.type.startsWith("image/")) return null;
+      return await toDataUrl(blob);
+    } catch {
+      return null;
+    }
+  })();
+  brandLogoCache.set(logoUrl, pending);
+  return pending;
+}
+
 function renderToCanvas(html: string, dir: "rtl" | "ltr"): Promise<HTMLCanvasElement> {
   const container = document.createElement("div");
   container.setAttribute("dir", dir);
@@ -83,12 +126,16 @@ function sliceCanvas(source: HTMLCanvasElement, y: number, h: number): HTMLCanva
  *   becomes multi-page automatically when content is tall.
  * - Persian/Arabic shaping is correct because the browser rasterizes the text.
  */
-export async function generateOrderPdf(data: OrderPdfData): Promise<Blob> {
+export async function generateOrderPdf(
+  data: OrderPdfData,
+  opts: { logoUrl?: string } = {},
+): Promise<Blob> {
   const printableH = PDF_PAGE_H - PDF_MARGIN * 2;
   const scale = 2;
   const usableCanvasH = printableH * scale; // canvas-space height per page
 
-  const first = await renderToCanvas(buildInvoiceHtml(data), data.dir);
+  const brandLogo = await loadBrandLogo(opts.logoUrl || DEFAULT_BRAND_LOGO_URL);
+  const first = await renderToCanvas(buildInvoiceHtml(data, undefined, brandLogo || undefined), data.dir);
   const fullH = first.height;
 
   // Compute slices: first page full, then fill pages up to white-gap boundaries.
@@ -126,7 +173,7 @@ export async function generateOrderPdf(data: OrderPdfData): Promise<Blob> {
       // Continuation pages: compact header strip with order number.
       pdf.setFontSize(10);
       pdf.setTextColor(109, 40, 217);
-      pdf.text(`KALASEARCH · ${data.orderNumber}`, data.dir === "rtl" ? PDF_PAGE_W - PDF_MARGIN : PDF_MARGIN, PDF_MARGIN - 10, {
+      pdf.text(`Orderx · ${data.orderNumber}`, data.dir === "rtl" ? PDF_PAGE_W - PDF_MARGIN : PDF_MARGIN, PDF_MARGIN - 10, {
         align: data.dir === "rtl" ? "right" : "left",
       });
     }

@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Home, Heart, ShoppingCart, User, Info, Phone, Sparkles } from "lucide-react";
+import { Home, Calculator, ShoppingCart, User, Info, Phone } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useAccount } from "../context/AccountContext";
 import { useCart } from "../context/CartContext";
-import { useWishlist } from "../context/WishlistContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
-import Logo from "./Logo";
+import OrderXLogo from "./OrderXLogo";
 import AboutOverlay from "./AboutOverlay";
 import ContactOverlay from "./ContactOverlay";
 import { useUiLayer } from "../context/UiLayerContext";
@@ -17,7 +16,6 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
   const { t, dir } = useLanguage();
   const { account } = useAccount();
   const { count: cartCount } = useCart();
-  const { ids: wishlistIds = [] } = useWishlist();
   const [showAboutOverlay, setShowAboutOverlay] = useState(false);
   const [showContactOverlay, setShowContactOverlay] = useState(false);
   const closedTransform = dir === "rtl" ? "translateX(100%)" : "translateX(-100%)";
@@ -48,7 +46,7 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
       >
         <div className="flex flex-col items-center px-4 pt-5 pb-3">
           <div className="ks-menu-brand-frame">
-            <Logo />
+            <OrderXLogo />
           </div>
           <div className="ks-menu-family mt-4 w-full">
             <img
@@ -124,9 +122,9 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
             )}
           </Link>
 
-          {/* Wishlist Card */}
+          {/* Neon Calculator Card */}
           <Link
-            to="/wishlist"
+            to="/calculator"
             onClick={onClose}
             className="glass flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-bold transition-all duration-200 hover:scale-[1.01] hover:border-violet-500/50 active:scale-95 cursor-pointer"
             style={{
@@ -138,20 +136,11 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
           >
             <div className="flex items-center gap-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-xl" style={{ background: "var(--chip-bg)", color: "var(--accent-3)" }}>
-                <Heart size={17} />
+                <Calculator size={17} />
               </div>
-              <span>{t("menu.wishlist") || "علاقه‌مندی‌ها"}</span>
+              <span>{t("menu.calculator") || "ماشین حساب"}</span>
             </div>
-            {wishlistIds.length > 0 ? (
-              <span
-                className="flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-[11px] font-bold text-white"
-                style={{ background: "var(--accent-3)" }}
-              >
-                {wishlistIds.length}
-              </span>
-            ) : (
-              <span className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>›</span>
-            )}
+            <span className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>›</span>
           </Link>
 
           {/* About Us (Glass Crystal Overlay Trigger) */}
@@ -217,8 +206,7 @@ export default function SideMenu({ open, onClose }: { open: boolean; onClose: ()
         </div>
 
         <div className="mt-auto flex items-center gap-2 px-4 pb-5 pt-1 text-xs" style={{ color: "var(--text-muted)" }}>
-          <Sparkles size={14} style={{ color: "var(--accent-1)" }} />
-          <span>Kala Search © {new Date().getFullYear()}</span>
+          <span>OrderX © {new Date().getFullYear()}</span>
         </div>
       </aside>
 

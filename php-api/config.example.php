@@ -40,4 +40,13 @@ return [
 
     // Session lifetime in days (tokens expire server-side; default 7).
     'session_ttl_days'     => 7,
+
+    // --- Owner (Hiboss) account — OPTIONAL -------------------------------
+    // Separate credentials for the /Hiboss owner panel. Leave empty to keep
+    // Hiboss locked (no owner session can ever be issued). Same hash rules as
+    // the admin account: prefer owner_password_hash; owner_password is the
+    // legacy plaintext fallback used only when the hash is empty.
+    'owner_username'       => '',
+    'owner_password_hash'  => '',
+    'owner_password'       => '',
 ];

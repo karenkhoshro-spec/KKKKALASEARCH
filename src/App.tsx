@@ -28,6 +28,8 @@ const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const ImageTestPage = lazy(() => import("./pages/ImageTestPage"));
 const AdminLoginPage = lazy(() => import("./pages/admin/AdminLoginPage"));
 const AdminOrdersPage = lazy(() => import("./pages/admin/AdminOrdersPage"));
+const HibossPage = lazy(() => import("./pages/HibossPage"));
+const CalculatorPage = lazy(() => import("./pages/CalculatorPage"));
 
 function AppShell() {
   const { hasChosenLanguage } = useLanguage();
@@ -114,6 +116,8 @@ function AppShell() {
                 <Route path="/image-test" element={<ImageTestPage />} />
                 <Route path="/admin" element={<AdminLoginPage />} />
                 <Route path="/admin/orders" element={<AdminOrdersPage />} />
+                <Route path="/hiboss" element={<HibossPage />} />
+                <Route path="/calculator" element={<CalculatorPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Suspense>

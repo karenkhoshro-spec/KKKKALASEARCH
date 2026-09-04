@@ -28,11 +28,22 @@ describe("UI & UX System Polish & Validation Suite", () => {
     );
 
     expect(html).toContain("جستجو");
+    // Quick access now hosts the full category box under the categories title;
+    // the price-sort control moved into the همه محصولات header.
     expect(html).toContain("دسته‌بندی محصولات");
+    expect(html).toContain("ارزان‌ترین");
     expect(html).toContain('href="/category/shopping-basket"');
-    expect(html).toContain('href="/category/other"');
-    // Quick access section removed per Requirement 4
+    // Popular subcategories are promoted into the visible rows; سایر opens the
+    // full-category panel instead of being a plain link (Req: better slider).
+    expect(html).toContain('href="/category/other?sub=colander-bowl"');
+    expect(html).toContain("ks-category-tile-other");
+    // Main product cards live under همه محصولات with an expand control
+    expect(html).toContain("همه محصولات");
+    expect(html).toContain("مشاهده بیشتر");
+    // No favorites / wishlist anywhere on the home page
     expect(html).not.toContain('href="/wishlist"');
+    // The banned promotional heading is gone
+    expect(html).not.toContain("بهترین لوازم پلاستیکی");
   });
 
   it("renders CategoryPage for 'other' with the 3 prominent subcategory cards", () => {
@@ -98,7 +109,7 @@ describe("UI & UX System Polish & Validation Suite", () => {
     expect(html).toContain('fetchPriority="high"');
     expect(html).toContain("مشاهده محصول در سایت اشکان پلاستیک");
     expect(html).toContain("کد محصول");
-    expect(html).toContain("شناسه موجودی");
+    expect(html).toContain("شناسه کالا");
     expect(html).toContain("مشخصات کامل");
     expect(html).toContain("افزودن به سبد خرید");
     expect(html).toContain("0"); // initial quantity is 0
@@ -124,7 +135,7 @@ describe("UI & UX System Polish & Validation Suite", () => {
     );
 
     expect(html).toContain("کد محصول");
-    expect(html).toContain("شناسه موجودی");
+    expect(html).toContain("شناسه کالا");
     expect(html).toContain("مشخصات کامل");
     expect(html).toContain("مشاهده محصول در سایت اشکان پلاستیک");
   });
@@ -149,7 +160,10 @@ describe("UI & UX System Polish & Validation Suite", () => {
     expect(html).toContain('href="/"');
     expect(html).toContain('href="/account"');
     expect(html).toContain('href="/cart"');
-    expect(html).toContain('href="/wishlist"');
+    // Favorites removed from the hamburger menu (Requirement 3); neon
+    // calculator entry is present instead.
+    expect(html).toContain('href="/calculator"');
+    expect(html).not.toContain('href="/wishlist"');
     expect(html).toContain("درباره ما");
     // Removed from UI menu per Requirement 1
     expect(html).not.toContain('href="/products"');
@@ -197,7 +211,7 @@ describe("UI & UX System Polish & Validation Suite", () => {
     expect(html).toContain("آبکش تخت 1000");
     expect(html).toContain("موجود در انبار");
     expect(html).toContain("کد محصول");
-    expect(html).toContain("شناسه موجودی");
+    expect(html).toContain("شناسه کالا");
     expect(html).toContain("54,000");
     expect(html).toContain("تومان");
     expect(html).toContain("مشاهده محصول در سایت اشکان پلاستیک");

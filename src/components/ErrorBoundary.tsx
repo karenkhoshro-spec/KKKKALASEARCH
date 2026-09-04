@@ -10,7 +10,7 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     // Keep production logs free of customer data; replace with Sentry/server logging later.
-    if (import.meta.env.DEV) console.error("KalaSearch UI error", error, info.componentStack);
+    if (import.meta.env.DEV) console.error("OrderX UI error", error, info.componentStack);
   }
 
   render() {

@@ -1,0 +1,54 @@
+/* ==========================================================================
+   OrderX wordmark — white, "Order" static, only the X sways gently.
+   Transform-only animation (compositor thread), tiny, reduced-motion safe.
+   ========================================================================== */
+
+.ks-orderx-logo {
+  display: inline-flex;
+  align-items: baseline;
+  line-height: 1;
+  color: #ffffff;
+  font-family: "Archivo Black", "Arial Black", "Segoe UI", system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.ks-orderx-word {
+  display: inline-block;
+  font-size: 1.35rem;
+  text-shadow: 0 1px 8px rgba(255, 255, 255, 0.18);
+}
+
+.ks-orderx-x {
+  display: inline-block;
+  font-size: 1.35rem;
+  margin-inline-start: 0.04em;
+  color: #d8b4fe;
+  text-shadow: 0 0 10px rgba(192, 132, 252, 0.55);
+  animation: ks-orderx-sway 3.2s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Compact variant (site header) */
+.ks-orderx-logo--compact .ks-orderx-word,
+.ks-orderx-logo--compact .ks-orderx-x {
+  font-size: 1.05rem;
+}
+
+@keyframes ks-orderx-sway {
+  0%,
+  100% {
+    transform: translateX(-1.5px);
+  }
+  50% {
+    transform: translateX(1.5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ks-orderx-x {
+    animation: none;
+  }
+}

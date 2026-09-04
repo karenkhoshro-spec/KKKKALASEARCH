@@ -20,16 +20,19 @@ export interface OrderItemPayload {
   unitPrice: number;
   price: number;
   lineTotal: number;
+  /** Units per package from the catalog (snapshot for the PDF). */
+  packQuantity?: number;
 }
 
 export interface CustomerPayload {
   name: string;
   phone: string;
+  /** Optional — removed from the checkout form, kept for legacy orders. */
   email?: string;
-  province: string;
+  province?: string;
   city: string;
   address: string;
-  postalCode: string;
+  postalCode?: string;
   notes?: string;
 }
 
@@ -85,6 +88,7 @@ export function buildOrderItems(items: CartItem[]): OrderItemPayload[] {
       unitPrice,
       price: unitPrice,
       lineTotal: unitPrice * item.quantity,
+      packQuantity: variation?.packQuantity ?? product?.packQuantity,
     };
   });
 }
@@ -135,6 +139,33 @@ export async function adminSession(token: string): Promise<boolean> {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.ok;
+}
+
+export interface AdminSessionInfo {
+  ok: boolean;
+  role: "admin" | "owner" | "";
+}
+
+/** Session validity + role ("admin" vs "owner") used by the Hiboss panel. */
+export async function adminSessionInfo(token: string): Promise<AdminSessionInfo> {
+  const res = await fetch(`${apiBase()}/api/admin/session`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await parseJson(res);
+  if (!res.ok) return { ok: false, role: "" };
+  return { ok: true, role: data.role === "owner" ? "owner" : "admin" };
+}
+
+/** Owner (Hiboss) login with the separate backend-only owner credentials. */
+export async function ownerLogin(username: string, password: string): Promise<string> {
+  const res = await fetch(`${apiBase()}/api/admin/owner-login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
+  const data = await parseJson(res);
+  if (!res.ok || !data.token) throw new Error(data.error || "owner_login_failed");
+  return data.token as string;
 }
 
 /** Server-side session invalidation: the current token is revoked immediately. */

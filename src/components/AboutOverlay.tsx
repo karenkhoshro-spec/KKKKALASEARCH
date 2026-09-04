@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { ArrowRight, ArrowLeft, Search, Layers, FileCheck, Sparkles, X, ShieldCheck } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
-import Logo from "./Logo";
+import OrderXLogo from "./OrderXLogo";
 import { useUiLayer } from "../context/UiLayerContext";
 
 interface AboutOverlayProps {
@@ -76,7 +76,7 @@ export default function AboutOverlay({ open, onClose }: AboutOverlayProps) {
               }}
             >
               <h2 id="about-overlay-title" className="text-xs font-black sm:text-sm md:text-base" style={{ color: "var(--text-primary)" }}>
-                {t("aboutModal.title") || "درباره کالا سرچ"}
+                {t("aboutModal.title") || "درباره OrderX"}
               </h2>
             </div>
           </div>
@@ -101,8 +101,8 @@ export default function AboutOverlay({ open, onClose }: AboutOverlayProps) {
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           <div className="flex flex-col items-center text-center">
             {/* Logo Brand Showcase */}
-            <div className="glass mb-4 flex items-center justify-center rounded-3xl p-4 shadow-[var(--shadow-glow)]" style={{ border: "1.5px solid var(--border-strong)" }}>
-              <Logo />
+            <div className="glass mb-4 flex items-center justify-center rounded-3xl p-4 shadow-[var(--shadow-glow)]" style={{ border: "1.5px solid var(--border-strong)", background: "var(--accent-1)" }}>
+              <OrderXLogo />
             </div>
 
             <h3 className="text-base font-extrabold sm:text-lg" style={{ color: "var(--text-primary)" }}>
@@ -110,7 +110,7 @@ export default function AboutOverlay({ open, onClose }: AboutOverlayProps) {
             </h3>
 
             <p className="mt-3 text-xs leading-6 sm:text-sm sm:leading-7" style={{ color: "var(--text-secondary)" }}>
-              {t("aboutModal.intro") || "کالا سرچ (KalaSearch) پلتفرم تخصصی و هوشمند جستجو، بررسی و دسترسی به تنوع گسترده محصولات پلاستیکی خانگی، آشپزخانه و بهداشتی است."}
+              {t("aboutModal.intro") || "OrderX پلتفرم تخصصی و هوشمند جستجو، بررسی و دسترسی به تنوع گسترده محصولات پلاستیکی خانگی، آشپزخانه و بهداشتی است."}
             </p>
           </div>
 

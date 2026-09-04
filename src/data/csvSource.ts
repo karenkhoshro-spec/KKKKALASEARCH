@@ -460,7 +460,22 @@ const otherRules: [string, string, string[]][] = [
   ["toolbox", "جعبه ابزار", ["جعبه ابزار"]],
   ["straw-basket", "سبد نان", ["سبد نان", "سبد باگت"]],
 ];
-function primaryCategory(name: string) { return primaryMatchers.find(([, words]) => words.some((word) => name.includes(word)))?.[0]; }
+/**
+ * True when `word` starts `name` or is preceded by whitespace/half-space.
+ * Used for words like "وان" that also appear INSIDE unrelated Persian words
+ * (e.g. "الوان" = multicolor, "گلدان" = flower-pot) so those products are
+ * never mis-routed into the "لگن و وان" category.
+ */
+function hasWordStart(name: string, word: string) {
+  const spaced = name.replace(/[\u200c\u200f\u200b]/g, " ").trim();
+  return spaced.startsWith(word) || spaced.includes(` ${word}`);
+}
+
+function primaryCategory(name: string) {
+  return primaryMatchers.find(([, words]) =>
+    words.some((word) => (word === "وان" ? hasWordStart(name, word) : name.includes(word))),
+  )?.[0];
+}
 function otherSubcategory(name: string) {
   const primary = primaryCategory(name); if (primary) return { id: primary, label: primaryNames[primaryMatchers.findIndex(([id]) => id === primary)] };
   const match = otherRules.find(([, , words]) => words.some((word) => name.includes(word)));
@@ -484,6 +499,17 @@ const colorTokens: Record<string, string> = {
   "آبی روشن": "#60a5fa", "آبی تیره": "#1d4ed8", "سبز روشن": "#86efac", "سبز تیره": "#15803d", "قرمز روشن": "#f87171", "قرمز تیره": "#b91c1c", "قهوه‌ای": "#8b5e3c", "قهوه ای": "#8b5e3c", "سرمه‌ای": "#1e3a8a", "سرمه ای": "#1e3a8a", "نقره‌ای": "#cbd5e1", "نقره ای": "#cbd5e1", "بی‌رنگ": "#f8fafc", "بی رنگ": "#f8fafc", "صورتی": "#f9a8d4", "طوسی": "#94a3b8", "خاکستری": "#6b7280", "کرم": "#d6c7a1", "موکا": "#8b6f5a", "وانیلی": "#f3e5ab", "عسلی": "#d69e2e", "کرپ": "#d8c3a5", "سفید": "#f8fafc", "قرمز": "#ef4444", "سبز": "#22c55e", "آبی": "#3b82f6", "مشکی": "#111827", "سیاه": "#111827", "زرد": "#eab308", "نارنجی": "#f97316", "بنفش": "#a855f7", "شفاف": "#e2e8f0", "بژ": "#d6c7a1", "طلایی": "#d4a72c", "مسی": "#b87333"
 };
 function extractColor(value: string) { const token = Object.keys(colorTokens).sort((a, b) => b.length - a.length).find((name) => value.includes(name)); return token ? { name: token, hex: colorTokens[token] } : undefined; }
+
+const colorHexByNormalizedName = new Map(Object.entries(colorTokens).map(([name, hex]) => [normalizePersian(name), hex]));
+
+/**
+ * Best-effort hex for a Persian color name (normalization-aware). Used by the
+ * cart/checkout swatches for cart items saved before colorHex existed.
+ */
+export function colorHexForName(name?: string | null): string | undefined {
+  if (!name) return undefined;
+  return colorHexByNormalizedName.get(normalizePersian(name));
+}
 
 function toVariation(row: ProductSourceRow): ProductVariation {
   const color = extractColor(row.variant_name || "");
@@ -726,21 +752,45 @@ for (const product of importedProducts) {
   else productsByCategoryId.set(product.categoryId, [product]);
 }
 const categoryNameById = new Map(importedCategories.map((c) => [c.id, c.name.fa]));
+
+/**
+ * Normalization that KEEPS single spaces (opposite of normalizePersian which
+ * strips non-alphanumerics) — used for the search index so phrase and token
+ * matching still work. Handles Arabic/Persian variants (ي/ى→ی, ك→ک), Arabic
+ * and Persian digits, diacritics, ZWNJ/ZWNBSP and punctuation.
+ */
+export function normalizeForSearch(value: string): string {
+  return String(value ?? "")
+    .normalize("NFKC")
+    .replace(/[يى]/g, "ی")
+    .replace(/[ك]/g, "ک")
+    .replace(/[\u064B-\u0652\u0670\u0653-\u0655]/g, "") // Arabic diacritics
+    .replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
+    .replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)))
+    .replace(/[\u200c\u200f\u200e\u200b\u00ad]/g, " ")
+    .replace(/[^\p{L}\p{N}\s]+/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLocaleLowerCase();
+}
+
 const searchBlobs = importedProducts.map((p) => ({
   product: p,
-  blob: [
-    p.name.fa,
-    p.productCode,
-    p.sku,
-    p.categoryId,
-    p.subcategoryId,
-    categoryNameById.get(p.categoryId),
-    p.description.fa,
-    ...(p.variants ?? []).flatMap((v) => [v.name.fa, v.sku, v.technicalSpec]),
-  ]
-    .filter(Boolean)
-    .join("\n")
-    .toLocaleLowerCase(),
+  blob: normalizeForSearch(
+    [
+      p.name.fa,
+      p.name.en,
+      p.productCode,
+      p.sku,
+      p.categoryId,
+      p.subcategoryId,
+      categoryNameById.get(p.categoryId),
+      p.description.fa,
+      ...(p.variants ?? []).flatMap((v) => [v.name.fa, v.sku, v.technicalSpec]),
+    ]
+      .filter(Boolean)
+      .join("\n"),
+  ),
 }));
 const otherSubcategoryCounts = importedOtherSubcategories
   .map((sub) => ({
@@ -759,8 +809,73 @@ export function getImportedProductsByCategory(categoryId: string, subcategoryId?
 export function getImportedOtherSubcategoryCounts() {
   return otherSubcategoryCounts;
 }
-export function searchImportedProducts(query: string) {
-  const q = query.trim().toLocaleLowerCase();
+/**
+ * Relevance ranking for search results. A product scores high only when the
+ * query appears at a WORD BOUNDARY in its name (exact name match > name
+ * starts with query > a name word starts with query). Plain substring matches
+ * inside words are rejected — "الوان" (colors) must NOT match "وان" (tub),
+ * and description/variation blob hits such as "وانیلی" must never surface
+ * unrelated products. The weak blob tier is used ONLY when no name-level
+ * match exists at all (e.g. a term that appears solely in descriptions).
+ */
+function rankSearchResults(query: string, entries: typeof searchBlobs): Product[] {
+  const q = query.trim();
   if (!q) return [];
-  return searchBlobs.filter((entry) => entry.blob.includes(q)).map((entry) => entry.product);
+
+  const scored: Array<{ product: Product; score: number }> = [];
+  for (const entry of entries) {
+    const name = normalizeForSearch(entry.product.name.fa);
+    const nameEn = normalizeForSearch(entry.product.name.en);
+    let score = 0;
+    if (name === q || nameEn === q) {
+      score = 100; // exact full-name match
+    } else if (name.startsWith(q) || nameEn.startsWith(q)) {
+      score = 80; // name starts with the query
+    } else {
+      const nameWords = (name + " " + nameEn).split(/\s+/).filter(Boolean);
+      if (nameWords.some((word) => word.startsWith(q))) {
+        score = 60; // a name word starts with the query (e.g. "وان گرد …")
+      } else if (entry.blob.includes(q)) {
+        score = 5; // weak: only in description/variation/category blob
+      }
+    }
+    if (score > 0) scored.push({ product: entry.product, score });
+  }
+
+  scored.sort((a, b) => {
+    if (a.score !== b.score) return b.score - a.score;
+    return a.product.name.fa.localeCompare(b.product.name.fa, "fa");
+  });
+
+  // Any name-level match (score >= 60) makes the weak blob tier irrelevant.
+  const hasNameMatch = scored.some((entry) => entry.score >= 60);
+  const filtered = hasNameMatch ? scored.filter((entry) => entry.score >= 60) : scored;
+  return filtered.map((entry) => entry.product);
+}
+
+export function searchImportedProducts(query: string) {
+  const q = normalizeForSearch(query);
+  if (!q) return [];
+  const tokens = q.split(" ").filter((token) => token.length >= 2);
+
+  // Single word/number: relevance-ranked matches over the normalized index.
+  if (tokens.length <= 1) {
+    return rankSearchResults(q, searchBlobs);
+  }
+
+  // Multi-word queries: full-phrase match first (relevance-ranked), then fall
+  // back to a token score so phrases such as "وان آبکش" still surface the
+  // relevant water/colander product families instead of returning an empty
+  // result.
+  const phraseHits = rankSearchResults(q, searchBlobs);
+  if (phraseHits.length > 0) return phraseHits;
+  if (tokens.length === 0) return [];
+  return searchBlobs
+    .map((entry) => ({
+      product: entry.product,
+      score: tokens.reduce((score, token) => score + (entry.blob.includes(token) ? 1 : 0), 0),
+    }))
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map((entry) => entry.product);
 }

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Menu, ShoppingCart, UserRound } from "lucide-react";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useCart } from "../context/CartContext";
-import Logo from "./Logo";
+import OrderXLogo from "./OrderXLogo";
 import "./Header.css";
 import SideMenu from "./SideMenu";
 
@@ -29,8 +29,8 @@ export default function Header() {
             </div>
 
             <div className="ks-site-header-brand flex items-center justify-center overflow-visible">
-              <Link to="/" aria-label="KalaSearch / کالا سرچ" className="overflow-visible">
-                <Logo compact />
+              <Link to="/" aria-label="OrderX — صفحه اصلی" className="overflow-visible">
+                <OrderXLogo compact />
               </Link>
             </div>
 

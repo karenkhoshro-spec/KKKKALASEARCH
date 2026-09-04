@@ -36,6 +36,9 @@ function ks_config(): array
         'admin_password'       => '',   // legacy plaintext, only when no hash is set
         'admin_session_secret' => '',   // HMAC pepper for session tokens
         'session_ttl_days'     => 7,
+        'owner_username'       => '',   // optional Owner (Hiboss) account
+        'owner_password_hash'  => '',
+        'owner_password'       => '',
     ];
 
     // --- 2. local config file -------------------------------------------
@@ -71,6 +74,9 @@ function ks_config(): array
         'admin_password'       => 'ADMIN_PASSWORD',
         'admin_session_secret' => 'ADMIN_SESSION_SECRET',
         'session_ttl_days'     => 'KALA_SESSION_TTL_DAYS',
+        'owner_username'       => 'OWNER_USERNAME',
+        'owner_password_hash'  => 'OWNER_PASSWORD_HASH',
+        'owner_password'       => 'OWNER_PASSWORD',
     ];
     foreach ($envMap as $key => $envName) {
         $value = getenv($envName);

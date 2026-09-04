@@ -6,6 +6,7 @@ import { useToast } from "../context/ToastContext";
 import { goBack } from "../utils/safeBack";
 import { fullImageChain } from "../data/productImageResolver";
 import { getProductById } from "../data/products";
+import { colorHexForName } from "../data/csvSource";
 import OverlayHeader from "../components/OverlayHeader";
 import CustomerOrdersPanel from "../components/CustomerOrdersPanel";
 
@@ -120,8 +121,17 @@ export default function CartPage() {
                       {sku ? ` · ${t("product.sku")}: ${sku}` : ""}
                     </p>
                     {color ? (
-                      <p className="font-semibold" style={{ color: "var(--accent-1)" }}>
-                        {t("product.color")}: {color}
+                      <p className="flex items-center gap-1.5 font-semibold" style={{ color: "var(--accent-1)" }}>
+                        <span
+                          className="inline-block h-2.5 w-2.5 shrink-0 rounded-full border"
+                          style={{
+                            background: item.variation?.colorHex || colorHexForName(color) || "#a8a29e",
+                            borderColor: "rgba(0,0,0,0.15)",
+                            boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.35)",
+                          }}
+                          aria-hidden="true"
+                        />
+                        <span>{t("product.color")}: {color}</span>
                       </p>
                     ) : null}
                     {variationName && variationName !== color ? (

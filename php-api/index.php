@@ -94,6 +94,18 @@ if ($method === 'POST' && $path === '/api/admin/login') {
     ks_send(200, ['token' => ks_issue_admin_token()]);
 }
 
+if ($method === 'POST' && $path === '/api/admin/owner-login') {
+    if (!ks_owner_configured()) {
+        ks_send_error(503, 'owner_not_configured');
+    }
+    $username = (string) ($body['username'] ?? '');
+    $password = (string) ($body['password'] ?? '');
+    if ($username === '' || $username !== ks_config()['owner_username'] || !ks_verify_owner_password($password)) {
+        ks_send_error(401, 'invalid_credentials');
+    }
+    ks_send(200, ['token' => ks_issue_admin_token($username), 'role' => 'owner']);
+}
+
 if ($method === 'POST' && $path === '/api/admin/logout') {
     $token = ks_bearer_token();
     if (!ks_verify_admin_token($token)) {
@@ -104,10 +116,11 @@ if ($method === 'POST' && $path === '/api/admin/logout') {
 }
 
 if ($method === 'GET' && $path === '/api/admin/session') {
-    if (!ks_verify_admin_token(ks_bearer_token())) {
+    $token = ks_bearer_token();
+    if (!ks_verify_admin_token($token)) {
         ks_send_error(401, 'unauthorized');
     }
-    ks_send(200, ['ok' => true]);
+    ks_send(200, ['ok' => true, 'role' => ks_session_role($token)]);
 }
 
 if ($method === 'GET' && $path === '/api/admin/orders') {

@@ -1,17 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
-import { Navigate } from "react-router-dom";
-import { FileDown, LogOut } from "lucide-react";
+import { Link, Navigate } from "react-router-dom";
+import { FileDown, LogOut, PackageCheck, Truck, Wallet, SearchX, ClipboardList, Home } from "lucide-react";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import { fetchAdminOrders, patchOrderStatus, ORDER_STATUSES, type StoredOrder, type OrderStatus } from "../../utils/ordersApi";
 import { downloadStoredOrderPdf, orderPdfLabels } from "../../utils/orderPdf";
 import OrderItemImage from "../../components/OrderItemImage";
 
+type StatusFilter = "all" | OrderStatus;
+
 export default function AdminOrdersPage() {
   const { t, dir, lang } = useLanguage();
   const { token, ready, logout } = useAdminAuth();
   const [orders, setOrders] = useState<StoredOrder[]>([]);
   const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [openId, setOpenId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [busyPdf, setBusyPdf] = useState("");
@@ -25,12 +28,22 @@ export default function AdminOrdersPage() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return orders;
     return orders.filter((order) => {
-      const blob = `${order.orderNumber} ${order.customer.name} ${order.customer.phone} ${order.customer.email || ""} ${order.customer.city} ${order.customer.province}`.toLowerCase();
+      if (statusFilter !== "all" && order.status !== statusFilter) return false;
+      if (!q) return true;
+      const blob = `${order.orderNumber} ${order.customer.name} ${order.customer.phone} ${order.customer.email || ""} ${order.customer.city} ${order.customer.province || ""}`.toLowerCase();
       return blob.includes(q);
     });
-  }, [orders, query]);
+  }, [orders, query, statusFilter]);
+
+  const summary = useMemo(() => {
+    const total = orders.length;
+    const revenue = orders.reduce((sum, order) => sum + (Number(order.total) || 0), 0);
+    const delivered = orders.filter((order) => order.status === "delivered").length;
+    const pending = orders.filter((order) => ["preparing", "ready_pickup", "shipping"].includes(order.status)).length;
+    const counts = Object.fromEntries(ORDER_STATUSES.map((status) => [status, orders.filter((order) => order.status === status).length])) as Record<OrderStatus, number>;
+    return { total, revenue, delivered, pending, counts };
+  }, [orders]);
 
   if (ready && !token) return <Navigate to="/admin" replace />;
 
@@ -76,26 +89,118 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-3 py-5 sm:px-6" dir={dir}>
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <h1 className="text-base font-black sm:text-lg" style={{ color: "var(--text-primary)" }}>{t("admin.orders")}</h1>
-        <button type="button" onClick={logout} className="glass flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold" style={{ color: "var(--danger)" }}>
+      {/* Header — Home button at the inline start, title centered, logout at
+          the inline end (physically LEFT in the RTL/Persian layout). A 3-column
+          grid keeps the title truly centered and prevents overlap on small
+          screens (buttons shrink to icon-only under 420px). */}
+      <div className="ks-admin-orders-header mb-4 grid grid-cols-[auto_1fr_auto] items-center gap-2 sm:gap-3">
+        <Link
+          to="/"
+          aria-label={t("menu.home") || "خانه"}
+          className="glass flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-transform hover:scale-[1.03] active:scale-95"
+          style={{ color: "var(--accent-1)", border: "1px solid var(--border-soft)" }}
+        >
+          <Home size={14} />
+          {t("menu.home") || "خانه"}
+        </Link>
+        <h1 className="flex min-w-0 items-center justify-center gap-2 text-center text-base font-black sm:text-lg" style={{ color: "var(--text-primary)" }}>
+          <ClipboardList size={19} className="shrink-0" style={{ color: "var(--accent-1)" }} />
+          <span className="truncate">{t("admin.orders")}</span>
+        </h1>
+        <button type="button" onClick={logout} className="glass flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold" style={{ color: "var(--danger)" }}>
           <LogOut size={14} />
           {t("admin.logout")}
         </button>
       </div>
 
-      <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder={t("admin.search")}
-        className="mb-4 w-full rounded-xl px-3.5 py-2.5 text-sm outline-none"
-        style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
-      />
+      {/* Compact management toolbar */}
+      <div className="glass mb-4 flex flex-col gap-3 rounded-2xl p-3" style={{ border: "1px solid var(--border-soft)" }}>
+        {/* Search */}
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t("admin.search")}
+          className="w-full rounded-xl px-3.5 py-2 text-sm outline-none transition-colors focus:border-violet-500"
+          style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
+        />
+
+        {/* Status filter pills */}
+        <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto pb-0.5">
+          <button
+            type="button"
+            onClick={() => setStatusFilter("all")}
+            className={`shrink-0 rounded-full px-3 py-1.5 text-[11px] font-bold transition-all cursor-pointer ${
+              statusFilter === "all" ? "" : "opacity-70 hover:opacity-100"
+            }`}
+            style={{
+              background: statusFilter === "all" ? "var(--chip-bg)" : "transparent",
+              color: statusFilter === "all" ? "var(--accent-1)" : "var(--text-muted)",
+              border: `1px solid ${statusFilter === "all" ? "var(--accent-1)" : "var(--border-soft)"}`,
+            }}
+          >
+            {t("admin.filterAll")} · {summary.total}
+          </button>
+          {ORDER_STATUSES.map((status) => (
+            <button
+              type="button"
+              key={status}
+              onClick={() => setStatusFilter(statusFilter === status ? "all" : status)}
+              className={`shrink-0 rounded-full px-3 py-1.5 text-[11px] font-bold transition-all cursor-pointer ${
+                statusFilter === status ? "" : "opacity-70 hover:opacity-100"
+              }`}
+              style={{
+                background: statusFilter === status ? "var(--chip-bg)" : "transparent",
+                color: statusFilter === status ? "var(--accent-1)" : "var(--text-muted)",
+                border: `1px solid ${statusFilter === status ? "var(--accent-1)" : "var(--border-soft)"}`,
+              }}
+            >
+              {t(`status.${status}`)} · {summary.counts[status]}
+            </button>
+          ))}
+        </div>
+
+        {/* Summary strip */}
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="flex items-center gap-2 rounded-xl px-2.5 py-2" style={{ background: "var(--chip-bg)" }}>
+            <PackageCheck size={15} style={{ color: "var(--accent-1)" }} />
+            <div className="min-w-0">
+              <p className="truncate text-[10px] font-semibold" style={{ color: "var(--text-muted)" }}>{t("admin.totalOrders")}</p>
+              <p className="text-sm font-black" style={{ color: "var(--text-primary)" }}>{summary.total}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 rounded-xl px-2.5 py-2" style={{ background: "var(--chip-bg)" }}>
+            <Wallet size={15} style={{ color: "var(--accent-2)" }} />
+            <div className="min-w-0">
+              <p className="truncate text-[10px] font-semibold" style={{ color: "var(--text-muted)" }}>{t("admin.revenueTotal")}</p>
+              <p className="truncate text-sm font-black" style={{ color: "var(--text-primary)" }}>{summary.revenue.toLocaleString()}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 rounded-xl px-2.5 py-2" style={{ background: "var(--chip-bg)" }}>
+            <Truck size={15} style={{ color: "#f59e0b" }} />
+            <div className="min-w-0">
+              <p className="truncate text-[10px] font-semibold" style={{ color: "var(--text-muted)" }}>{t("hiboss.pending")}</p>
+              <p className="text-sm font-black" style={{ color: "var(--text-primary)" }}>{summary.pending}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 rounded-xl px-2.5 py-2" style={{ background: "var(--chip-bg)" }}>
+            <PackageCheck size={15} style={{ color: "var(--success)" }} />
+            <div className="min-w-0">
+              <p className="truncate text-[10px] font-semibold" style={{ color: "var(--text-muted)" }}>{t("hiboss.delivered")}</p>
+              <p className="text-sm font-black" style={{ color: "var(--text-primary)" }}>{summary.delivered}</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {error && <p className="mb-3 text-xs" style={{ color: "var(--danger)" }}>{error}</p>}
 
       {filtered.length === 0 ? (
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("admin.noOrders")}</p>
+        <div className="flex flex-col items-center gap-3 py-16 text-center">
+          <SearchX size={30} style={{ color: "var(--text-muted)" }} />
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+            {orders.length === 0 ? t("admin.noOrders") : t("search.noResults")}
+          </p>
+        </div>
       ) : (
         <div className="flex flex-col gap-3">
           {filtered.map((order) => {
@@ -103,12 +208,17 @@ export default function AdminOrdersPage() {
             return (
               <div key={order.orderNumber} className="glass rounded-2xl p-4" style={{ border: "1px solid var(--border-soft)" }}>
                 <button type="button" className="flex w-full items-center justify-between gap-3 text-start" onClick={() => setOpenId(open ? null : order.orderNumber)}>
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-sm font-black" style={{ color: "var(--text-primary)" }}>{order.orderNumber}</p>
-                    <p className="text-xs" style={{ color: "var(--text-muted)" }}>{order.customer.name} · {order.customer.phone}</p>
+                    <p className="truncate text-xs" style={{ color: "var(--text-muted)" }}>{order.customer.name} · {order.customer.phone}</p>
                   </div>
-                  <span className="rounded-full px-2.5 py-1 text-[11px] font-bold" style={{ background: "var(--chip-bg)", color: "var(--accent-1)" }}>
-                    {t(`status.${order.status}`)}
+                  <span className="flex shrink-0 items-center gap-2">
+                    <span className="hidden rounded-full px-2.5 py-1 text-[11px] font-bold sm:inline-block" style={{ background: "var(--chip-bg)", color: "var(--accent-1)" }}>
+                      {order.items.reduce((sum, item) => sum + item.quantity, 0)} {t("cart.itemsCount")}
+                    </span>
+                    <span className="rounded-full px-2.5 py-1 text-[11px] font-bold" style={{ background: "var(--chip-bg)", color: order.status === "delivered" ? "var(--success)" : "var(--accent-1)" }}>
+                      {t(`status.${order.status}`)}
+                    </span>
                   </span>
                 </button>
 
@@ -118,34 +228,32 @@ export default function AdminOrdersPage() {
                       <span>{t("checkout.fullName")}: {order.customer.name}</span>
                       <span dir="ltr">{t("checkout.phone")}: {order.customer.phone}</span>
                       {order.customer.email ? <span dir="ltr">{t("checkout.email")}: {order.customer.email}</span> : null}
-                      <span>{t("checkout.province")}: {order.customer.province}</span>
+                      {order.customer.province ? <span>{t("checkout.province")}: {order.customer.province}</span> : null}
                       <span>{t("checkout.city")}: {order.customer.city}</span>
                       <span className="sm:col-span-2">{t("checkout.address")}: {order.customer.address}</span>
-                      <span>{t("checkout.postalCode")}: {order.customer.postalCode}</span>
+                      {order.customer.postalCode ? <span>{t("checkout.postalCode")}: {order.customer.postalCode}</span> : null}
                       <span>{t("checkout.date")}: {dateLabel(order.createdAt)}</span>
                       <span>{t("checkout.paymentStatus")}: {t(`payment.${order.paymentStatus}`)}</span>
-                      <span>{t("admin.status")}: {t(`status.${order.status}`)}</span>
                       {order.customer.notes ? <span className="sm:col-span-2">{t("checkout.notes")}: {order.customer.notes}</span> : null}
                     </div>
 
-                    <label className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>{t("admin.status")}</label>
-                    <select
-                      value={order.status}
-                      onChange={(e) => handleStatus(order.orderNumber, e.target.value as OrderStatus)}
-                      className="rounded-xl px-3 py-2 text-sm outline-none"
-                      style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
-                    >
-                      {ORDER_STATUSES.map((status) => (
-                        <option key={status} value={status}>{t(`status.${status}`)}</option>
-                      ))}
-                    </select>
-
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>{t("admin.status")}:</span>
+                      <select
+                        value={order.status}
+                        onChange={(e) => handleStatus(order.orderNumber, e.target.value as OrderStatus)}
+                        className="rounded-xl px-3 py-1.5 text-xs outline-none cursor-pointer"
+                        style={{ background: "var(--input-bg)", color: "var(--text-primary)", border: "1px solid var(--border-soft)" }}
+                      >
+                        {ORDER_STATUSES.map((status) => (
+                          <option key={status} value={status}>{t(`status.${status}`)}</option>
+                        ))}
+                      </select>
                       <button
                         type="button"
                         disabled={busyPdf === order.orderNumber}
                         onClick={() => handleDownloadPdf(order)}
-                        className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-white"
+                        className="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold text-white transition-transform hover:scale-[1.02] active:scale-95"
                         style={{ background: "linear-gradient(90deg, var(--accent-2), var(--accent-1))" }}
                       >
                         <FileDown size={14} />
@@ -191,7 +299,7 @@ export default function AdminOrdersPage() {
                       })}
                     </div>
                     <p className="text-end text-sm font-black" style={{ color: "var(--accent-1)" }}>
-                      {t("cart.total")}: {order.total.toLocaleString()} {t("cart.toman")}
+                      {t("checkout.grandTotal") || t("cart.total")}: {order.total.toLocaleString()} {t("cart.toman")}
                     </p>
                   </div>
                 )}

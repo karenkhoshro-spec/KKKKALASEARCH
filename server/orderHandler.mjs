@@ -88,6 +88,15 @@ function adminPass() {
   return process.env.ADMIN_PASSWORD || "";
 }
 
+/** Owner (Hiboss) credentials — optional, entirely backend-only. */
+function ownerUser() {
+  return process.env.OWNER_USERNAME || "";
+}
+
+function ownerPass() {
+  return process.env.OWNER_PASSWORD || "";
+}
+
 function decodeTokenPayload(token) {
   const [payload] = String(token || "").split(".");
   if (!payload) return null;
@@ -99,16 +108,33 @@ function decodeTokenPayload(token) {
   }
 }
 
-export function signAdminToken() {
+function signToken(user, role) {
   const secret = adminSecret();
-  const user = adminUser();
   if (!secret || !user) return "";
   const exp = Date.now() + 7 * 24 * 60 * 60 * 1000;
   const payload = Buffer.from(
-    JSON.stringify({ u: user, exp, jti: crypto.randomBytes(9).toString("base64url") }),
+    JSON.stringify({ u: user, r: role, exp, jti: crypto.randomBytes(9).toString("base64url") }),
   ).toString("base64url");
   const sig = crypto.createHmac("sha256", secret).update(payload).digest("base64url");
   return `${payload}.${sig}`;
+}
+
+export function signAdminToken() {
+  return signToken(adminUser(), "admin");
+}
+
+export function signOwnerToken() {
+  return signToken(ownerUser(), "owner");
+}
+
+/**
+ * Role carried by a VALID admin/owner token ("admin" | "owner" | "").
+ * Callers must verify the token first with {@link verifyAdminToken}.
+ */
+export function tokenRole(token) {
+  const data = decodeTokenPayload(token);
+  if (!data) return "";
+  return data.r === "owner" ? "owner" : "admin";
 }
 
 export function verifyAdminToken(token) {
@@ -125,7 +151,11 @@ export function verifyAdminToken(token) {
   } catch {
     return false;
   }
-  if (data.u !== adminUser() || Number(data.exp) <= Date.now()) return false;
+  // Accepted identities: the configured admin, or the configured owner
+  // (owner tokens are signed with role "owner" and are a superset of admin).
+  const isAdmin = data.u === adminUser() && (data.r === "admin" || data.r === undefined);
+  const isOwner = data.u === ownerUser() && data.r === "owner" && ownerUser() !== "";
+  if ((!isAdmin && !isOwner) || Number(data.exp) <= Date.now()) return false;
   // Reject tokens that were explicitly revoked by logout.
   const now = Date.now();
   const revoked = readAdminRevocations().filter((entry) => Number(entry?.exp) > now);
@@ -160,6 +190,23 @@ export function adminLogin(username, password) {
     return { ok: false, status: 401, error: "invalid_credentials" };
   }
   return { ok: true, token: signAdminToken() };
+}
+
+/**
+ * Owner (Hiboss) login. Separate, backend-only OWNER_USERNAME/OWNER_PASSWORD;
+ * when they are not configured the endpoint answers 503 and the Hiboss panel
+ * stays locked (no fallback to admin credentials, no public backdoor).
+ */
+export function ownerLogin(username, password) {
+  const user = ownerUser();
+  const pass = ownerPass();
+  if (!user || !pass || !adminSecret()) {
+    return { ok: false, status: 503, error: "owner_not_configured" };
+  }
+  if (username !== user || password !== pass) {
+    return { ok: false, status: 401, error: "invalid_credentials" };
+  }
+  return { ok: true, token: signOwnerToken() };
 }
 
 function generateOrderNumber(existing) {
@@ -269,12 +316,13 @@ export function createOrder(payload) {
   const email = String(customer.email || "").trim();
   const items = Array.isArray(payload?.items) ? payload.items : [];
 
+  // Required checkout fields (frontend collects only these today). Province,
+  // postal code and email were removed from the customer form — legacy clients
+  // may still send them, and the server accepts them, but they are optional.
   if (!name) return { ok: false, status: 400, error: "name_required" };
   if (!phone) return { ok: false, status: 400, error: "invalid_phone" };
-  if (!province) return { ok: false, status: 400, error: "province_required" };
   if (!city) return { ok: false, status: 400, error: "city_required" };
   if (!address) return { ok: false, status: 400, error: "address_required" };
-  if (postalCode.length !== 10) return { ok: false, status: 400, error: "invalid_postal_code" };
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { ok: false, status: 400, error: "invalid_email" };
   }
@@ -457,6 +505,12 @@ export async function handleApiRequest(req, res) {
     return true;
   }
 
+  if (method === "POST" && url.pathname === "/api/admin/owner-login") {
+    const result = ownerLogin(String(body.username || ""), String(body.password || ""));
+    send(res, result.ok ? 200 : result.status, result.ok ? { token: result.token, role: "owner" } : { error: result.error });
+    return true;
+  }
+
   if (method === "POST" && url.pathname === "/api/admin/logout") {
     const token = bearer(req);
     if (!verifyAdminToken(token)) {
@@ -469,8 +523,9 @@ export async function handleApiRequest(req, res) {
   }
 
   if (method === "GET" && url.pathname === "/api/admin/session") {
-    const ok = verifyAdminToken(bearer(req));
-    send(res, ok ? 200 : 401, ok ? { ok: true } : { error: "unauthorized" });
+    const token = bearer(req);
+    const ok = verifyAdminToken(token);
+    send(res, ok ? 200 : 401, ok ? { ok: true, role: tokenRole(token) } : { error: "unauthorized" });
     return true;
   }
 

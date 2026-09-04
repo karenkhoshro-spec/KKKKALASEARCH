@@ -9,75 +9,120 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  /* Rows sit close together — the old 1rem+ gap looked disconnected. */
+  gap: 0.35rem;
 }
 
 @media (min-width: 640px) {
   .ks-category-container {
-    gap: 0.75rem;
+    gap: 0.45rem;
   }
 }
 
 @media (min-width: 1024px) {
   .ks-category-container {
-    gap: 1rem;
+    gap: 0.6rem;
   }
 }
 
-/* 4 Primary Items Per Row */
-.ks-category-grid-4 {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+/* BOTH rows share the exact same horizontally swipeable strip behavior:
+   native overflow-x scrolling (smooth on touch, no JS animation), hidden
+   scrollbar, snap alignment. Row 1 previously could not scroll because its
+   tiles were forced to flex-shrink into the viewport; min-width now wins,
+   so overflow — and therefore swipe — activates on both rows identically. */
+.ks-category-grid-4,
+.ks-category-row-scroll {
+  display: flex;
+  align-items: stretch;
   gap: 0.45rem;
   width: 100%;
   box-sizing: border-box;
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  padding: 0.15rem 0.1rem;
+  overscroll-behavior-x: contain;
+}
+
+.ks-category-grid-4::-webkit-scrollbar,
+.ks-category-row-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 @media (min-width: 480px) {
-  .ks-category-grid-4 {
+  .ks-category-grid-4,
+  .ks-category-row-scroll {
     gap: 0.65rem;
   }
 }
 
 @media (min-width: 768px) {
-  .ks-category-grid-4 {
+  .ks-category-grid-4,
+  .ks-category-row-scroll {
     gap: 0.85rem;
   }
 }
 
 @media (min-width: 1024px) {
-  .ks-category-grid-4 {
+  .ks-category-grid-4,
+  .ks-category-row-scroll {
     gap: 1.15rem;
   }
 }
 
-/* Row for Centered "Other" Tile */
+/* Row 2 keeps the class so tests/consumers can still find it */
 .ks-category-row-other {
-  display: flex;
-  justify-content: center;
   align-items: center;
   width: 100%;
 }
 
+/* Tiles keep a fixed minimum width instead of compressing into the viewport:
+   when 5+ tiles exceed the row width the row overflows horizontally and
+   native touch swipe takes over. Row 1 and row 2 use identical sizing. */
+.ks-category-grid-4 > .ks-category-tile {
+  flex: 0 0 auto;
+  min-width: 22%;
+  scroll-snap-align: start;
+}
+
+.ks-category-row-other > .ks-category-tile {
+  min-width: 22%;
+}
+
 .ks-category-tile-other {
-  width: calc(100% / 4 - 0.45rem);
-  min-width: 76px;
-  max-width: 170px;
+  flex: 0 0 auto;
+  min-width: 22%;
+  scroll-snap-align: start;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
+  .ks-category-grid-4 > .ks-category-tile,
+  .ks-category-row-other > .ks-category-tile,
   .ks-category-tile-other {
-    min-width: 110px;
-    max-width: 200px;
+    min-width: 20%;
   }
 }
 
-@media (min-width: 1024px) {
-  .ks-category-tile-other {
-    min-width: 130px;
-    max-width: 220px;
-  }
+/* Desktop pointer drag-to-scroll (no JS animation loops — a single passive
+   pointer handler toggles overflow behavior; native scrolling does the rest). */
+.ks-category-row-scroll {
+  cursor: grab;
+}
+
+.ks-category-row-scroll.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  user-select: none;
+}
+
+.ks-category-row-scroll.is-dragging .ks-category-tile {
+  pointer-events: none;
+}
+
+.ks-category-grid-4 > .ks-category-tile > * {
+  max-width: 100%;
 }
 
 /* Crystal Glassmorphism Tile Card */
@@ -392,4 +437,76 @@ html[data-theme="light"] .subcategory-tile[aria-pressed="true"] .ks-category-ico
 .subcategory-tile[aria-pressed="true"] {
   border-color: var(--accent-1) !important;
   box-shadow: 0 0 0 2px var(--accent-1), 0 0 18px var(--accent-glow) !important;
+}
+
+/* ==========================================================================
+   Neon icon rings — a soft, living ring hugging each icon frame.
+   Night: violet neon ring. Day: colorful elegant ring in the icon's own tone.
+   The glow stays tight around the frame (no giant wandering halo).
+   ========================================================================== */
+.ks-icon-3d {
+  --icon-ring: rgba(216, 180, 254, 0.65);
+  --icon-ring-soft: rgba(168, 85, 247, 0.28);
+  animation: ks-neon-icon-ring-dark 3.8s ease-in-out infinite;
+}
+
+.ks-icon-tone-orange { --icon-ring: rgba(251, 146, 60, 0.85); --icon-ring-soft: rgba(251, 146, 60, 0.3); }
+.ks-icon-tone-green  { --icon-ring: rgba(134, 239, 172, 0.85); --icon-ring-soft: rgba(74, 222, 128, 0.3); }
+.ks-icon-tone-blue   { --icon-ring: rgba(147, 197, 253, 0.9); --icon-ring-soft: rgba(96, 165, 250, 0.32); }
+.ks-icon-tone-teal   { --icon-ring: rgba(94, 234, 212, 0.9); --icon-ring-soft: rgba(45, 212, 191, 0.32); }
+.ks-icon-tone-purple { --icon-ring: rgba(196, 181, 253, 0.95); --icon-ring-soft: rgba(167, 139, 250, 0.35); }
+.ks-icon-tone-navy   { --icon-ring: rgba(147, 197, 253, 0.9); --icon-ring-soft: rgba(96, 165, 250, 0.3); }
+.ks-icon-tone-red    { --icon-ring: rgba(253, 164, 175, 0.9); --icon-ring-soft: rgba(251, 113, 133, 0.32); }
+.ks-icon-tone-white  { --icon-ring: rgba(226, 232, 240, 0.9); --icon-ring-soft: rgba(148, 163, 184, 0.35); }
+
+@keyframes ks-neon-icon-ring-dark {
+  0%, 100% {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.32),
+      inset 0 -10px 14px rgba(59, 7, 100, 0.5),
+      0 0 0 1.5px var(--icon-ring-soft),
+      0 0 10px var(--icon-ring-soft);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.4),
+      inset 0 -10px 14px rgba(59, 7, 100, 0.6),
+      0 0 0 2px var(--icon-ring),
+      0 0 16px var(--icon-ring);
+  }
+}
+
+html[data-theme="light"] .ks-icon-3d {
+  animation-name: ks-neon-icon-ring-light;
+}
+
+@keyframes ks-neon-icon-ring-light {
+  0%, 100% {
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -8px 12px rgba(22, 163, 74, 0.08),
+      0 0 0 1.5px var(--icon-ring-soft);
+  }
+  50% {
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, 1),
+      inset 0 -8px 12px rgba(22, 163, 74, 0.14),
+      0 0 0 2px var(--icon-ring),
+      0 0 12px var(--icon-ring-soft);
+  }
+}
+
+html[data-theme="light"] .ks-icon-tone-orange { --icon-ring: rgba(249, 115, 22, 0.6); --icon-ring-soft: rgba(249, 115, 22, 0.2); }
+html[data-theme="light"] .ks-icon-tone-green  { --icon-ring: rgba(22, 163, 74, 0.55); --icon-ring-soft: rgba(34, 197, 94, 0.2); }
+html[data-theme="light"] .ks-icon-tone-blue   { --icon-ring: rgba(37, 99, 235, 0.55); --icon-ring-soft: rgba(59, 130, 246, 0.2); }
+html[data-theme="light"] .ks-icon-tone-teal   { --icon-ring: rgba(13, 148, 136, 0.55); --icon-ring-soft: rgba(20, 184, 166, 0.2); }
+html[data-theme="light"] .ks-icon-tone-purple { --icon-ring: rgba(124, 58, 237, 0.5); --icon-ring-soft: rgba(139, 92, 246, 0.2); }
+html[data-theme="light"] .ks-icon-tone-navy   { --icon-ring: rgba(29, 78, 216, 0.55); --icon-ring-soft: rgba(59, 130, 246, 0.2); }
+html[data-theme="light"] .ks-icon-tone-red    { --icon-ring: rgba(190, 18, 60, 0.55); --icon-ring-soft: rgba(225, 29, 72, 0.2); }
+html[data-theme="light"] .ks-icon-tone-white  { --icon-ring: rgba(100, 116, 139, 0.45); --icon-ring-soft: rgba(148, 163, 184, 0.22); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ks-icon-3d {
+    animation: none;
+  }
 }
