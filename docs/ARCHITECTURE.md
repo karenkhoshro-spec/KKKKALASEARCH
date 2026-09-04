@@ -4,8 +4,10 @@
 
 - **Production on cPanel / shared hosting:** PHP 8.1 + MySQL (`php-api/`,
   `database/schema.sql`). Browser calls relative `/api/...`. Admin login is
-  `POST /api/admin/login`. Credentials live only in `kalasearch-config.php`
-  **outside** `public_html` (see `docs/CPANEL_PHP_DEPLOYMENT.md`).
+  `POST /api/admin/login`. Bootstrap credentials live in `kalasearch-config.php`
+  **outside** `public_html`. After a password change in `/admin`, the bcrypt
+  hash is stored in MySQL `admin_credentials` and overrides the config file
+  (see `docs/CPANEL_PHP_DEPLOYMENT.md`).
 - **Local development:** Vite + the Node API middleware (`server/orderHandler.mjs`).
   Node is not required on cPanel.
 

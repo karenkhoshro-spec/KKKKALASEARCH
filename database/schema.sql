@@ -79,3 +79,17 @@ CREATE TABLE IF NOT EXISTS admin_sessions (
   UNIQUE KEY uq_admin_sessions_token_hash (token_hash),
   KEY idx_admin_sessions_expires (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------------
+-- Admin credentials — bcrypt hash stored in MySQL so the password can be
+-- changed from the admin panel without writing kalasearch-config.php.
+-- The config file (outside public_html) is only the bootstrap fallback until
+-- a row exists here. NEVER store a plaintext password in this table.
+-- Single-row table (id = 1). Re-import is safe (IF NOT EXISTS).
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS admin_credentials (
+  id            TINYINT UNSIGNED NOT NULL PRIMARY KEY DEFAULT 1,
+  username      VARCHAR(100)     NOT NULL,
+  password_hash VARCHAR(255)     NOT NULL,                  -- password_hash() bcrypt
+  updated_at    DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

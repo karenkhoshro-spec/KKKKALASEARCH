@@ -127,8 +127,9 @@ describe("secrets stay out of the frontend", () => {
     expect(example).toMatch(/'admin_password_hash'\s*=>\s*''/);
     expect(example).toMatch(/'admin_password'\s*=>\s*''/);
     expect(example).not.toMatch(/\$2y\$\d+\$.{20,}/);
-    expect(example).toMatch(/'admin_username'\s*=>\s*'Orderx'/);
+    expect(example).toMatch(/'admin_username'\s*=>\s*'admin'/);
     expect(example).not.toMatch(/'admin_username'\s*=>\s*'karen'/i);
+    expect(example).not.toMatch(/'admin_password'\s*=>\s*'admin'/);
   });
 
   it("PHP auth uses password_verify and never documents a live password", () => {

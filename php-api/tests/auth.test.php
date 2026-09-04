@@ -18,7 +18,7 @@ $writeConfig = static function (array $overrides) use ($tmp, $testHash): void {
         'db_name' => '',
         'db_user' => '',
         'db_password' => '',
-        'admin_username' => 'Orderx',
+        'admin_username' => 'admin',
         'admin_password_hash' => $testHash,
         'admin_password' => '',
         'admin_session_secret' => 'unit-test-session-secret-not-for-production',
@@ -65,8 +65,8 @@ ks_config_reset();
 check('missing admin configuration detected', ks_admin_configured() === false);
 
 $writeConfig([
-    'admin_username' => 'Orderx',
-    'admin_password_hash' => '',
+        'admin_username' => 'admin',
+        'admin_password_hash' => '',
     'admin_password' => '',
     'admin_session_secret' => 'unit-test-session-secret-not-for-production',
 ]);
@@ -77,10 +77,16 @@ $writeConfig([]);
 ks_config_reset();
 
 echo "== username matching ==\n";
-check('documented template username Orderx is accepted', ks_admin_username_matches('Orderx') === true);
+check('bootstrap username admin is accepted', ks_admin_username_matches('admin') === true);
 check('wrong username rejected', ks_admin_username_matches('karen') === false);
-check('case-sensitive: orderx rejected', ks_admin_username_matches('orderx') === false);
+check('case-sensitive: Admin rejected', ks_admin_username_matches('Admin') === false);
 check('empty username rejected', ks_admin_username_matches('') === false);
+
+echo "== ks_validate_new_password ==\n";
+check('empty new password', ks_validate_new_password('', 'x') === 'new_password_required');
+check('too short', ks_validate_new_password('ab', 'ab') === 'password_too_short');
+check('mismatch', ks_validate_new_password('abcd', 'abce') === 'password_mismatch');
+check('valid new password', ks_validate_new_password('abcd', 'abcd') === null);
 
 echo "== password_verify (bcrypt hash) ==\n";
 check('correct password accepted', ks_verify_admin_password($testPassword) === true);

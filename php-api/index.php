@@ -15,6 +15,7 @@
  *   POST    /api/admin/logout         (bearer) → 200 {ok:true} | 401
  *   GET     /api/admin/session        (bearer) → 200 {ok:true} | 401
  *   GET     /api/admin/orders         (bearer) → 200 {orders:[…]} | 401
+ *   POST    /api/admin/change-password (bearer) → 200 {ok:true} | 400/401
  *   PATCH   /api/admin/orders/:orderNumber/status (bearer) → 200 {order} | 400/404/401
  */
 
@@ -128,6 +129,21 @@ if ($method === 'GET' && $path === '/api/admin/orders') {
         ks_send_error(401, 'unauthorized');
     }
     ks_send(200, ['orders' => ks_list_admin_orders()]);
+}
+
+if ($method === 'POST' && $path === '/api/admin/change-password') {
+    $token = ks_bearer_token();
+    if (!ks_verify_admin_token($token)) {
+        ks_send_error(401, 'unauthorized');
+    }
+    $current = (string) ($body['currentPassword'] ?? '');
+    $new = (string) ($body['newPassword'] ?? '');
+    $confirm = (string) ($body['confirmPassword'] ?? '');
+    $result = ks_change_admin_password($current, $new, $confirm, $token);
+    if ($result['ok']) {
+        ks_send(200, ['ok' => true]);
+    }
+    ks_send_error($result['status'], $result['error']);
 }
 
 if ($method === 'PATCH' && preg_match('#^/api/admin/orders/([^/]+)/status$#', $path, $m)) {

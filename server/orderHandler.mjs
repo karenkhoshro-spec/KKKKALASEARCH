@@ -7,6 +7,8 @@ import {
   writeOrders,
   readAdminRevocations,
   writeAdminRevocations,
+  readAdminCredentials,
+  writeAdminCredentials,
 } from "./orderStore.mjs";
 
 const PROJECT_ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -88,6 +90,25 @@ function adminPass() {
   return process.env.ADMIN_PASSWORD || "";
 }
 
+function hashLocalPassword(password) {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const digest = crypto.scryptSync(password, salt, 32).toString("hex");
+  return `scrypt:${salt}:${digest}`;
+}
+
+function verifyLocalPassword(password, stored) {
+  const parts = String(stored || "").split(":");
+  if (parts.length !== 3 || parts[0] !== "scrypt") return false;
+  const digest = crypto.scryptSync(password, parts[1], 32).toString("hex");
+  const a = Buffer.from(parts[2], "hex");
+  const b = Buffer.from(digest, "hex");
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+function effectiveAdminUser() {
+  return readAdminCredentials()?.username || adminUser();
+}
+
 /** Owner (Hiboss) credentials — optional, entirely backend-only. */
 function ownerUser() {
   return process.env.OWNER_USERNAME || "";
@@ -120,7 +141,7 @@ function signToken(user, role) {
 }
 
 export function signAdminToken() {
-  return signToken(adminUser(), "admin");
+  return signToken(effectiveAdminUser(), "admin");
 }
 
 export function signOwnerToken() {
@@ -153,7 +174,7 @@ export function verifyAdminToken(token) {
   }
   // Accepted identities: the configured admin, or the configured owner
   // (owner tokens are signed with role "owner" and are a superset of admin).
-  const isAdmin = data.u === adminUser() && (data.r === "admin" || data.r === undefined);
+  const isAdmin = data.u === effectiveAdminUser() && (data.r === "admin" || data.r === undefined);
   const isOwner = data.u === ownerUser() && data.r === "owner" && ownerUser() !== "";
   if ((!isAdmin && !isOwner) || Number(data.exp) <= Date.now()) return false;
   // Reject tokens that were explicitly revoked by logout.
@@ -181,15 +202,53 @@ export function revokeAdminToken(token) {
 }
 
 export function adminLogin(username, password) {
+  if (!adminSecret()) {
+    return { ok: false, status: 503, error: "admin_not_configured" };
+  }
+  const override = readAdminCredentials();
+  if (override) {
+    if (username !== override.username || !verifyLocalPassword(password, override.passwordHash)) {
+      return { ok: false, status: 401, error: "invalid_credentials" };
+    }
+    return { ok: true, token: signAdminToken() };
+  }
   const user = adminUser();
   const pass = adminPass();
-  if (!user || !pass || !adminSecret()) {
+  if (!user || !pass) {
     return { ok: false, status: 503, error: "admin_not_configured" };
   }
   if (username !== user || password !== pass) {
     return { ok: false, status: 401, error: "invalid_credentials" };
   }
   return { ok: true, token: signAdminToken() };
+}
+
+export function validateNewAdminPassword(newPassword, confirm) {
+  if (!newPassword) return "new_password_required";
+  if (String(newPassword).length < 4 || String(newPassword).length > 200) return "password_too_short";
+  if (newPassword !== confirm) return "password_mismatch";
+  return null;
+}
+
+/**
+ * Persist a new admin password hash in the local runtime store (dev/Node).
+ * Production cPanel uses MySQL admin_credentials instead.
+ */
+export function changeAdminPassword(currentPassword, newPassword, confirm, keepToken) {
+  if (!verifyAdminToken(keepToken)) {
+    return { ok: false, status: 401, error: "unauthorized" };
+  }
+  const probe = adminLogin(effectiveAdminUser(), currentPassword);
+  if (!probe.ok) {
+    return { ok: false, status: 401, error: "invalid_current_password" };
+  }
+  const error = validateNewAdminPassword(newPassword, confirm);
+  if (error) return { ok: false, status: 400, error };
+  writeAdminCredentials({
+    username: effectiveAdminUser(),
+    passwordHash: hashLocalPassword(newPassword),
+  });
+  return { ok: true };
 }
 
 /**
@@ -535,6 +594,18 @@ export async function handleApiRequest(req, res) {
       return true;
     }
     send(res, 200, { orders: listAdminOrders() });
+    return true;
+  }
+
+  if (method === "POST" && url.pathname === "/api/admin/change-password") {
+    const token = bearer(req);
+    const result = changeAdminPassword(
+      String(body.currentPassword || ""),
+      String(body.newPassword || ""),
+      String(body.confirmPassword || ""),
+      token,
+    );
+    send(res, result.ok ? 200 : result.status, result.ok ? { ok: true } : { error: result.error });
     return true;
   }
 

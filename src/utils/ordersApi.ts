@@ -194,6 +194,32 @@ export async function fetchAdminOrders(token: string): Promise<StoredOrder[]> {
   return Array.isArray(data.orders) ? data.orders : [];
 }
 
+export async function changeAdminPassword(
+  token: string,
+  payload: { currentPassword: string; newPassword: string; confirmPassword: string },
+): Promise<void> {
+  let res: Response;
+  try {
+    res = await fetch(`${apiBase()}/api/admin/change-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    throw new Error("network_error");
+  }
+  const data = await parseJson(res);
+  if (res.ok && data.ok) return;
+  if (res.status === 401 && data.error === "invalid_current_password") {
+    throw new Error("invalid_current_password");
+  }
+  if (res.status === 401) throw new Error("unauthorized");
+  throw new Error(typeof data.error === "string" && data.error ? data.error : "server_error");
+}
+
 export async function patchOrderStatus(token: string, orderNumber: string, status: OrderStatus): Promise<StoredOrder> {
   const res = await fetch(`${apiBase()}/api/admin/orders/${encodeURIComponent(orderNumber)}/status`, {
     method: "PATCH",

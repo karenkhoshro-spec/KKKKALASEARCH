@@ -67,7 +67,9 @@ Output: `dist/` — pure static files (`index.html`, `assets/`, `images/`).
 
 1. cPanel → **phpMyAdmin** → select your database (left sidebar).
 2. **Import** tab → **Choose File** → `database/schema.sql` → **Go**.
-3. Verify three tables exist: `orders`, `order_items`, `admin_sessions`.
+3. Verify these tables exist: `orders`, `order_items`, `admin_sessions`,
+   `admin_credentials` (the last one is empty until you change the password
+   in `/admin`; it is created by `schema.sql`).
 
 Or via SSH on a VPS (not needed for cPanel):
 
@@ -129,10 +131,8 @@ return [
   'db_name'              => 'karenk_kalasearch',
   'db_user'              => 'karenk_kalasearch',
   'db_password'          => 'STRONG_DB_PASSWORD',
-  // The live username is WHATEVER you set here. It is not in the React app.
-  // Older notes mentioning "karen" were examples only — they are not compiled
-  // into the frontend. The template name in config.example.php is "Orderx".
-  'admin_username'       => 'Orderx',
+  // Bootstrap username — not compiled into the React app. Case-sensitive.
+  'admin_username'       => 'admin',
   'admin_password_hash'  => '$2y$10$...',       // ← generate below; NEVER a raw password
   'admin_password'       => '',                 // leave empty once hash is set
   'admin_session_secret' => 'LONG_RANDOM_STRING_AT_LEAST_32_CHARS',
@@ -313,20 +313,24 @@ Do **not** upload `php-api/config.example.php` as the live config, and do
 | Session HMAC pepper | `admin_session_secret` | frontend / GitHub |
 
 The login form is empty on purpose. Type the **exact** `admin_username` from
-the config file (case-sensitive). The template value is `Orderx`. If you set
-a different name in the config, that is the name you type. Names that appear
-in old docs (`karen`) are **not** baked into the app.
+the config file (case-sensitive). The intended bootstrap username is `admin`.
+It is **not** hardcoded in the React app.
 
 ### Generate `ADMIN_PASSWORD_HASH` (never commit the raw password)
 
-On your computer (PHP 8.1+):
+On your computer (PHP 8.1+), for the intended bootstrap password:
 
 ```bash
-php -r "echo password_hash('YOUR_ADMIN_PASSWORD', PASSWORD_DEFAULT), PHP_EOL;"
+php -r "echo password_hash('admin', PASSWORD_DEFAULT), PHP_EOL;"
 ```
 
 Paste **only the hash** (starts with `$2y$`) into `admin_password_hash`.
 Leave `admin_password` empty. The live site uses `password_verify()`.
+Never put the raw password in `src/`, `public/`, GitHub, or `config.example.php`.
+
+After first login, change that password in **Admin orders → Change password**.
+The new bcrypt hash is stored in MySQL table `admin_credentials` and overrides
+the config file from then on (no need to edit `kalasearch-config.php` again).
 
 ### Generate `ADMIN_SESSION_SECRET`
 
@@ -347,6 +351,7 @@ Confirm these tables exist:
 - `orders`
 - `order_items`
 - `admin_sessions`  ← login **cannot** succeed without this table
+- `admin_credentials` ← empty at first; filled when the admin changes the password in the panel
 
 A successful `POST /api/admin/login` **inserts a row** into `admin_sessions`.
 If the database is missing, login returns `500 {"error":"server_error"}`
@@ -356,10 +361,10 @@ If the database is missing, login returns `500 {"error":"server_error"}`
 
 ```
 db_host, db_name, db_user, db_password
-admin_username
-admin_password_hash     (or legacy admin_password — migrate to the hash)
+admin_username              (intended bootstrap: admin)
+admin_password_hash         (bcrypt of the bootstrap password — see above)
 admin_session_secret
-session_ttl_days        (default 7)
+session_ttl_days            (default 7)
 ```
 
 If username / hash / secret are empty, login returns
@@ -381,7 +386,7 @@ wrong — `/admin` will not be able to log in.
 ```bash
 curl -sS -D - -o /tmp/ks-login.json -X POST https://YOUR-DOMAIN/api/admin/login \
   -H 'Content-Type: application/json' \
-  -d '{"username":"Orderx","password":"YOUR_ADMIN_PASSWORD"}'
+  -d '{"username":"admin","password":"YOUR_BOOTSTRAP_PASSWORD"}'
 ```
 
 Use the username that is actually in `kalasearch-config.php`.

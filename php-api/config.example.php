@@ -28,11 +28,10 @@ return [
     'db_password'          => 'CHANGE_ME_STRONG_DB_PASSWORD',
 
     // --- Admin login -----------------------------------------------------
-    // The live username is whatever you set here (case-sensitive). It is NOT
-    // compiled into the React app. The template value is "Orderx". Change this
-    // key if you want a different name. NEVER write the raw password in this
-    // file, in src/, in public/, or in Git — only the bcrypt hash (password_hash).
-    'admin_username'       => 'Orderx',
+    // Bootstrap username (case-sensitive). NOT compiled into the React app.
+    // After a password change in /admin, MySQL admin_credentials overrides
+    // this file. NEVER write the raw password here — only a bcrypt hash.
+    'admin_username'       => 'admin',
     // bcrypt hash from password_hash() — the ONLY recommended form.
     'admin_password_hash'  => '',                // e.g. '$2y$10$....'
     // Legacy plaintext fallback (used ONLY when admin_password_hash is '').

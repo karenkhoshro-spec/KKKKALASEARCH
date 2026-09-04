@@ -59,3 +59,21 @@ export function readAdminRevocations() {
 export function writeAdminRevocations(entries) {
   writeJson(runtimeFilePath("admin_revoked.json"), entries);
 }
+
+/** Local-dev override of admin username + scrypt hash (never committed). */
+export function readAdminCredentials() {
+  const data = readJson(runtimeFilePath("admin_credentials.json"), null);
+  if (!data || typeof data !== "object") return null;
+  const username = String(data.username || "").trim();
+  const passwordHash = String(data.passwordHash || "").trim();
+  if (!username || !passwordHash) return null;
+  return { username, passwordHash };
+}
+
+export function writeAdminCredentials(record) {
+  writeJson(runtimeFilePath("admin_credentials.json"), {
+    username: String(record.username || ""),
+    passwordHash: String(record.passwordHash || ""),
+    updatedAt: new Date().toISOString(),
+  });
+}
