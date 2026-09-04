@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { renderToString } from "react-dom/server";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import Home from "../src/pages/Home";
@@ -108,11 +109,13 @@ describe("UI & UX System Polish & Validation Suite", () => {
     expect(html).toContain('loading="eager"');
     expect(html).toContain('fetchPriority="high"');
     expect(html).toContain("مشاهده محصول در سایت اشکان پلاستیک");
-    expect(html).toContain("کد محصول");
-    expect(html).toContain("شناسه کالا");
     expect(html).toContain("مشخصات کامل");
     expect(html).toContain("افزودن به سبد خرید");
     expect(html).toContain("0"); // initial quantity is 0
+    // کد محصول / شناسه کالا no longer clutter the upper product area — they
+    // live inside the مشخصات کامل section (source-verified below).
+    expect(html).not.toContain("کد محصول");
+    expect(html).not.toContain("شناسه کالا");
   });
 
   it("renders ProductDetails for out-of-stock product with clean out-of-stock badge and summary card", () => {
@@ -134,10 +137,11 @@ describe("UI & UX System Polish & Validation Suite", () => {
       </MemoryRouter>
     );
 
-    expect(html).toContain("کد محصول");
-    expect(html).toContain("شناسه کالا");
     expect(html).toContain("مشخصات کامل");
     expect(html).toContain("مشاهده محصول در سایت اشکان پلاستیک");
+    // Identifiers are spec-section content only (cleaner top area)
+    expect(html).not.toContain("کد محصول");
+    expect(html).not.toContain("شناسه کالا");
   });
 
   it("renders SideMenu with uniform crystal cards and About Us overlay trigger", () => {
@@ -210,10 +214,17 @@ describe("UI & UX System Polish & Validation Suite", () => {
 
     expect(html).toContain("آبکش تخت 1000");
     expect(html).toContain("موجود در انبار");
-    expect(html).toContain("کد محصول");
-    expect(html).toContain("شناسه کالا");
     expect(html).toContain("54,000");
     expect(html).toContain("تومان");
     expect(html).toContain("مشاهده محصول در سایت اشکان پلاستیک");
+    // Identifiers are NOT in the upper/main area...
+    expect(html).not.toContain("کد محصول");
+    expect(html).not.toContain("شناسه کالا");
+    // ...but ARE part of the مشخصات کامل specification list (rendered when
+    // the accordion opens — verified at the source level).
+    const source = readFileSync("src/pages/ProductDetails.tsx", "utf8");
+    const specsBlock = source.slice(source.indexOf("const allSpecifications"), source.indexOf("const allSpecifications") + 900);
+    expect(specsBlock).toContain("کد محصول");
+    expect(specsBlock).toContain("شناسه کالا");
   });
 });

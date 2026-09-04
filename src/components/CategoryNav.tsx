@@ -96,38 +96,39 @@ function CategoryNav() {
         })}
       </div>
 
-      {/* Full category list — opens when سایر is tapped (existing behavior). */}
+      {/* Full category list — opens when سایر is tapped (existing behavior).
+          Compact: sized to content, small gaps, mobile-first padding. */}
       {showAll && (
         <div
-          className="fixed inset-0 z-[200] flex items-end justify-center bg-black/60 p-3 backdrop-blur-sm sm:items-center"
+          className="fixed inset-0 z-[200] flex items-end justify-center bg-black/60 p-2 backdrop-blur-sm sm:items-center sm:p-4"
           role="dialog"
           aria-modal="true"
           aria-label="همه دسته‌بندی‌ها"
           onClick={() => setShowAll(false)}
         >
           <div
-            className="glass-strong max-h-[80vh] w-full max-w-2xl overflow-y-auto rounded-3xl p-5"
+            className="ks-category-modal glass-strong max-h-[78vh] w-fit min-w-[min(92vw,20rem)] max-w-[92vw] overflow-y-auto rounded-2xl p-3.5 sm:max-w-xl sm:p-4"
             onClick={(e) => e.stopPropagation()}
             style={{ border: "1.5px solid var(--border-strong)", background: "var(--surface-strong)" }}
           >
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="text-base font-black" style={{ color: "var(--text-primary)" }}>
+            <div className="mb-2.5 flex items-center justify-between gap-3">
+              <h2 className="text-sm font-black sm:text-base" style={{ color: "var(--text-primary)" }}>
                 همه دسته‌بندی‌ها
               </h2>
               <button
                 type="button"
                 onClick={() => setShowAll(false)}
-                className="glass rounded-full px-3 py-1.5 text-xs font-bold active:scale-95"
+                className="glass rounded-full px-2.5 py-1 text-[11px] font-bold active:scale-95 sm:text-xs"
                 style={{ color: "var(--accent-1)", border: "1px solid var(--border-soft)" }}
               >
                 بستن
               </button>
             </div>
 
-            <p className="mb-2 text-xs font-bold" style={{ color: "var(--text-muted)" }}>
+            <p className="mb-1.5 text-[10px] font-bold sm:text-xs" style={{ color: "var(--text-muted)" }}>
               دسته‌های اصلی
             </p>
-            <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <div className="ks-modal-grid mb-2.5">
               {categories
                 .filter((c) => c.id !== "other")
                 .map((cat) => (
@@ -135,28 +136,32 @@ function CategoryNav() {
                     key={cat.id}
                     to={`/category/${cat.id}`}
                     onClick={() => setShowAll(false)}
-                    className="glass ks-category-card flex-col rounded-2xl p-3 text-center"
+                    className="glass ks-modal-card ks-category-card flex-col text-center"
                     style={{ color: "var(--text-primary)" }}
                   >
-                    <CategoryIconFrame id={cat.id} size={20} className="h-9 w-9" />
+                    <span className="ks-category-card-icon ks-category-card-icon--sm">
+                      <CategoryIconFrame id={cat.id} size={18} className="h-5 w-5" />
+                    </span>
                     <span className="ks-category-card-label">{cat.name[lang]}</span>
                   </Link>
                 ))}
             </div>
 
-            <p className="mb-2 text-xs font-bold" style={{ color: "var(--text-muted)" }}>
+            <p className="mb-1.5 text-[10px] font-bold sm:text-xs" style={{ color: "var(--text-muted)" }}>
               زیر دسته‌ها
             </p>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            <div className="ks-modal-grid">
               {getOtherSubcategoryCounts().map((sub) => (
                 <Link
                   key={sub.id}
                   to={`/category/other?sub=${sub.id}`}
                   onClick={() => setShowAll(false)}
-                  className="glass ks-category-card flex-col rounded-2xl p-3 text-center"
+                  className="glass ks-modal-card ks-category-card flex-col text-center"
                   style={{ color: "var(--text-primary)" }}
                 >
-                  <CategoryIconFrame id={sub.id} size={20} className="h-9 w-9" />
+                  <span className="ks-category-card-icon ks-category-card-icon--sm">
+                    <CategoryIconFrame id={sub.id} size={18} className="h-5 w-5" />
+                  </span>
                   <span className="ks-category-card-label">{sub.name[lang]}</span>
                 </Link>
               ))}

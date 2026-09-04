@@ -59,11 +59,11 @@ export default function Home() {
     setSort((current) => (current === key ? "default" : key));
   };
 
-  const shown = (quickQuery.trim() ? quickResults : orderedCatalog).slice(
-    0,
-    quickQuery.trim() || expanded ? undefined : INITIAL_VISIBLE,
-  );
   const quickActive = Boolean(quickQuery.trim());
+  // Perf: one stable slice computation (avoids re-running `.slice` twice and
+  // keeps the expanded flag from re-sorting the catalog on every keystroke).
+  const sourceList = quickActive ? quickResults : orderedCatalog;
+  const shown = quickActive || expanded ? sourceList : sourceList.slice(0, INITIAL_VISIBLE);
   const remaining = quickActive ? 0 : orderedCatalog.length - INITIAL_VISIBLE;
 
   const priceChip = (key: "cheapest" | "expensive", label: string) => {
@@ -130,8 +130,10 @@ export default function Home() {
               Filters the product list below in place (no popups/alerts). */}
           <div className="glass flex items-center gap-2 rounded-2xl px-3 py-1.5" style={{ border: "1px solid var(--border-soft)" }}>
             <Search size={14} className="shrink-0" style={{ color: "var(--accent-1)" }} aria-hidden="true" />
+            {/* type="text" (not "search"): the native search field renders its
+                own × on WebKit, which duplicated our clear button. One × only. */}
             <input
-              type="search"
+              type="text"
               value={quickQuery}
               onChange={(event) => setQuickQuery(event.target.value)}
               placeholder={t("home.quickSearch") || "جستجوی سریع"}

@@ -83,9 +83,15 @@ export default function ProductDetails() {
   const rawActiveUrl = selectedVariation?.url || product.productUrl || product.ashkanProductUrl;
   const activeUrl = rawActiveUrl && isValidProductUrl(rawActiveUrl) ? rawActiveUrl.trim() : undefined;
 
-  // Move pack quantity and genuine specs inside full specifications list; filter out stray numbers
+  // Move pack quantity and genuine specs inside full specifications list; filter out stray numbers.
+  // کد محصول and شناسه کالا also live here (مشخصات کامل) — never in the upper
+  // product area — keeping the top display clean while the data stays intact.
   const activePackQty = selectedVariation?.packQuantity ?? product.packQuantity;
+  const productCodeVal = product.productCode ?? product.id ?? "-";
+  const stockSkuVal = selectedVariation?.sku ?? product.sku ?? "-";
   const allSpecifications = Array.from(new Set([
+    `${t("product.productCode") || "کد محصول"}: ${productCodeVal}`,
+    `${t("product.sku") || "شناسه کالا"}: ${stockSkuVal}`,
     ...(activePackQty && String(activePackQty).trim() && String(activePackQty).trim() !== "-"
       ? [`تعداد در بسته: ${activePackQty}`]
       : []),
@@ -166,9 +172,6 @@ export default function ProductDetails() {
     showToast(t("notifications.addedToCart") || "به سبد خرید اضافه شد", "success");
   };
 
-  const productCodeVal = product.productCode ?? product.id ?? "-";
-  const stockSkuVal = selectedVariation?.sku ?? product.sku ?? "-";
-
   return (
     <div className="mx-auto max-w-5xl px-3.5 py-4 sm:px-6">
       {activeImage && (
@@ -207,36 +210,8 @@ export default function ProductDetails() {
               )}
             </div>
 
-            {/* Bottom Info Strip inside Image Card: Right = Product Code, Left = Stock SKU */}
-            <div className="mt-3 flex w-full items-center justify-between gap-2 border-t pt-2.5 text-xs" style={{ borderColor: "var(--border-soft)" }}>
-              <div
-                className="glass flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs font-bold"
-                style={{
-                  background: "var(--surface)",
-                  borderColor: "var(--border-soft)",
-                  color: "var(--text-primary)",
-                }}
-              >
-                <span className="text-[11px] font-semibold" style={{ color: "var(--text-muted)" }}>
-                  {t("product.productCode") || "کد محصول"}:
-                </span>
-                <span>{productCodeVal}</span>
-              </div>
-
-              <div
-                className="glass flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs font-bold"
-                style={{
-                  background: "var(--surface)",
-                  borderColor: "var(--border-soft)",
-                  color: "var(--text-primary)",
-                }}
-              >
-                <span className="text-[11px] font-semibold" style={{ color: "var(--text-muted)" }}>
-                  {t("product.sku") || "شناسه کالا"}:
-                </span>
-                <span>{stockSkuVal}</span>
-              </div>
-            </div>
+            {/* Bottom Info Strip removed: کد محصول / شناسه کالا now live in
+                the مشخصات کامل section below (cleaner top area, same data). */}
           </div>
 
           {/* Ashkan Plastic External Link CTA */}

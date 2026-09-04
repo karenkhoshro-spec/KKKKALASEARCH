@@ -1,6 +1,8 @@
 /* ==========================================================================
-   OrderX wordmark — white, "Order" static, only the X sways gently.
+   OrderX wordmark — "Order" static, only the X sways gently.
    Transform-only animation (compositor thread), tiny, reduced-motion safe.
+   Dark theme: neon white "Order" + purple X. Light theme: deep violet
+   "Order" (readable on white) while the X keeps its purple identity.
    ========================================================================== */
 
 .ks-orderx-logo {
@@ -21,6 +23,16 @@
   text-shadow: 0 1px 8px rgba(255, 255, 255, 0.18);
 }
 
+/* Light mode: white "Order" is invisible on white backgrounds — switch to
+   the brand's deep violet with a subtle purple edge glow for contrast. */
+html[data-theme="light"] .ks-orderx-logo {
+  color: #4c1d95;
+}
+
+html[data-theme="light"] .ks-orderx-word {
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6), 0 0 10px rgba(124, 58, 237, 0.18);
+}
+
 .ks-orderx-x {
   display: inline-block;
   font-size: 1.35rem;
@@ -29,6 +41,12 @@
   text-shadow: 0 0 10px rgba(192, 132, 252, 0.55);
   animation: ks-orderx-sway 3.2s ease-in-out infinite;
   will-change: transform;
+}
+
+/* Light mode X stays purple, slightly deepened so it still pops on white. */
+html[data-theme="light"] .ks-orderx-x {
+  color: #9333ea;
+  text-shadow: 0 0 8px rgba(147, 51, 234, 0.35);
 }
 
 /* Compact variant (site header) */

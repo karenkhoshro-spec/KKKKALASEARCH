@@ -202,11 +202,33 @@ body .font-normal { font-weight: 600; }
 }
 
 @keyframes glowPulse {
-  0%, 100% { opacity: 0.55; filter: blur(60px); }
-  50% { opacity: 0.9; filter: blur(80px); }
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.9; }
 }
+/* Perf: blur is no longer animated (animating filter blur forces expensive
+   repaints every frame). The static blur lives on the element using it. */
 .animate-glow-pulse {
   animation: glowPulse 5s ease-in-out infinite;
+  filter: blur(60px);
+}
+
+/* Perf: continuous background animations pause when scrolled off-screen and
+   under prefers-reduced-motion — GPU-friendly, keeps the neon identity. */
+@keyframes ksAnimRunning {
+  from { animation-play-state: running; }
+  to { animation-play-state: running; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-blob,
+  .animate-blob-slow,
+  .animate-glow-pulse,
+  .animate-kenburns,
+  .search-shimmer,
+  .ks-orderx-x,
+  .ks-icon-3d {
+    animation: none !important;
+  }
 }
 
 @keyframes shimmerBorder {
@@ -815,6 +837,12 @@ html[data-theme="light"] .ks-menu-purple-btn {
     animation: none;
     transition: none;
   }
+}
+
+/* Perf: hero/foreground lazy images reserve no height — this utility prevents
+   layout shift on image grids that opt in (aspect-ratio keeps the space). */
+.img-zoom-safe {
+  contain: layout paint;
 }
 
 /* ==========================================================================
