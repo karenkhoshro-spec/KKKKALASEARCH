@@ -17,9 +17,25 @@
  * config.example.php. NEVER put the real config inside public_html.
  */
 
-function ks_config(): array
+/**
+ * Drop the cached config (PHP unit tests only). Production never calls this.
+ */
+function ks_config_reset(): void
+{
+    $cache = &ks_config_cache();
+    $cache = null;
+}
+
+/** @return mixed */
+function &ks_config_cache()
 {
     static $config = null;
+    return $config;
+}
+
+function ks_config(): array
+{
+    $config = &ks_config_cache();
     if ($config !== null) {
         return $config;
     }

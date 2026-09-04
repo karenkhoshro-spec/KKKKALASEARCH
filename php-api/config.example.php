@@ -28,8 +28,10 @@ return [
     'db_password'          => 'CHANGE_ME_STRONG_DB_PASSWORD',
 
     // --- Admin login -----------------------------------------------------
-    // Official management account: username "Orderx". NEVER write the real
-    // password here — only its bcrypt hash (password_hash/password_verify).
+    // The live username is whatever you set here (case-sensitive). It is NOT
+    // compiled into the React app. The template value is "Orderx". Change this
+    // key if you want a different name. NEVER write the raw password in this
+    // file, in src/, in public/, or in Git — only the bcrypt hash (password_hash).
     'admin_username'       => 'Orderx',
     // bcrypt hash from password_hash() — the ONLY recommended form.
     'admin_password_hash'  => '',                // e.g. '$2y$10$....'

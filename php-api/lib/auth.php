@@ -29,6 +29,22 @@ function ks_owner_configured(): bool
         && $c['admin_session_secret'] !== '';
 }
 
+/**
+ * Timing-safe username compare against the configured admin account.
+ * The username lives only in backend config — never in the frontend.
+ */
+function ks_admin_username_matches(string $username): bool
+{
+    $expected = ks_config()['admin_username'];
+    return $username !== '' && $expected !== '' && hash_equals($expected, $username);
+}
+
+function ks_owner_username_matches(string $username): bool
+{
+    $expected = ks_config()['owner_username'];
+    return $username !== '' && $expected !== '' && hash_equals($expected, $username);
+}
+
 function ks_verify_admin_password(string $password): bool
 {
     $c = ks_config();
@@ -36,7 +52,7 @@ function ks_verify_admin_password(string $password): bool
         return password_verify($password, $c['admin_password_hash']);
     }
     // Legacy plaintext fallback — documented migration path is ADMIN_PASSWORD_HASH.
-    return hash_equals($c['admin_password'], $password);
+    return $c['admin_password'] !== '' && hash_equals($c['admin_password'], $password);
 }
 
 function ks_verify_owner_password(string $password): bool
@@ -46,7 +62,7 @@ function ks_verify_owner_password(string $password): bool
         return password_verify($password, $c['owner_password_hash']);
     }
     // Legacy plaintext fallback — documented migration path is OWNER_PASSWORD_HASH.
-    return hash_equals($c['owner_password'], $password);
+    return $c['owner_password'] !== '' && hash_equals($c['owner_password'], $password);
 }
 
 /** Issue a new session token (row inserted into admin_sessions). */
@@ -69,7 +85,7 @@ function ks_issue_admin_token(?string $username = null): string
 /** True when the presented token is valid: exists, not revoked, not expired. */
 function ks_verify_admin_token(?string $token): bool
 {
-    if ($token === null || $token === '' || !ks_admin_configured()) {
+    if ($token === null || $token === '' || ks_config()['admin_session_secret'] === '') {
         return false;
     }
     $tokenHash = hash_hmac('sha256', $token, ks_config()['admin_session_secret']);
@@ -88,7 +104,7 @@ function ks_verify_admin_token(?string $token): bool
  */
 function ks_session_role(?string $token): string
 {
-    if ($token === null || $token === '' || !ks_admin_configured()) {
+    if ($token === null || $token === '' || ks_config()['admin_session_secret'] === '') {
         return '';
     }
     $tokenHash = hash_hmac('sha256', $token, ks_config()['admin_session_secret']);
@@ -123,10 +139,12 @@ function ks_revoke_admin_token(?string $token): void
 
 function ks_bearer_token(): string
 {
-    $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+    $header = $_SERVER['HTTP_AUTHORIZATION']
+        ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
+        ?? '';
     if ($header === '' && function_exists('apache_request_headers')) {
         $headers = apache_request_headers();
-        $header = $headers['Authorization'] ?? '';
+        $header = $headers['Authorization'] ?? $headers['authorization'] ?? '';
     }
     if (preg_match('/^Bearer\s+(.+)$/i', $header, $m)) {
         return trim($m[1]);

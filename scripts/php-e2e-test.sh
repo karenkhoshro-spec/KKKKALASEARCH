@@ -172,6 +172,12 @@ CODE=$(req POST /api/admin/login /tmp/ks-login.json)
 check "wrong password → 401" "$CODE" "401"
 check "…with invalid_credentials" "$(json .error)" "invalid_credentials"
 cat > /tmp/ks-login.json <<JSON
+{ "username": "wrong-username", "password": "$ADMIN_PASSWORD" }
+JSON
+CODE=$(req POST /api/admin/login /tmp/ks-login.json)
+check "wrong username → 401" "$CODE" "401"
+check "…with invalid_credentials" "$(json .error)" "invalid_credentials"
+cat > /tmp/ks-login.json <<JSON
 { "username": "$ADMIN_USERNAME", "password": "$ADMIN_PASSWORD" }
 JSON
 CODE=$(req POST /api/admin/login /tmp/ks-login.json)

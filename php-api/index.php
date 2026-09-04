@@ -21,7 +21,7 @@
 require __DIR__ . '/lib/bootstrap.php';
 
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
-$path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+$path = ks_request_path();
 
 // CORS: the app is same-origin only — no Access-Control-* headers are sent,
 // so cross-origin browsers cannot call the API at all.
@@ -88,7 +88,7 @@ if ($method === 'POST' && $path === '/api/admin/login') {
     }
     $username = (string) ($body['username'] ?? '');
     $password = (string) ($body['password'] ?? '');
-    if ($username === '' || $username !== ks_config()['admin_username'] || !ks_verify_admin_password($password)) {
+    if (!ks_admin_username_matches($username) || !ks_verify_admin_password($password)) {
         ks_send_error(401, 'invalid_credentials');
     }
     ks_send(200, ['token' => ks_issue_admin_token()]);
@@ -100,7 +100,7 @@ if ($method === 'POST' && $path === '/api/admin/owner-login') {
     }
     $username = (string) ($body['username'] ?? '');
     $password = (string) ($body['password'] ?? '');
-    if ($username === '' || $username !== ks_config()['owner_username'] || !ks_verify_owner_password($password)) {
+    if (!ks_owner_username_matches($username) || !ks_verify_owner_password($password)) {
         ks_send_error(401, 'invalid_credentials');
     }
     ks_send(200, ['token' => ks_issue_admin_token($username), 'role' => 'owner']);

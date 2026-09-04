@@ -231,3 +231,78 @@ function ks_read_body(): ?string
     }
     return $raw;
 }
+
+/**
+ * Resolve the public /api/... path across Apache, LiteSpeed, and cPanel
+ * rewrite variants. Some hosts replace REQUEST_URI with /api/index.php after
+ * the front-controller rewrite; without this helper every admin login would
+ * 404 and the SPA would (previously) show "wrong password".
+ *
+ * $server is injectable so the helper is unit-testable without a web SAPI.
+ */
+function ks_request_path(?array $server = null): string
+{
+    $s = $server ?? $_SERVER;
+
+    $from = static function (?string $raw): string {
+        if ($raw === null || $raw === '') {
+            return '';
+        }
+        $path = parse_url($raw, PHP_URL_PATH);
+        if (!is_string($path) || $path === '') {
+            $path = explode('?', $raw, 2)[0];
+        }
+        return $path;
+    };
+
+    $candidates = [];
+    $candidates[] = $from($s['REQUEST_URI'] ?? null);
+    $candidates[] = $from($s['REDIRECT_URL'] ?? null);
+    $candidates[] = $from($s['REDIRECT_REDIRECT_URL'] ?? null);
+    $candidates[] = $from($s['UNENCODED_URL'] ?? null);
+    if (isset($s['THE_REQUEST']) && is_string($s['THE_REQUEST'])
+        && preg_match('#^[A-Z]+\s+(\S+)#', $s['THE_REQUEST'], $m)) {
+        $candidates[] = $from($m[1]);
+    }
+
+    $path = '';
+    foreach ($candidates as $candidate) {
+        if ($candidate === '') {
+            continue;
+        }
+        $stripped = preg_replace('#/index\.php#', '', $candidate) ?? $candidate;
+        if ($stripped !== '' && $stripped !== '/api' && str_contains($stripped, '/api/')) {
+            $path = $stripped;
+            break;
+        }
+        if ($path === '') {
+            $path = $stripped !== '' ? $stripped : $candidate;
+        }
+    }
+
+    $pathInfo = $s['PATH_INFO'] ?? '';
+    if (is_string($pathInfo) && $pathInfo !== '') {
+        if ($path === '' || $path === '/api' || !str_contains($path, '/api/')) {
+            $info = str_starts_with($pathInfo, '/') ? $pathInfo : '/' . $pathInfo;
+            $path = str_starts_with($info, '/api/') ? $info : '/api' . $info;
+        }
+    }
+
+    $path = preg_replace('#/index\.php#', '', $path) ?? $path;
+    if ($path === '') {
+        $path = '/';
+    }
+
+    // Front controller lives at /api/index.php — a URI of /admin/login is
+    // the same route as /api/admin/login.
+    $script = $from($s['SCRIPT_NAME'] ?? null);
+    if ($path !== '/' && !str_starts_with($path, '/api') && str_contains($script, '/api')) {
+        $path = '/api' . (str_starts_with($path, '/') ? $path : '/' . $path);
+    }
+
+    if ($path !== '/' && str_ends_with($path, '/')) {
+        $path = rtrim($path, '/');
+    }
+
+    return $path;
+}

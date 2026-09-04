@@ -20,6 +20,10 @@ export default defineConfig({
     fileParallelism: false,
     env: {
       ORDER_STORE_PATH: join(testDataDir, "orders.json"),
+      // Local Node test credentials only — never production values, never VITE_*.
+      ADMIN_USERNAME: "test-admin",
+      ADMIN_PASSWORD: "test-admin-pass",
+      ADMIN_SESSION_SECRET: "test-session-secret-at-least-32-chars",
     },
   },
 });

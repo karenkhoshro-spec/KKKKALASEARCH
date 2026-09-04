@@ -3,6 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { Eye, EyeOff, Home, ShieldCheck } from "lucide-react";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { useAdminAuth } from "../../context/AdminAuthContext";
+import { adminLoginErrorI18nKey } from "../../utils/adminLoginErrors";
 
 export default function AdminLoginPage() {
   const { t, dir } = useLanguage();
@@ -21,8 +22,9 @@ export default function AdminLoginPage() {
     setError("");
     try {
       await login(username, password);
-    } catch {
-      setError(t("admin.invalidCredentials"));
+    } catch (err) {
+      const code = err instanceof Error ? err.message : "network_error";
+      setError(t(adminLoginErrorI18nKey(code)));
     } finally {
       setSubmitting(false);
     }
